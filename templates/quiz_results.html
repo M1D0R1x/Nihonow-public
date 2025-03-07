@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1 class="text-center mb-4">{{ level }} Quiz Results</h1>
+    <div class="alert alert-info text-center">
+        You scored {{ score }} out of {{ total }}!
+    </div>
+    <div class="card">
+        <div class="card-body">
+            {% for result in results %}
+                <div class="mb-3">
+                    <h5>{{ result.question }}</h5>
+                    <p>Your answer: {{ result.user_answer }}</p>
+                    <p>Correct answer: {{ result.correct_answer }}</p>
+                    <p class="{% if result.is_correct %}text-success{% else %}text-danger{% endif %}">
+                        {% if result.is_correct %}Correct!{% else %}Incorrect{% endif %}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="mt-4 text-center">
+        <a href="{% url 'quiz' level %}" class="btn btn-primary">Try Again</a>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+    </div>
+{% endblock %}

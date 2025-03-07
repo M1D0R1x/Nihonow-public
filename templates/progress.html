@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1 class="text-center mb-4">Your Progress</h1>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Level</th>
+                    <th>Studied</th>
+                    <th>Quiz Completed</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in progress %}
+                    <tr>
+                        <td>{{ entry.level }}</td>
+                        <td>{{ entry.studied|yesno:"Yes,No" }}</td>
+                        <td>{{ entry.quiz_completed|yesno:"Yes,No" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3">No progress yet!</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

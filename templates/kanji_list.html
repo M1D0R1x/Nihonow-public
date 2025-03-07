@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1 class="text-center mb-4">{{ level }} Kanji</h1>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Kanji</th>
+                    <th>On Reading</th>
+                    <th>Kun Reading</th>
+                    <th>Meaning</th>
+                    <th>Stroke Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for k in kanji %}
+                    <tr>
+                        <td>{{ k.character }}</td>
+                        <td>{{ k.on_reading }}</td>
+                        <td>{{ k.kun_reading }}</td>
+                        <td>{{ k.meaning }}</td>
+                        <td>{{ k.stroke_count }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5">No kanji available for {{ level }} yet!</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

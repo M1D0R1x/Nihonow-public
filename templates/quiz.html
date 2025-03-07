@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1 class="text-center mb-4">{{ level }} Quiz</h1>
+    <form method="post" action="{% url 'quiz' level %}">
+        {% csrf_token %}
+        {% for question in questions %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ forloop.counter }}. {{ question.question }}</h5>
+                    <div class="form-check">
+                        <label>
+                            <input type="radio" class="form-check-input" name="answer_{{ question.id }}" value="{{ question.correct_answer }}" required>
+                        </label>
+                        <label class="form-check-label">{{ question.correct_answer }}</label>
+                    </div>
+                    <div class="form-check">
+                        <label>
+                            <input type="radio" class="form-check-input" name="answer_{{ question.id }}" value="{{ question.wrong_answer1 }}">
+                        </label>
+                        <label class="form-check-label">{{ question.wrong_answer1 }}</label>
+                    </div>
+                    <div class="form-check">
+                        <label>
+                            <input type="radio" class="form-check-input" name="answer_{{ question.id }}" value="{{ question.wrong_answer2 }}">
+                        </label>
+                        <label class="form-check-label">{{ question.wrong_answer2 }}</label>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center">No quiz questions available for {{ level }} yet!</p>
+        {% endfor %}
+        {% if questions %}
+            <button type="submit" class="btn btn-primary w-100">Submit Answers</button>
+        {% endif %}
+    </form>
+{% endblock %}
