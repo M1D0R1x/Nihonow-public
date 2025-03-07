@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h1 class="text-center mb-4" style="color: #2c3e50;">Japanese Numbers</h1>
+
+    <!-- Introduction -->
+    <div class="card mb-4 shadow-sm" style="background-color: #f8f9fa; border-color: #3498db;">
+        <div class="card-body">
+            <h2 class="card-title" style="color: #3498db;">About Japanese Numbers</h2>
+            <p>Japanese numbers are an essential part of the language, used for counting, ordering, and more. Unlike English, Japanese numbers are typically written in Hiragana or Katakana for basic counting (e.g., いち for 1, イチ for 1 in Katakana), though Kanji is often used in formal or written contexts. This page focuses on the phonetic representation of numbers using Hiragana and Katakana, along with their pronunciations.</p>
+            <p>Japanese numbers follow a straightforward pattern, but their pronunciation can vary depending on counters (e.g., people, flat objects) or grammatical context. Learning these variations is key to using numbers correctly in conversation.</p>
+        </div>
+    </div>
+
+    <!-- Basic Numbers Table -->
+    <div class="card mb-4 shadow-sm" style="background-color: #ecf0f1; border-color: #e74c3c;">
+        <div class="card-body">
+            <h2 class="card-title" style="color: #e74c3c;">Basic Numbers (1-10)</h2>
+            <p>Below are the numbers from 1 to 10 written in Hiragana and Katakana with their pronunciations.</p>
+            <table class="table table-bordered text-center" style="font-size: 1.5em;">
+                <thead>
+                    <tr style="background-color: #e74c3c; color: white;">
+                        <th>Number</th><th>Hiragana</th><th>Pronunciation</th><th>Katakana</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td><td><span style="color: #2ecc71;">いち</span></td><td>ichi</td><td><span style="color: #2ecc71;">イチ</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td><td><span style="color: #3498db;">に</span></td><td>ni</td><td><span style="color: #3498db;">ニ</span></td>
+                    </tr>
+                    <tr>
+                        <td>3</td><td><span style="color: #9b59b6;">さん</span></td><td>san</td><td><span style="color: #9b59b6;">サン</span></td>
+                    </tr>
+                    <tr>
+                        <td>4</td><td><span style="color: #e67e22;">し</span></td><td>shi</td><td><span style="color: #e67e22;">シ</span></td>
+                    </tr>
+                    <tr>
+                        <td>5</td><td><span style="color: #1abc9c;">ご</span></td><td>go</td><td><span style="color: #1abc9c;">ゴ</span></td>
+                    </tr>
+                    <tr>
+                        <td>6</td><td><span style="color: #f1c40f;">ろく</span></td><td>roku</td><td><span style="color: #f1c40f;">ロク</span></td>
+                    </tr>
+                    <tr>
+                        <td>7</td><td><span style="color: #e74c3c;">しち</span></td><td>shichi</td><td><span style="color: #e74c3c;">シチ</span></td>
+                    </tr>
+                    <tr>
+                        <td>8</td><td><span style="color: #8e44ad;">はち</span></td><td>hachi</td><td><span style="color: #8e44ad;">ハチ</span></td>
+                    </tr>
+                    <tr>
+                        <td>9</td><td><span style="color: #27ae60;">く</span></td><td>ku</td><td><span style="color: #27ae60;">ク</span></td>
+                    </tr>
+                    <tr>
+                        <td>10</td><td><span style="color: #d35400;">じゅう</span></td><td>juu</td><td><span style="color: #d35400;">ジュウ</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><strong>Note:</strong> These are the base forms. Pronunciation may change with counters or context, as explained below.</p>
+        </div>
+    </div>
+
+    <!-- Variations in Sounds -->
+    <div class="card mb-4 shadow-sm" style="background-color: #f8f9fa; border-color: #3498db;">
+        <div class="card-body">
+            <h2 class="card-title" style="color: #3498db;">Variations in Sounds</h2>
+            <p>Japanese numbers can have variations in pronunciation depending on the context, especially when used with counters (e.g., counting people, objects, or time). Here are some key points:</p>
+            <ul>
+                <li><strong>4 and 7 Variations:</strong> The number 4 can be pronounced as "shi" (し/シ) or "yon" (よん/ヨン), and 7 as "shichi" (しち/シチ) or "nana" (なな/ナナ). The choice depends on the counter or to avoid confusion (e.g., "shi" sounds like "death" in some contexts, so "yon" is preferred).</li>
+                <li><strong>Counters:</strong> When counting specific items, the number's ending may adjust:
+                    <ul>
+                        <li>For people (with counter 〜人, e.g., にん): 1 is "hitori" (ひとり/ヒトリ), 2 is "futari" (ふたり/フタリ), and 3+ follows the base form (e.g., "san-nin" for 3).</li>
+                        <li>For flat objects (e.g., sheets of paper with counter 〜枚, e.g., まい): 1 is "ichi-mai" (いちまい/イチマイ), 2 is "ni-mai" (にまい/ニマイ), etc.</li>
+                    </ul>
+                </li>
+                <li><strong>Compound Numbers:</strong> For numbers beyond 10, combine the base numbers (e.g., 11 is "juu-ichi" じゅういち/ジュウイチ, 20 is "ni-juu" にじゅう/ニジュウ). The pronunciation may blend slightly depending on speed or dialect.</li>
+                <li><strong>Dialects:</strong> In some regions, slight pronunciation differences may occur, but the standard forms listed above are widely accepted.</li>
+            </ul>
+            <p>Practice these variations with native speakers or resources to get comfortable with their usage!</p>
+        </div>
+    </div>
+
+    <!-- Downloadable Chart -->
+    <div class="text-center mb-4">
+        <a href="{% static 'images/numbers_chart.pdf' %}" class="btn btn-success btn-lg" style="background-color: #27ae60; border-color: #27ae60;" download>Download Numbers Chart</a>
+    </div>
+{% endblock %}
