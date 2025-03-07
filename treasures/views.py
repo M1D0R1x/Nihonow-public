@@ -1,57 +1,14 @@
-from django.shortcuts import render
+# treasures/views.py
 from django.contrib.auth.decorators import login_required
-from .models import Vocabulary, QuizQuestion, Kanji, UserProgress
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+
 
 def home(request):
-    levels = Vocabulary.LEVEL_CHOICES
-    return render(request, 'home.html', {'levels': levels})
+    return render(request, 'home.html')
 
-def level_detail(request, level):
-    vocab_list = Vocabulary.objects.filter(level=level)
-    return render(request, 'level_detail.html', {'level': level, 'vocab_list': vocab_list})
-
-def quiz(request, level):
-    questions = QuizQuestion.objects.filter(level=level)
-    if request.method == 'POST':
-        score = 0
-        total = questions.count()
-        results = []
-        for question in questions:
-            user_answer = request.POST.get(f'answer_{question.id}')
-            is_correct = user_answer == question.correct_answer
-            if is_correct:
-                score += 1
-            results.append({
-                'question': question.question,
-                'user_answer': user_answer,
-                'correct_answer': question.correct_answer,
-                'is_correct': is_correct,
-            })
-        # Mark quiz as completed for the user
-        if request.user.is_authenticated:
-            UserProgress.objects.update_or_create(
-                user=request.user,
-                level=level,
-                defaults={'quiz_completed': True}
-            )
-        return render(request, 'quiz_results.html', {
-            'level': level,
-            'score': score,
-            'total': total,
-            'results': results,
-        })
-    # Mark level as studied when user views the quiz
-    if request.user.is_authenticated:
-        UserProgress.objects.update_or_create(
-            user=request.user,
-            level=level,
-            defaults={'studied': True}
-        )
-    return render(request, 'quiz.html', {'level': level, 'questions': questions})
-
-def kanji_list(request, level):
-    kanji = Kanji.objects.filter(level=level)
-    return render(request, 'kanji_list.html', {'level': level, 'kanji': kanji})
+def numbers(request):
+    return render(request, 'numbers.html')
 
 def hiragana(request):
     return render(request, 'hiragana.html')
@@ -59,10 +16,51 @@ def hiragana(request):
 def katakana(request):
     return render(request, 'katakana.html')
 
-def numbers(request):
-    return render(request, 'numbers.html')
+def n5(request):
+    return render(request, 'level_detail.html', {'level': 'N5'})
+def n5_quiz(request):
+    return render(request, 'quiz.html', {'level': 'N5'})
+def n5_kanji(request):
+    return render(request, 'kanji_list.html', {'level': 'N5'})
+
+def n4(request):
+    return render(request, 'level_detail.html', {'level': 'N4'})
+def n4_quiz(request):
+    return render(request, 'quiz.html', {'level': 'N4'})
+def n4_kanji(request):
+    return render(request, 'kanji_list.html', {'level': 'N4'})
+
+def n3(request):
+    return render(request, 'level_detail.html', {'level': 'N3'})
+def n3_quiz(request):
+    return render(request, 'quiz.html', {'level': 'N3'})
+def n3_kanji(request):
+    return render(request, 'kanji_list.html', {'level': 'N3'})
+
+def n2(request):
+    return render(request, 'level_detail.html', {'level': 'N2'})
+def n2_quiz(request):
+    return render(request, 'quiz.html', {'level': 'N2'})
+def n2_kanji(request):
+    return render(request, 'kanji_list.html', {'level': 'N2'})
+
+def n1(request):
+    return render(request, 'level_detail.html', {'level': 'N1'})
+def n1_quiz(request):
+    return render(request, 'quiz.html', {'level': 'N1'})
+def n1_kanji(request):
+    return render(request, 'kanji_list.html', {'level': 'N1'})
 
 @login_required
-def progress(request):
-    progress = UserProgress.objects.filter(user=request.user)
-    return render(request, 'progress.html', {'progress': progress})
+def dashboard(request):
+    return render(request, 'dashboard.html', {'user': request.user})
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})

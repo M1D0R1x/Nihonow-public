@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">
+        <div class="card-body">
+            <h2 class="card-title text-center" style="color: #0288d1;">Dashboard</h2>
+            <p class="text-center">Welcome, {{ user.username }}!</p>
+            <p class="text-center">This is your dashboard. Add progress tracking or stats here later.</p>
+            <a href="{% url 'home' %}" class="btn btn-info mt-3">Back to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
