@@ -26,4 +26,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('register/', views.register, name='register'),
+    # New URL patterns added below
+    path('about/', views.about, name='about'),
+    path('resources/', views.resources, name='resources'),
+    path('contact/', views.contact, name='contact'),
 ]

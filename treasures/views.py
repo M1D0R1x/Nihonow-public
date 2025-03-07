@@ -51,6 +51,15 @@ def n1_quiz(request):
 def n1_kanji(request):
     return render(request, 'kanji_list.html', {'level': 'N1'})
 
+def about(request):
+    return render(request, 'about.html')
+
+def contact(request):
+    return render(request, 'contact.html')
+
+def resources(request):
+    return render(request, 'resources.html')
+
 @login_required
 def dashboard(request):
     return render(request, 'dashboard.html', {'user': request.user})
