@@ -1,0 +1,29 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+# Database files
+db.sql
+*.sql
+.env
+NihongoDekita.iml.xml
+# IntelliJ IDEA specific files
+.idea/
+*.iml
+# Python/Django specific files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+env.bak/
+venv.bak/
+
+# Migration files (do NOT ignore, as confirmed earlier)
+# migrations/  <- Keep this uncommented
