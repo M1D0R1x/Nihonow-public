@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-po^n&a(ii85f@0xqb_q$*pq#3m8^qcup-pkmof7b*(9bs$%m27
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*', 'nihonow.vercel.app', '.now.sh']
+ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', '.now.sh']
 
 
 # Application definition
@@ -80,8 +80,12 @@ WSGI_APPLICATION = 'NihongoDekita.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'RZBFSItwfdWjSabpIvRJDFiEuwyoSCVL',
+        'HOST': 'shortline.proxy.rlwy.net',
+        'PORT': '26709',
     }
 }
 
