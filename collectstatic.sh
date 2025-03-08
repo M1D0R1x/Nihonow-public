@@ -1,3 +1,5 @@
 #!/bin/bash
-python -m pip install -r requirements.txt
-python NihongoDekita/manage.py collectstatic --noinput
+echo "BUILD START"
+python3.13 -m pip install -r requirements.txt
+python3.13 NihongoDekita/manage.py collectstatic --noinput --clear
+echo "BUILD END"
