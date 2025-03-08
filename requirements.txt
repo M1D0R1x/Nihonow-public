@@ -6,6 +6,7 @@ joblib==1.4.2
 nltk==3.9.1
 psycopg==3.2.5
 psycopg-binary==3.2.5
+python-dotenv==1.0.1
 regex==2024.11.6
 sqlparse==0.5.3
 tqdm==4.67.1
