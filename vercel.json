@@ -1,9 +1,15 @@
 {
-  "builds": [{
-    "src": "NihongoDekita/wsgi.py",
-    "use": "@vercel/python",
-    "config": {"maxLambdaSize":  "15mb", "runtime": "python3.13"}
-  }],
+  "builds": [
+    {
+      "src": "NihongoDekita/wsgi.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.13" }
+    },
+    {
+      "src": "collectstatic.sh",
+      "use": "@vercel/build-utils"
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",
