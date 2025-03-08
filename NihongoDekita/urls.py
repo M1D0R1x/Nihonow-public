@@ -19,10 +19,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from treasures.views import custom_login, logout_view
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/login/', custom_login, name='login'),
     path('', include('treasures.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('logout/', logout_view, name='logout'),
 ]
 
 # Serve static and media files during development

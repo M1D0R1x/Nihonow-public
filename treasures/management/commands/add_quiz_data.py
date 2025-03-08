@@ -12,6 +12,7 @@ class Command(BaseCommand):
                 'correct_answer': 'hello',
                 'wrong_answer1': 'goodbye',
                 'wrong_answer2': 'thank you',
+                'wrong_answer3': 'sorry',
             },
             {
                 'level': 'N5',
@@ -19,6 +20,7 @@ class Command(BaseCommand):
                 'correct_answer': 'thank you',
                 'wrong_answer1': 'hello',
                 'wrong_answer2': 'goodbye',
+                'wrong_answer3': 'welcome',
             },
             {
                 'level': 'N4',
@@ -26,6 +28,7 @@ class Command(BaseCommand):
                 'correct_answer': 'good morning',
                 'wrong_answer1': 'good night',
                 'wrong_answer2': 'hello',
+                'wrong_answer3': 'welcome',
             },
             {
                 'level': 'N4',
@@ -33,6 +36,7 @@ class Command(BaseCommand):
                 'correct_answer': 'goodbye',
                 'wrong_answer1': 'thank you',
                 'wrong_answer2': 'good morning',
+                'wrong_answer3': 'welcome',
             },
         ]
         for sample in samples:
@@ -43,6 +47,7 @@ class Command(BaseCommand):
                     'correct_answer': sample['correct_answer'],
                     'wrong_answer1': sample['wrong_answer1'],
                     'wrong_answer2': sample['wrong_answer2'],
+                    'wrong_answer3': sample['wrong_answer3'],
                 }
             )
         self.stdout.write(self.style.SUCCESS('Sample quiz data added or updated!'))

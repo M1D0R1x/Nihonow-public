@@ -1,10 +1,71 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Contact - NihongoDekita</title>
-</head>
-<body>
-    <h1>Contact</h1>
-    <p>Contact us at: example@email.com</p>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="background-color: #f8f9fa; min-height: 100vh;">
+    <div class="row justify-content-center py-5">
+        <div class="col-md-10">
+            <div class="card shadow-sm border-0 mb-4" style="background: linear-gradient(135deg, #ff6f61, #ffd700); border-radius: 15px;">
+                <div class="card-body text-center text-white p-5">
+                    <h1 class="display-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Contact Us</h1>
+                    <p class="lead">We’d love to hear from you!</p>
+                </div>
+            </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if submitted %}
+                <div class="alert alert-success text-center" role="alert">
+                    <h4>Thank You!</h4>
+                    <p>Your message has been successfully sent. We will get back to you soon.</p>
+                    <a href="{% url 'home' %}" class="btn btn-outline-success mt-3">Return to Home</a>
+                    <button type="button" class="btn btn-outline-secondary mt-3" onclick="document.getElementById('contact-form').reset(); location.reload();">Send Another Message</button>
+                </div>
+            {% else %}
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm" style="background-color: #fff; transition: transform 0.3s;">
+                            <div class="card-body">
+                                <h5 class="card-title">Get in Touch</h5>
+                                <p class="card-text"><i class="fas fa-envelope me-2" style="color: #ff6f61;"></i>Email: <a href="mailto:veerababusaviti2103@gmail.com">veerababusaviti2103@gmail.com</a></p>
+                                <p class="card-text"><i class="fas fa-phone me-2" style="color: #ff6f61;"></i>Phone: +1-555-123-4567</p>
+                                <p class="card-text"><i class="fas fa-map-marker-alt me-2" style="color: #ff6f61;"></i>Address: 123 Japanese Lane, Tokyo, Japan</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm" style="background-color: #fff; transition: transform 0.3s;">
+                            <div class="card-body">
+                                <h5 class="card-title">Send Us a Message</h5>
+                                <form action="{% url 'contact' %}" method="post" id="contact-form" class="needs-validation" novalidate>
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Name</label>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="message" class="form-label">Message</label>
+                                        <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100" style="background-color: #2c3e50; border: none;">Send Message</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

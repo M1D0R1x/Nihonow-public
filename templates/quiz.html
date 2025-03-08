@@ -1,37 +1,45 @@
 {% extends 'base.html' %}
+
+{% block title %}Quiz - {{ level }}{% endblock %}
+
 {% block content %}
-    <h1 class="text-center mb-4">{{ level }} Quiz</h1>
-    <form method="post" action="{% url 'quiz' level %}">
-        {% csrf_token %}
-        {% for question in questions %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">{{ forloop.counter }}. {{ question.question }}</h5>
-                    <div class="form-check">
-                        <label>
-                            <input type="radio" class="form-check-input" name="answer_{{ question.id }}" value="{{ question.correct_answer }}" required>
-                        </label>
-                        <label class="form-check-label">{{ question.correct_answer }}</label>
-                    </div>
-                    <div class="form-check">
-                        <label>
-                            <input type="radio" class="form-check-input" name="answer_{{ question.id }}" value="{{ question.wrong_answer1 }}">
-                        </label>
-                        <label class="form-check-label">{{ question.wrong_answer1 }}</label>
-                    </div>
-                    <div class="form-check">
-                        <label>
-                            <input type="radio" class="form-check-input" name="answer_{{ question.id }}" value="{{ question.wrong_answer2 }}">
-                        </label>
-                        <label class="form-check-label">{{ question.wrong_answer2 }}</label>
-                    </div>
+<div class="container mt-5" style="background-color: #f8f9fa; min-height: 100vh;">
+    <div class="row justify-content-center py-5">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 mb-4" style="background: linear-gradient(135deg, #ff6f61, #ffd700); border-radius: 15px;">
+                <div class="card-body text-center text-white p-5">
+                    <h1 class="display-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">{{ level }} Quiz</h1>
+                    <p class="lead">Test your knowledge!</p>
                 </div>
             </div>
-        {% empty %}
-            <p class="text-center">No quiz questions available for {{ level }} yet!</p>
-        {% endfor %}
-        {% if questions %}
-            <button type="submit" class="btn btn-primary w-100">Submit Answers</button>
-        {% endif %}
-    </form>
+            {% if error %}
+                <div class="alert alert-warning text-center" role="alert">{{ error }}</div>
+            {% elif submitted %}
+                <div class="alert alert-success text-center" role="alert">
+                    <h4>Quiz Completed!</h4>
+                    <p>Your Score: {{ score }}%</p>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-success">View Progress</a>
+                </div>
+            {% else %}
+                <form method="post">
+                    {% csrf_token %}
+                    {% for item in questions_with_options %}
+                        <div class="card mb-3 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item.question.question }}</h5>
+                                {% for option in item.options %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_{{ item.question.id }}" value="{{ option }}" required>
+                                        <label class="form-check-label">{{ option }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100" style="background-color: #2c3e50; border: none;">Submit Quiz</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

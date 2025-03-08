@@ -1,10 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>About Us - NihongoDekita</title>
-</head>
-<body>
-    <h1>About Us</h1>
-    <p>This is the about page for NihongoDekita.</p>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="background-color: #f8f9fa; min-height: 100vh;">
+    <div class="row justify-content-center py-5">
+        <div class="col-md-10">
+            <div class="card shadow-sm border-0 mb-4" style="background: linear-gradient(135deg, #ff6f61, #ffd700); border-radius: 15px;">
+                <div class="card-body text-center text-white p-5">
+                    <h1 class="display-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">About NihongoDekita</h1>
+                    <p class="lead">Your journey to mastering Japanese starts here!</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm" style="background-color: #fff; transition: transform 0.3s;">
+                        <div class="card-body text-center">
+                            <i class="fas fa-book-open fa-3x mb-3" style="color: #ff6f61;"></i>
+                            <h4 class="card-title">Our Mission</h4>
+                            <p class="card-text">At NihongoDekita, we aim to make Japanese learning accessible, engaging, and effective for everyone, from beginners to advanced learners.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm" style="background-color: #fff; transition: transform 0.3s;">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-3x mb-3" style="color: #ffd700;"></i>
+                            <h4 class="card-title">Our Team</h4>
+                            <p class="card-text">A passionate group of language enthusiasts and educators dedicated to creating a world-class learning platform.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm" style="background-color: #fff; transition: transform 0.3s;">
+                        <div class="card-body text-center">
+                            <i class="fas fa-globe fa-3x mb-3" style="color: #2c3e50;"></i>
+                            <h4 class="card-title">Our Vision</h4>
+                            <p class="card-text">To empower millions globally to master Japanese and connect with its rich culture.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

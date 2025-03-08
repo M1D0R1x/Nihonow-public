@@ -1,7 +1,8 @@
 /* styles.css */
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    font-family: 'Noto Sans Japanese', sans-serif; /* Japanese font */
+    background-color: #f8f8f8; /* Light gray background */
 }
 
 .navbar {
@@ -26,4 +27,24 @@ body {
 .table th, .table td {
     text-align: center;
     vertical-align: middle;
+}
+
+.dashboard-header { /* Style the main heading */
+    color: #333; /* Dark gray text */
+    font-size: 2.5rem;
+}
+
+.progress-bar {
+    background-color: #007bff; /* Blue progress bar */
+}
+
+.recent-activity, .next-steps {
+    background-color: #fff; /* White background for sections */
+    border: 1px solid #e0e0e0; /* Light gray border */
+    padding: 20px;
+    border-radius: 5px;
+}
+.register-container {
+    min-height: 100vh;
+    padding-bottom: 100px;
 }

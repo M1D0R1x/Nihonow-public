@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - NihongoDekita{% endblock %}
+
+{% block content %}
+<!-- Register Header -->
+<div class="container-fluid py-5 text-center" style="background: linear-gradient(135deg, #ff6f61, #ffd700); min-height: 150px; color: #fff;">
+    <div class="container">
+        <h2 class="text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Register</h2>
+        <p class="text-white">Create an account to start learning Japanese!</p>
+    </div>
+</div>
+
+<!-- Register Form -->
+<div class="container mt-3" style="min-height: calc(100vh - 300px); display: flex; flex-direction: column; justify-content: center; padding-bottom: 50px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0" style="border-radius: 15px;">
+                <div class="card-body">
+                    {% if messages %}
+                        <div class="alert alert-info">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" name="username" id="username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password1" class="form-label">Password</label>
+                            <input type="password" name="password1" id="password1" class="form-control" required>
+                            <small class="form-text text-muted">Password must be at least 8 characters long, contain at least one number, and one special character (e.g., !@#$%^&*).</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">Confirm Password</label>
+                            <input type="password" name="password2" id="password2" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
+                    <p class="text-center mt-3">
+                        Already have an account? <a href="{% url 'login' %}">Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
