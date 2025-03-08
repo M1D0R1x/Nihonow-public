@@ -1,19 +1,13 @@
 {
-  "builds": [
-    {
-      "src": "NihongoDekita/wsgi.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "collectstatic.sh",
-      "use": "@vercel/static-build"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "NihongoDekita/wsgi.py"
-    }
-  ],
-  "outputDirectory": "public"
-}
+   "builds": [{
+     "src": "NihongoDekita/wsgi.py",
+     "use": "@vercel/python",
+     "config": {"maxLambdaSize":  "15mb", "runtime": "python3.13"}
+   }],
+   "routes": [
+     {
+       "src": "/(.*)",
+       "dest": "NihongoDekita/wsgi.py"
+     }
+   ]
+ }
