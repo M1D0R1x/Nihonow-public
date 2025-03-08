@@ -1,10 +1,14 @@
 #!/bin/bash
 
-# Install dependencies
-pip install -r requirements.txt
+# Use the Vercel-provided Python binary
+python3.9 -m pip install -r requirements.txt
 
 # Run migrations
-python manage.py migrate
+python3.9 manage.py migrate
 
 # Collect static files
-python manage.py collectstatic --noinput
+python3.9 manage.py collectstatic --noinput
+
+# Create a build directory for Vercel
+mkdir -p staticfiles_build
+cp -r staticfiles/* staticfiles_build/
