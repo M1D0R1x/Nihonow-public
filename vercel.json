@@ -2,8 +2,7 @@
   "builds": [
     {
       "src": "NihongoDekita/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.13" }
+      "use": "@vercel/python"
     },
     {
       "src": "collectstatic.sh",
@@ -15,5 +14,6 @@
       "src": "/(.*)",
       "dest": "NihongoDekita/wsgi.py"
     }
-  ]
+  ],
+  "outputDirectory": "public"
 }
