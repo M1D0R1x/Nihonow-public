@@ -20,8 +20,7 @@ from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include
 from django.views.generic import TemplateView
-
-from treasures.sitemaps import StaticViewSitemap  # Import the class, not the module
+from treasures.sitemaps import StaticViewSitemap
 from treasures.views import custom_login, logout_view
 
 # Define the sitemaps dictionary
@@ -36,7 +35,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('logout/', logout_view, name='logout'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    path('robots.txt', TemplateView.as_view (template_name="robots.txt", content_type="text/plain",)),
+    path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
 ]
 
 # Serve static and media files during development

@@ -23,5 +23,25 @@
       "src": "/(.*)",
       "dest": "NihongoDekita/wsgi.py"
     }
+  ],
+  "headers": [
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "index" }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, noodp, noarchive" }
+      ]
+    }
   ]
 }
