@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /admin/  # Optional: block admin pages if you have them
+Allow: /
+Sitemap: https://nihonow.vercel.app/sitemap.xml
