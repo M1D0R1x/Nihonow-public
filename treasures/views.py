@@ -255,7 +255,7 @@ def contact(request):
             subject = f'New Contact Form Submission from {name}'
             message_body = f'Name: {name}\nEmail: {email}\n\nMessage:\n{message}'
             from_email = settings.EMAIL_HOST_USER
-            recipient_list = ['veerababusaviti2103@gmail.com']  # Your email
+            recipient_list = ['veerababusaviti21@gmail.com']  # Your email
 
             try:
                 # Send the email
