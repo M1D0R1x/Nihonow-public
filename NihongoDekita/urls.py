@@ -14,12 +14,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
+from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
+from django.urls import path, include
+from treasures.sitemaps import StaticViewSitemap  # Import the class, not the module
 from treasures.views import custom_login, logout_view
+
+# Define the sitemaps dictionary
+sitemaps = {
+    'static': StaticViewSitemap,
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +33,7 @@ urlpatterns = [
     path('', include('treasures.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('logout/', logout_view, name='logout'),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 # Serve static and media files during development

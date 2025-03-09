@@ -31,4 +31,5 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('contact/', views.contact, name='contact'),
     path('quiz/<str:level>/', views.quiz, name='quiz'),
+    path('quizzes/<slug:slug>/', views.quiz, name='quiz_detail'),
 ]
