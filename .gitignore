@@ -1,0 +1,30 @@
+### IntelliJ IDEA ###
+.idea/
+*.iml
+.idea/*.xml
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### Python/Django ###
+*.pyc
+__pycache__/
+venv/
+env/
+*.db
+staticfiles/
+media/
+.env
+*.log
+
+### VS Code ###
+.vscode/
+
+### Vercel ###
+.vercel/
+
+### General ###
+# Ignore temporary files
+*.tmp
+*.bak
+*.swp

@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Set New Password - NihongoDekita{% endblock %}
+{% block title %}Resend Confirmation - NihongoDekita{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-5 text-center" style="background: linear-gradient(135deg, #ff6f61, #ffd700); min-height: 150px; color: #fff;">
     <div class="container">
-        <h2 class="text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Set New Password</h2>
-        <p class="text-white">Enter your new password below.</p>
+        <h2 class="text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Resend Confirmation Email</h2>
+        <p class="text-white">Enter your email to resend the verification link.</p>
     </div>
 </div>
 
@@ -16,22 +16,23 @@
         <div class="col-md-6 col-lg-4">
             <div class="card shadow-sm border-0" style="border-radius: 15px;">
                 <div class="card-body">
-                    {% if validlink %}
-                        <form method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="new_password1" class="form-label">New Password</label>
-                                <input type="password" name="new_password1" id="new_password1" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="new_password2" class="form-label">Confirm New Password</label>
-                                <input type="password" name="new_password2" id="new_password2" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Set New Password</button>
-                        </form>
-                    {% else %}
-                        <p class="text-center text-danger">The password reset link is invalid or has expired. Please <a href="{% url 'password_reset' %}">request a new one</a>.</p>
+                    {% if messages %}
+                        <div class="alert alert-info">
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                            <p class="mt-2">If the email exists in our system, a verification link has been sent. Please check your inbox and spam folder.</p>
+                        </div>
                     {% endif %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Resend Confirmation Email</button>
+                        <a href="{% url 'login' %}" class="btn btn-outline-secondary w-100">Back to Login</a>
+                    </form>
                 </div>
             </div>
         </div>

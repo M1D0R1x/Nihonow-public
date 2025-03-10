@@ -7,21 +7,25 @@ import uuid
 logger = logging.getLogger(__name__)
 
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout
-from django.core.mail import send_mail
-from django.shortcuts import redirect
-from django.urls import reverse
 from django.db.models import Q  # Add this import to fix the unresolved reference
 
 from .models import UserProfile
 from .models import QuizQuestion, UserProgress
 
 from django.utils import timezone
-from django.shortcuts import render
 from .models import DailyWord
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
 
 
 def home(request):
@@ -211,34 +215,38 @@ def custom_login(request):
     return render(request, 'registration/login.html')
 
 def resend_confirmation(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         email = request.POST.get('email')
         try:
             user = User.objects.get(email=email)
-            # Check if user has a profile, create one if not
-            if not hasattr(user, 'profile'):
-                UserProfile.objects.create(user=user, email_confirmed=False, confirmation_token=None)
-            if not user.profile.email_confirmed:
-                token = str(uuid.uuid4())
-                user.profile.confirmation_token = token
-                user.profile.save()
+            if user.is_active:
+                messages.info(request, "This account is already verified.")
+            else:
+                # Generate token and UID
+                token = default_token_generator.make_token(user)
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                verification_link = request.build_absolute_uri(
+                    reverse('activate', kwargs={'uidb64': uid, 'token': token})
+                )
 
-                confirmation_url = request.build_absolute_uri(reverse('confirm_email', kwargs={'token': token}))
-                subject = 'Resend: Confirm Your Email for NihongoDekita'
-                message = f'Hi {user.username},\n\nPlease confirm your email by clicking the link below:\n{confirmation_url}\n\nThank you for joining NihongoDekita!'
+                # Send email
                 send_mail(
-                    subject,
-                    message,
-                    settings.EMAIL_HOST_USER,
-                    [email],
+                    subject="Verify Your NihongoDekita Account",
+                    message=f"Click this link to verify your account: {verification_link}",
+                    from_email="your-email@gmail.com",
+                    recipient_list=[email],
                     fail_silently=False,
                 )
-                messages.success(request, "Confirmation email resent. Please check your inbox.")
-            else:
-                messages.info(request, "Your email is already confirmed.")
+                messages.success(request, "Verification email sent successfully.")
         except User.DoesNotExist:
-            messages.error(request, "No user found with this email.")
+            messages.error(request, "No account found with this email.")
+        return render(request, 'registration/resend_confirmation.html')
+
     return render(request, 'registration/resend_confirmation.html')
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'registration/password_reset_form.html'
+    success_url = reverse_lazy('password_reset_done')
 
 def contact(request):
     submitted = False
@@ -255,7 +263,7 @@ def contact(request):
             subject = f'New Contact Form Submission from {name}'
             message_body = f'Name: {name}\nEmail: {email}\n\nMessage:\n{message}'
             from_email = settings.EMAIL_HOST_USER
-            recipient_list = ['veerababusaviti21@gmail.com']  # Your email
+            recipient_list = ['veerababusaviti2103@gmail.com']  # Your email
 
             try:
                 # Send the email

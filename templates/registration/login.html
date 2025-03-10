@@ -46,6 +46,14 @@
                     <p class="text-center">
                         <a href="{% url 'resend_confirmation' %}">Didn’t receive confirmation email?</a>
                     </p>
+                    {% if form.errors %}
+                        <div class="alert alert-danger mt-3">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                            If an account exists, please check your inbox and spam/junk folder for the email.
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
