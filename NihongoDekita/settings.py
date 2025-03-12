@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-po^n&a(ii85f@0xqb_q$*pq#3m8^qcup-pkmof7b*(9bs$%m27
 
 #
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True #
+DEBUG = False #
 
 ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', '.now.sh']
 
@@ -186,11 +186,10 @@ LOGGING = {
 JAZZMIN_SETTINGS = {
     "site_title": "Nihonow Admin",
     "site_header": "Nihonow Admin",
-    # "site_logo": "img/logo.png",  # Optional: Path to a logo (see Step 6 for static files)
     "welcome_sign": "Welcome to Nihonow Admin",
     "show_ui_builder": True,  # Enable UI customization
     "changeform_format": "horizontal_tabs",  # Better layout for forms
-    "custom_css": "css/custom.css",  # Custom styling (see Step 7)
+    "custom_css": "custom.css",  # Custom styling (see Step 7)
 }
 
 JAZZMIN_UI_TWEAKS = {
