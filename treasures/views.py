@@ -4,6 +4,7 @@ import random
 import re
 import uuid
 
+logger = logging.getLogger(__name__)
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout
@@ -26,8 +27,6 @@ from django.contrib.auth.views import PasswordResetView
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 
-
-logger = logging.getLogger(__name__)
 
 def home(request):
     # Use timezone-aware current date
