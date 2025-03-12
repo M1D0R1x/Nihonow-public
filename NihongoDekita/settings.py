@@ -133,7 +133,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "public/static"),  # Ensure this folder exists
+    os.path.join(BASE_DIR, "public/../static"),  # Ensure this folder exists
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -189,7 +189,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to Nihonow Admin",
     "show_ui_builder": True,  # Enable UI customization
     "changeform_format": "horizontal_tabs",  # Better layout for forms
-    "custom_css": "public/static/custom/custom.css",  # Custom styling (see Step 7)
+    "custom_css": "static/custom/custom.css",  # Custom styling (see Step 7)
 }
 
 JAZZMIN_UI_TWEAKS = {
