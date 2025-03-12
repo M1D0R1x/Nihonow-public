@@ -4,29 +4,30 @@ import random
 import re
 import uuid
 
-logger = logging.getLogger(__name__)
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout
-from django.db.models import Q  # Add this import to fix the unresolved reference
+from django.db.models import Q
 
 from .models import UserProfile
 from .models import QuizQuestion, UserProgress
-
-from django.utils import timezone
 from .models import DailyWord
-from django.contrib.auth.views import PasswordResetView
+
+from django.conf import settings
 from django.urls import reverse_lazy
-from django.contrib import messages
-from django.contrib.auth.models import User
-from django.core.mail import send_mail
-from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils import timezone
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 
+
+logger = logging.getLogger(__name__)
 
 def home(request):
     # Use timezone-aware current date

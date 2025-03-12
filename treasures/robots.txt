@@ -1,0 +1,12 @@
+# www.robotstxt.org/
+
+# Allow crawling of all content
+# robots.txt for NihongoDekita Django app
+User-agent: *
+Disallow: /admin/          # Block access to Django admin
+Disallow: /media/          # Block media files (e.g., user-uploaded PDFs) if sensitive
+Disallow: /private/        # Example: block any private URLs you define
+Allow: /                   # Explicitly allow all other content
+
+# Sitemap
+Sitemap: https://nihonow.vercel.app/sitemap.xml
