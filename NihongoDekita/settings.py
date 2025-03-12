@@ -189,7 +189,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to Nihonow Admin",
     "show_ui_builder": True,  # Enable UI customization
     "changeform_format": "horizontal_tabs",  # Better layout for forms
-    "custom_css": "static/custom/custom.css",  # Custom styling (see Step 7)
+    "custom_css": "custom.css",  # Custom styling (see Step 7)
 }
 
 JAZZMIN_UI_TWEAKS = {

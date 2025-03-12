@@ -1,0 +1,33 @@
+/* NihongoDekita/treasures/static/treasures/css/custom.css */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+
+body {
+    font-family: 'Noto Sans JP', sans-serif;
+}
+.navbar, .bg-primary {
+    background-color: #d32f2f !important; /* Japanese red */
+}
+.sidebar {
+    background-color: #333333 !important; /* Dark grey for better contrast */
+}
+.sidebar .nav-link {
+    color: #ffffff !important; /* White text for readability */
+}
+.sidebar .nav-link.active {
+    background-color: #d32f2f !important; /* Red background for active item */
+    color: #ffffff !important;
+}
+.sidebar .nav-link:hover {
+    background-color: #555555 !important; /* Slightly lighter grey on hover */
+    color: #ffffff !important;
+}
+.card-header {
+    background-color: #d32f2f;
+    color: white;
+}
+.brand-link {
+    color: white !important;
+    font-size: 1.5rem !important;
+    font-weight: bold;
+    text-transform: uppercase;
+}
