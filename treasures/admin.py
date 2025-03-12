@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from .models import UserProgress, QuizQuestion, DailyWord, UserProfile
+from .models import UserProgress, QuizQuestion, DailyWord, UserProfile, Vocabulary, Kanji, Tip
 
 # Inline to show UserProfile details
 class UserProfileInline(admin.StackedInline):
@@ -20,10 +20,65 @@ class CustomUserAdmin(UserAdmin):
     get_email_confirmed.short_description = 'Email Confirmed'
     get_email_confirmed.admin_order_field = 'profile__email_confirmed'
 
+# Register Vocabulary model
+@admin.register(Vocabulary)
+class VocabularyAdmin(admin.ModelAdmin):
+    list_display = ('word', 'reading', 'meaning', 'level', 'audio')
+    list_filter = ('level',)
+    search_fields = ('word', 'reading', 'meaning')
+    list_per_page = 25
+
+# Register QuizQuestion model
+@admin.register(QuizQuestion)
+class QuizQuestionAdmin(admin.ModelAdmin):
+    list_display = ('level', 'question', 'correct_answer')
+    list_filter = ('level',)
+    search_fields = ('question', 'correct_answer')
+    list_per_page = 25
+
+# Register Kanji model
+@admin.register(Kanji)
+class KanjiAdmin(admin.ModelAdmin):
+    list_display = ('character', 'level', 'on_reading', 'kun_reading', 'stroke_count')
+    list_filter = ('level',)
+    search_fields = ('character', 'on_reading', 'kun_reading', 'meaning')
+    list_per_page = 25
+
+# Register UserProgress model
+@admin.register(UserProgress)
+class UserProgressAdmin(admin.ModelAdmin):
+    list_display = ('user', 'level', 'lessons_completed', 'total_lessons', 'quiz_score', 'updated_at', 'progress_percentage')
+    list_filter = ('level', 'updated_at')
+    search_fields = ('user__username',)
+    list_per_page = 25
+
+    def progress_percentage(self, obj):
+        return (obj.lessons_completed / obj.total_lessons) * 100 if obj.total_lessons > 0 else 0
+    progress_percentage.short_description = 'Progress (%)'
+
+# Register DailyWord model
+@admin.register(DailyWord)
+class DailyWordAdmin(admin.ModelAdmin):
+    list_display = ('date', 'word', 'reading', 'english_meaning')
+    list_filter = ('date',)
+    search_fields = ('word', 'reading', 'english_meaning')
+    list_per_page = 25
+
+# Register UserProfile model
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'email_confirmed', 'confirmation_token')
+    list_filter = ('email_confirmed',)
+    search_fields = ('user__username',)
+
+# Register Tip model
+@admin.register(Tip)
+class TipAdmin(admin.ModelAdmin):
+    list_display = ('text', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('text',)
+    list_per_page = 25
+
 # Unregister the default UserAdmin and register the custom one
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(UserProgress)
-admin.site.register(QuizQuestion)
-admin.site.register(DailyWord)
-admin.site.register(UserProfile)

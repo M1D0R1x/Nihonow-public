@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-po^n&a(ii85f@0xqb_q$*pq#3m8^qcup-pkmof7b*(9bs$%m27
 
 #
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False #
+DEBUG = True #
 
 ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', '.now.sh']
 
@@ -181,4 +181,27 @@ LOGGING = {
             'propagate': True,
         },
     },
+}
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Nihongo Dekita Admin",
+    "site_header": "Nihongo Dekita",
+    # "site_logo": "img/logo.png",  # Optional: Path to a logo (see Step 6 for static files)
+    "welcome_sign": "Welcome to Nihonow Admin",
+    "show_ui_builder": True,  # Enable UI customization
+    "changeform_format": "horizontal_tabs",  # Better layout for forms
+    "custom_css": "css/custom.css",  # Custom styling (see Step 7)
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-red",  # Japanese red theme
+    "accent": "accent-red",
+    "navbar": "navbar-red navbar-dark",
+    "no_navigation_bar": False,
+    "show_sidebar_compact": False,
+    "sidebar_fixed": True,
 }
