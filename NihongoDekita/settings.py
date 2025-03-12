@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-po^n&a(ii85f@0xqb_q$*pq#3m8^qcup-pkmof7b*(9bs$%m27
 
 #
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', '.now.sh']
@@ -35,7 +35,7 @@ ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', '.now.sh']
 # Application definition
 
 INSTALLED_APPS = [
-    'whitenoise.runserver_nostatic',
+    # 'whitenoise.runserver_nostatic',
     'django.contrib.sites',
     'django.contrib.sitemaps',
     'jazzmin',
@@ -134,9 +134,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, "static"),  # Ensure this folder exists
-# ]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Ensure this folder exists
+]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
