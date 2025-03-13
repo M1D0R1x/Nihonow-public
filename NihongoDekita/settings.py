@@ -23,7 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-po^n&a(ii85f@0xqb_q$*pq#3m8^qcup-pkmof7b*(9bs$%m27'
 
-#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
@@ -55,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middleware.RobotsTagMiddleware',  # Moved here from INSTALLED_APPS
 ]
 
 ROOT_URLCONF = 'NihongoDekita.urls'
@@ -62,8 +62,7 @@ ROOT_URLCONF = 'NihongoDekita.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,7 +78,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'NihongoDekita.wsgi.application'
 
 SITE_ID = 1
-
 
 
 # Database
@@ -165,6 +163,7 @@ AUTHENTICATION_BACKENDS = [
     'treasures.auth_backend.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -204,3 +203,10 @@ JAZZMIN_UI_TWEAKS = {
     "show_sidebar_compact": False,
     "sidebar_fixed": True,
 }
+
+# Security settings to prevent noindex
+SECURE_BROWSER_XSS_FILTER = False
+SECURE_CONTENT_TYPE_NOSNIFF = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False

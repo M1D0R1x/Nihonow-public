@@ -23,5 +23,16 @@
       "src": "/(.*)",
       "dest": "NihongoDekita/wsgi.py"
     }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "index, follow"
+        }
+      ]
+    }
   ]
 }
