@@ -60,7 +60,7 @@ class DailyWord(models.Model):
     date = models.DateField(unique=True)
     reading = models.CharField(max_length=100)  # Reverted to original name
     word = models.CharField(max_length=100)     # Reverted to original name
-    english_meaning = models.CharField(max_length=200, default="No meaning available")  # Added with default
+    english_meaning = models.CharField(max_length=200)  # Added with default
 
     def __str__(self):
         return f"{self.reading} ({self.word}) - {self.english_meaning}"

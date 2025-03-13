@@ -3,6 +3,7 @@ import logging
 import random
 import re
 import uuid
+import csv
 
 logger = logging.getLogger(__name__)
 
@@ -11,9 +12,11 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from django.db.models import Q
 
 from .models import UserProfile
-from .models import QuizQuestion, UserProgress
 from .models import DailyWord
+from .forms import DailyWordUploadForm
+from .models import QuizQuestion, UserProgress
 
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.urls import reverse_lazy
 from django.urls import reverse
@@ -27,11 +30,16 @@ from django.contrib.auth.views import PasswordResetView
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 
-
+# treasures/views.py
 def home(request):
-    # Use timezone-aware current date
     today = timezone.now().date()
     daily_word = DailyWord.objects.filter(date=today).first()
+
+    # Fallback: If no word for today, get the earliest word and reuse it
+    if not daily_word:
+        daily_word = DailyWord.objects.order_by('date').first()
+        if daily_word and request.user.is_superuser:
+            messages.info(request, "No new word for today; showing an earlier one.")
 
     context = {
         'daily_word': daily_word,
@@ -314,3 +322,117 @@ def quiz(request, level):
         })
 
     return render(request, 'quiz.html', {'level': level, 'questions_with_options': questions_with_options})
+
+# treasures/views.py
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta
+import csv
+from .models import DailyWord, Kanji, QuizQuestion
+from .forms import DailyWordUploadForm  # We'll expand this
+
+# Existing code remains unchanged...
+
+@login_required
+def admin_bulk_upload(request):
+    if not request.user.is_superuser:
+        messages.error(request, "Only admins can access this page.")
+        return redirect('home')
+
+    if request.method == "POST":
+        # Handle DailyWord upload
+        if 'dailyword_csv' in request.FILES:
+            csv_file = request.FILES['dailyword_csv']
+            if not csv_file.name.endswith('.csv'):
+                messages.error(request, "Please upload a CSV file for Daily Words.")
+                return redirect('admin_bulk_upload')
+
+            decoded_file = csv_file.read().decode("utf-8").splitlines()
+            reader = csv.DictReader(decoded_file)
+            required_headers = {"word", "reading", "english_meaning"}
+            has_date = "date" in reader.fieldnames
+            if not required_headers.issubset(reader.fieldnames):
+                messages.error(request, "DailyWord CSV must have headers: word, reading, english_meaning (date optional)")
+                return redirect('admin_bulk_upload')
+
+            current_date = timezone.now().date()
+            for i, row in enumerate(reader):
+                try:
+                    date = datetime.strptime(row["date"], "%Y-%m-%d").date() if has_date else current_date + timedelta(days=i)
+                    DailyWord.objects.update_or_create(
+                        date=date,
+                        defaults={
+                            "word": row["word"],
+                            "reading": row["reading"],
+                            "english_meaning": row["english_meaning"],
+                        }
+                    )
+                except Exception as e:
+                    messages.error(request, f"DailyWord row {i+1}: {str(e)}")
+            messages.success(request, "Daily Words uploaded successfully!")
+
+        # Handle Kanji upload
+        elif 'kanji_csv' in request.FILES:
+            csv_file = request.FILES['kanji_csv']
+            if not csv_file.name.endswith('.csv'):
+                messages.error(request, "Please upload a CSV file for Kanji.")
+                return redirect('admin_bulk_upload')
+
+            decoded_file = csv_file.read().decode("utf-8").splitlines()
+            reader = csv.DictReader(decoded_file)
+            required_headers = {"character", "level", "on_reading", "kun_reading", "meaning", "stroke_count"}
+            if not required_headers.issubset(reader.fieldnames):
+                messages.error(request, "Kanji CSV must have headers: character, level, on_reading, kun_reading, meaning, stroke_count")
+                return redirect('admin_bulk_upload')
+
+            for i, row in enumerate(reader):
+                try:
+                    Kanji.objects.update_or_create(
+                        character=row["character"],
+                        level=row["level"],
+                        defaults={
+                            "on_reading": row["on_reading"],
+                            "kun_reading": row["kun_reading"],
+                            "meaning": row["meaning"],
+                            "stroke_count": int(row["stroke_count"]),
+                        }
+                    )
+                except Exception as e:
+                    messages.error(request, f"Kanji row {i+1}: {str(e)}")
+            messages.success(request, "Kanji uploaded successfully!")
+
+        # Handle QuizQuestion upload
+        elif 'quiz_csv' in request.FILES:
+            csv_file = request.FILES['quiz_csv']
+            if not csv_file.name.endswith('.csv'):
+                messages.error(request, "Please upload a CSV file for Quiz Questions.")
+                return redirect('admin_bulk_upload')
+
+            decoded_file = csv_file.read().decode("utf-8").splitlines()
+            reader = csv.DictReader(decoded_file)
+            required_headers = {"level", "question", "wrong_answer1", "wrong_answer2", "wrong_answer3", "correct_answer"}
+            if not required_headers.issubset(reader.fieldnames):
+                messages.error(request, "Quiz CSV must have headers: level, question, wrong_answer1, wrong_answer2, wrong_answer3, correct_answer")
+                return redirect('admin_bulk_upload')
+
+            for i, row in enumerate(reader):
+                try:
+                    QuizQuestion.objects.update_or_create(
+                        level=row["level"],
+                        question=row["question"],
+                        defaults={
+                            "wrong_answer1": row["wrong_answer1"],
+                            "wrong_answer2": row["wrong_answer2"],
+                            "wrong_answer3": row["wrong_answer3"],
+                            "correct_answer": row["correct_answer"],
+                        }
+                    )
+                except Exception as e:
+                    messages.error(request, f"Quiz row {i+1}: {str(e)}")
+            messages.success(request, "Quiz Questions uploaded successfully!")
+
+        return redirect('admin_bulk_upload')
+
+    return render(request, 'admin_bulk_upload.html')

@@ -13,9 +13,9 @@ def get_greeting(username):
     current_time = now().astimezone(tz)
     current_hour = current_time.hour
 
-    if current_hour < 12:
+    if 6 < current_hour < 12:
         return f"Ohayo Gozaimasu {username}!"
-    elif current_hour < 18:
+    elif 12 < current_hour < 18:
         return f"Konnichiwa {username}!"
     else:
         return f"Konbanwa {username}!"

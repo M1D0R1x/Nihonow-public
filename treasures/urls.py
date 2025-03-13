@@ -38,5 +38,6 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
     path('resend-confirmation/', views.resend_confirmation, name='resend_confirmation'),
-    # path('activate/<uidb64>/<token>/', views.activate, name='activate'),
+    # path("upload-daily-words/", views.upload_daily_words, name="upload_daily_words"),
+path('admin-bulk-upload/', views.admin_bulk_upload, name='admin_bulk_upload'),
 ]

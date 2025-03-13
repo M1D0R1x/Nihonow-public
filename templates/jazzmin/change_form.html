@@ -1,0 +1,9 @@
+{% extends "jazzmin/change_form.html" %}
+{% block submit_buttons_bottom %}
+<div class="submit-row">
+    {% if show_upload_button %}
+        <a href="{% url 'dailyword/upload_csv' %}" class="btn btn-info" style="margin-right: 10px;">Upload CSV</a>
+    {% endif %}
+    {{ block.super }}
+</div>
+{% endblock %}

@@ -66,5 +66,18 @@
             </div>
         </div>
     </div>
+
+    <!-- Admin Bulk Upload Button -->
+    {% if user.is_authenticated and user.is_superuser %}
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8">
+                <a href="{% url 'admin_bulk_upload' %}" class="d-block text-decoration-none">
+                    <div class="card shadow-sm border-0" style="background: linear-gradient(135deg, #babf33, #a9d16a); border-radius: 15px; min-height: 100px; display: flex; align-items: center; justify-content: center;">
+                        <h5 style="color: #88f305;">Admin Bulk Upload Dashboard</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

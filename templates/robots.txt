@@ -1,4 +1,13 @@
-User-agent: *
-Disallow: /admin/  # Optional: block admin pages if you have them
-Allow: /
+User-agent: Googlebot
+Disallow:
+User-agent: googlebot-image
+Disallow:
+User-agent: googlebot-mobile
+Disallow:
+User-agent: MSNBot
+Disallow:
+User-agent: Slurp
+Disallow:
+User-agent: Teoma
+Disallow:
 Sitemap: https://nihonow.vercel.app/sitemap.xml

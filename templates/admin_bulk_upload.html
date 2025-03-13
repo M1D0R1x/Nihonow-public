@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+  <!-- Header -->
+  <div class="container-fluid py-5 text-center" style="background: linear-gradient(135deg, #26c6da, #4dd0e1); min-height: 150px; color: #fff;">
+    <div class="container">
+      <h1 class="text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Admin Bulk Upload Dashboard</h1>
+      <p class="text-white">Welcome, {{ user.username }}! Use the forms below to bulk upload data via CSV files.</p>
+    </div>
+  </div>
+
+  <!-- Upload Sections -->
+  <div class="container mt-5">
+    <!-- DailyWord Upload -->
+    <div class="card shadow-sm border-0 mb-4" style="background: linear-gradient(135deg, #ff6f61, #ffd700); border-radius: 15px;">
+      <div class="card-body">
+        <h2 style="color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Upload Daily Words</h2>
+        <p style="color: #fff;">CSV headers: <code>word, reading, english_meaning</code> (optional: <code>date</code> in YYYY-MM-DD)</p>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="file" name="dailyword_csv" accept=".csv" required class="form-control mb-2">
+          <button type="submit" class="btn btn-light">Upload Daily Words</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Kanji Upload -->
+    <div class="card shadow-sm border-0 mb-4" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4); border-radius: 15px;">
+      <div class="card-body">
+        <h2 style="color: #d32f2f;">Upload Kanji</h2>
+        <p style="color: #d32f2f;">CSV headers: <code>character, level, on_reading, kun_reading, meaning, stroke_count</code></p>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="file" name="kanji_csv" accept=".csv" required class="form-control mb-2">
+          <button type="submit" class="btn btn-light">Upload Kanji</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- QuizQuestion Upload -->
+    <div class="card shadow-sm border-0 mb-4" style="background: linear-gradient(135deg, #d4fc79, #96e6a1); border-radius: 15px;">
+      <div class="card-body">
+        <h2 style="color: #388e3c;">Upload Quiz Questions</h2>
+        <p style="color: #388e3c;">CSV headers: <code>level, question, wrong_answer1, wrong_answer2, wrong_answer3, correct_answer</code></p>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="file" name="quiz_csv" accept=".csv" required class="form-control mb-2">
+          <button type="submit" class="btn btn-light">Upload Quiz Questions</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+      <div class="alert alert-info mt-4">
+        <ul class="messages mb-0">
+          {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
