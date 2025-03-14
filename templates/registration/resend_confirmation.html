@@ -17,18 +17,17 @@
             <div class="card shadow-sm border-0" style="border-radius: 15px;">
                 <div class="card-body">
                     {% if messages %}
-                        <div class="alert alert-info">
+                        <div class="alert alert-{{ messages.0.tags }}">
                             {% for message in messages %}
                                 {{ message }}
                             {% endfor %}
-                            <p class="mt-2">If the email exists in our system, a verification link has been sent. Please check your inbox and spam folder.</p>
                         </div>
                     {% endif %}
                     <form method="post">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" required>
+                            <input type="email" name="email" id="email" class="form-control" required value="{{ request.POST.email|default_if_none:'' }}">
                         </div>
                         <button type="submit" class="btn btn-primary w-100 mb-3">Resend Confirmation Email</button>
                         <a href="{% url 'login' %}" class="btn btn-outline-secondary w-100">Back to Login</a>

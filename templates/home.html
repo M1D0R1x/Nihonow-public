@@ -7,8 +7,10 @@
 {% block content %}
 <!-- Greeting Section -->
 {% if user.is_authenticated %}
-    <div class="container mt-3 text-center">
-        <h4 class="text-muted">{% get_greeting user.username %}</h4>
+    <div class="greeting-container">
+        <div class="container mt-3 text-center">
+            <h4 class="greeting-text">{% get_greeting user.username %}</h4>
+        </div>
     </div>
 {% endif %}
 

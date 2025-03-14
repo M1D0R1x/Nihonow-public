@@ -2,35 +2,28 @@
 import logging
 import random
 import re
-import uuid
-import csv
+
+from NihongoDekita import settings
 
 logger = logging.getLogger(__name__)
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.db.models import Q
-
-from .models import UserProfile
-from .models import DailyWord
-from .forms import DailyWordUploadForm
-from .models import QuizQuestion, UserProgress
-
-from datetime import datetime, timedelta
-from django.conf import settings
-from django.urls import reverse_lazy
-from django.urls import reverse
-from django.utils import timezone
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.core.mail import send_mail
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.urls import reverse_lazy, reverse
+from django.utils import timezone
+from datetime import timedelta, datetime
+import csv
+from .models import UserProfile, UserProgress, DailyWord, Kanji, QuizQuestion
 
-# treasures/views.py
 def home(request):
     today = timezone.now().date()
     daily_word = DailyWord.objects.filter(date=today).first()
@@ -109,7 +102,7 @@ def resources(request):
     return render(request, 'resources.html')
 
 def logout_view(request):
-    logout(request)
+    auth_logout(request)
     return redirect('home')  # Redirect to home page after logout
 
 @login_required
@@ -164,7 +157,7 @@ def register(request):
         user.save()
 
         # Create a user profile with a confirmation token
-        token = str(uuid.uuid4())
+        token = default_token_generator.make_token(user)  # Use Django's token generator
         UserProfile.objects.create(user=user, confirmation_token=token)
 
         # Send confirmation email
@@ -179,8 +172,12 @@ def register(request):
             fail_silently=False,
         )
 
+        # Log out the user to ensure they are not automatically logged in
+        auth_logout(request)
+        # Set the success message
         messages.success(request, "Registration successful! Please check your email to confirm your account.")
-        return redirect('login')
+        # Redirect to the login page
+        return redirect('login')  # Use namespaced URL to avoid conflicts
 
     return render(request, 'registration/register.html')
 
@@ -194,10 +191,16 @@ def confirm_email(request, token):
         else:
             profile.email_confirmed = True
             profile.confirmation_token = None  # Clear the token
-            profile.save()
             profile.user.is_active = True
             profile.user.save()
+            profile.save()
             messages.success(request, "Email confirmed! You can now log in.")
+            # Updated message with a clickable link
+            message = (
+                'Email confirmed! You will be redirected to the login page in 3 seconds. '
+                'If not redirected, <a href="' + reverse('login') + '" class="text-primary">click here to go to the login page</a>.'
+            )
+            return render(request, 'registration/confirm_email.html', {'message': message})
     except UserProfile.DoesNotExist:
         logger.error(f"Invalid confirmation token: {token}")
         messages.error(request, "Invalid confirmation link.")
@@ -222,39 +225,65 @@ def custom_login(request):
                 messages.error(request, "Invalid email/username or password.")
     return render(request, 'registration/login.html')
 
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.urls import reverse
+from django.utils import timezone
+from django.contrib.auth.models import User
+from .models import UserProfile
+
 def resend_confirmation(request):
     if request.method == "POST":
         email = request.POST.get('email')
         try:
             user = User.objects.get(email=email)
+            profile = user.profile
             if user.is_active:
                 messages.info(request, "This account is already verified.")
             else:
-                # Generate token and UID
-                token = default_token_generator.make_token(user)
-                uid = urlsafe_base64_encode(force_bytes(user.pk))
-                verification_link = request.build_absolute_uri(
-                    reverse('activate', kwargs={'uidb64': uid, 'token': token})
-                )
+                # Check if a confirmation email was sent recently (within 5 minutes)
+                if hasattr(profile, 'last_confirmation_sent') and (timezone.now() - profile.last_confirmation_sent).total_seconds() < 300:  # 300 seconds = 5 minutes
+                    messages.warning(request, "A verification email was sent recently. Please wait 5 minutes before requesting another.")
+                else:
+                    # Generate a new token and update the profile
+                    token = default_token_generator.make_token(user)
+                    profile.confirmation_token = token
+                    profile.last_confirmation_sent = timezone.now()  # Track the last sent time
+                    profile.save()
 
-                # Send email
-                send_mail(
-                    subject="Verify Your NihongoDekita Account",
-                    message=f"Click this link to verify your account: {verification_link}",
-                    from_email="your-email@gmail.com",
-                    recipient_list=[email],
-                    fail_silently=False,
-                )
-                messages.success(request, "Verification email sent successfully.")
+                    # Send confirmation email
+                    confirmation_url = request.build_absolute_uri(reverse('confirm_email', kwargs={'token': token}))
+                    subject = 'Resend Verify Your NihongoDekita Account'
+                    message = f'Hi {user.username},\n\nPlease confirm your email by clicking the link below:\n{confirmation_url}\n\nThank you for using NihongoDekita!'
+                    send_mail(
+                        subject,
+                        message,
+                        settings.EMAIL_HOST_USER,
+                        [email],
+                        fail_silently=False,
+                    )
+                    messages.success(request, "A verification link has been sent. Please check your inbox and spam folder. If not received in 5 minutes, resend again.")
         except User.DoesNotExist:
-            messages.error(request, "No account found with this email.")
+            messages.error(request, "User does not exist in our system.")
+        except UserProfile.DoesNotExist:
+            messages.error(request, "User profile not found. Please contact support.")
         return render(request, 'registration/resend_confirmation.html')
 
     return render(request, 'registration/resend_confirmation.html')
 
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'registration/password_reset_form.html'
+    email_template_name = 'registration/password_reset_email.html'
     success_url = reverse_lazy('password_reset_done')
+
+    def form_valid(self, form):
+        email = form.cleaned_data['email']
+        if not User.objects.filter(email=email).exists():
+            messages.error(self.request, "This email is not registered with us.")
+            return self.render_to_response(self.get_context_data(form=form))
+        return super().form_valid(form)
 
 def contact(request):
     submitted = False
@@ -322,18 +351,6 @@ def quiz(request, level):
         })
 
     return render(request, 'quiz.html', {'level': level, 'questions_with_options': questions_with_options})
-
-# treasures/views.py
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.utils import timezone
-from datetime import timedelta
-import csv
-from .models import DailyWord, Kanji, QuizQuestion
-from .forms import DailyWordUploadForm  # We'll expand this
-
-# Existing code remains unchanged...
 
 @login_required
 def admin_bulk_upload(request):

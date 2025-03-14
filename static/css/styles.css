@@ -44,7 +44,35 @@ body {
     padding: 20px;
     border-radius: 5px;
 }
+
 .register-container {
     min-height: 100vh;
     padding-bottom: 100px;
+}
+
+/* Greeting Container */
+.greeting-container {
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4); /* Soft gradient background */
+    padding: 20px 0; /* Add some vertical padding */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin: 20px 0; /* Space above and below */
+}
+
+/* Greeting Text */
+.greeting-text {
+    font-size: 2rem; /* Larger font size */
+    font-weight: 700; /* Bold text */
+    background: linear-gradient(90deg, #ff6f61, #ffd700); /* Gradient text effect */
+    -webkit-background-clip: text; /* Apply gradient to text */
+    -webkit-text-fill-color: transparent; /* Make text fill with gradient */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    animation: fadeIn 1.5s ease-in-out; /* Fade-in animation */
+    margin: 0; /* Remove default margins */
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(15px); } /* Start slightly below and invisible */
+    100% { opacity: 1; transform: translateY(0); } /* End at normal position and fully visible */
 }

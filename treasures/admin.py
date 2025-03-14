@@ -2,13 +2,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from django import forms
-from django.urls import path
-from django.shortcuts import render, redirect
-from django.contrib import messages
-import csv
-from datetime import datetime
-from .models import UserProgress, QuizQuestion, DailyWord, UserProfile, Vocabulary, Kanji, Tip
+
+from .models import UserProgress, QuizQuestion, DailyWord, UserProfile, Kanji
 
 
 # Inline to show UserProfile details
@@ -29,15 +24,6 @@ class CustomUserAdmin(UserAdmin):
 
     get_email_confirmed.short_description = 'Email Confirmed'
     get_email_confirmed.admin_order_field = 'profile__email_confirmed'
-
-
-# Register Vocabulary model
-@admin.register(Vocabulary)
-class VocabularyAdmin(admin.ModelAdmin):
-    list_display = ('word', 'reading', 'meaning', 'level', 'audio')
-    list_filter = ('level',)
-    search_fields = ('word', 'reading', 'meaning')
-    list_per_page = 25
 
 
 # Register QuizQuestion model
@@ -98,15 +84,6 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'email_confirmed', 'confirmation_token')
     list_filter = ('email_confirmed',)
     search_fields = ('user__username',)
-
-
-# Register Tip model
-@admin.register(Tip)
-class TipAdmin(admin.ModelAdmin):
-    list_display = ('text', 'created_at')
-    list_filter = ('created_at',)
-    search_fields = ('text',)
-    list_per_page = 25
 
 
 # Unregister the default UserAdmin and register the custom one
