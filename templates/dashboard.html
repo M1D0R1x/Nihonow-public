@@ -2,13 +2,15 @@
 {% load static %}
 {% load custom_tags %}
 
-{% block title %}Dashboard - NihongoDekita{% endblock %}
+{% block title %}Dashboard - Nihonow{% endblock %}
 
 {% block content %}
 <!-- Greeting Section -->
 {% if user.is_authenticated %}
-    <div class="container mt-3 text-center">
-        <h4 class="text-muted">{% get_greeting user.username %}</h4>
+    <div class="greeting-container">
+        <div class="container mt-3 text-center">
+            <h4 class="greeting-text" style="color: #d4a017;">{% get_greeting user.username %}</h4>
+        </div>
     </div>
 {% endif %}
 

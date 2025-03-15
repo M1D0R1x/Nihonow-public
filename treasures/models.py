@@ -59,6 +59,15 @@ class Kanji(models.Model):
     def __str__(self):
         return f"{self.character} ({self.level})"
 
+class DailyKanji(models.Model):
+    date = models.DateField(unique=True)
+    kanji = models.ForeignKey(Kanji, on_delete=models.CASCADE, related_name='daily_kanji')
+    example_sentence = models.CharField(max_length=200, blank=True)
+    example_translation = models.CharField(max_length=200, blank=True)
+
+    def __str__(self):
+        return f"Kanji of the Day for {self.date}: {self.kanji.character}"
+
 class QuizQuestion(models.Model):
     level = models.CharField(max_length=2, choices=[('N5', 'N5'), ('N4', 'N4'), ('N3', 'N3'), ('N2', 'N2'), ('N1', 'N1')])
     question = models.CharField(max_length=255)

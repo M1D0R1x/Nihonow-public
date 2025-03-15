@@ -1,4 +1,5 @@
 # treasures/views.py
+import csv
 import logging
 import random
 import re
@@ -8,21 +9,20 @@ from NihongoDekita import settings
 logger = logging.getLogger(__name__)
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.db.models import Q
 from django.contrib.auth.views import PasswordResetView
-from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
+from django.urls import reverse_lazy
+from datetime import timedelta, datetime
+from .models import UserProgress, DailyWord, Kanji, QuizQuestion, DailyKanji
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.utils import timezone
-from datetime import timedelta, datetime
-import csv
-from .models import UserProfile, UserProgress, DailyWord, Kanji, QuizQuestion
+from django.contrib.auth.models import User
+from .models import UserProfile
 
 def home(request):
     today = timezone.now().date()
@@ -33,9 +33,18 @@ def home(request):
         daily_word = DailyWord.objects.order_by('date').first()
         if daily_word and request.user.is_superuser:
             messages.info(request, "No new word for today; showing an earlier one.")
+    #
+    # # Debug: Minimal DailyKanji fetching
+    # daily_kanji = None
+    # try:
+    #     daily_kanji = DailyKanji.objects.filter(date=today).first()
+    #     print(f"DailyKanji fetched: {daily_kanji}")  # Debug print
+    # except Exception as e:
+    #     print(f"Error fetching DailyKanji: {e}")  # Capture any exception
 
     context = {
         'daily_word': daily_word,
+        # 'daily_kanji': daily_kanji,
     }
     return render(request, 'home.html', context)
 
@@ -224,15 +233,6 @@ def custom_login(request):
             except User.DoesNotExist:
                 messages.error(request, "Invalid email/username or password.")
     return render(request, 'registration/login.html')
-
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from django.core.mail import send_mail
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.urls import reverse
-from django.utils import timezone
-from django.contrib.auth.models import User
-from .models import UserProfile
 
 def resend_confirmation(request):
     if request.method == "POST":

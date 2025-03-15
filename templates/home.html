@@ -2,32 +2,43 @@
 {% load static %}
 {% load custom_tags %}
 
-{% block title %}NihongoDekita{% endblock %}
+{% block title %}Nihonow{% endblock %}
 
 {% block content %}
 <!-- Greeting Section -->
 {% if user.is_authenticated %}
     <div class="greeting-container">
         <div class="container mt-3 text-center">
-            <h4 class="greeting-text">{% get_greeting user.username %}</h4>
+            <h4 class="greeting-text" style="color: #d4a017;">{% get_greeting user.username %}</h4>
         </div>
     </div>
 {% endif %}
 
 <!-- Hero Section -->
-<div class="container-fluid py-5 text-center" style="background: linear-gradient(135deg, #ff6f61, #ffd700); min-height: 400px; color: #fff;">
+<div class="container-fluid py-5 text-center hero-section" style="background: linear-gradient(135deg, #ff6f61, #ffd700); min-height: 300px; color: #fff; border-radius: 15px">
     <div class="container">
-        <h1 class="display-3" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">NihongoDekita</h1>
-        <p class="lead">Learn Japanese the Fun Way!</p>
-        <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg mt-3">Get Started</a>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-12 text-center">
+                <h1 class="display-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3); font-size: 3.5rem;">Nihonow</h1>
+            </div>
+        </div>
+        <p class="lead mt-3">
+            {% if user.is_authenticated %}
+                Continue your {{ user_current_level }} journey!
+            {% else %}
+                Learn Japanese the Fun Way!
+            {% endif %}
+        </p>
+        <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg mt-3" style="transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';" >Get Started</a>
     </div>
 </div>
 
-<!-- Word of the Day -->
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm border-0" style="background-color: #2c3e50; color: #fff; border-radius: 15px;">
+<!-- Word of the Day and Kanji of the Day Side by Side -->
+<div class="container mt-5 word-kanji-section">
+    <div class="row">
+        <!-- Word of the Day -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100" style="background-color: #2c3e50; color: #fff; border-radius: 15px;">
                 <div class="card-body text-center">
                     <h3>Word of the Day</h3>
                     {% if daily_word %}
@@ -35,6 +46,24 @@
                         <p>{{ daily_word.english_meaning }}</p>
                     {% else %}
                         <p>No word available for today.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Kanji of the Day -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100" style="background-color: #f7f1e3; color: #333; border-radius: 15px;">
+                <div class="card-body text-center">
+                    <h3>Kanji of the Day</h3>
+                    {% if daily_kanji %}
+                        <h4>{{ daily_kanji.character }}</h4>
+                        <p><strong>Readings:</strong> {{ daily_kanji.onyomi }} (on'yomi), {{ daily_kanji.kunyomi }} (kun'yomi)</p>
+                        <p><strong>Meaning:</strong> {{ daily_kanji.meaning }}</p>
+                        <p><strong>Example:</strong> {{ daily_kanji.example_sentence }} ({{ daily_kanji.example_translation }})</p>
+                        <a href="{% url 'kanji_detail' daily_kanji.id %}" class="btn btn-outline-dark">Learn More</a>
+                    {% else %}
+                        <p>No Kanji available for today.</p>
                     {% endif %}
                 </div>
             </div>
