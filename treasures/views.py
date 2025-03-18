@@ -40,13 +40,9 @@ def home(request):
 def profile(request):
     if not request.user.is_authenticated:
         return redirect('login')
-    email_confirmed = getattr(request.user.profile, 'email_confirmed', False) if hasattr(request.user, 'profile') else False
     context = {
         'user': request.user,
-        'email_confirmed': email_confirmed,
     }
-    if not email_confirmed:
-        messages.warning(request, "Please verify your email to access all features. Check your inbox or <a href='{% url 'resend_confirmation' %}'>resend confirmation</a>.")
     return render(request, 'profile.html', context)
 
 def numbers(request):
