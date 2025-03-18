@@ -56,15 +56,7 @@
             <div class="card shadow-sm border-0 h-100" style="background-color: #f7f1e3; color: #333; border-radius: 15px;">
                 <div class="card-body text-center">
                     <h3>Kanji of the Day</h3>
-                    {% if daily_kanji %}
-                        <h4>{{ daily_kanji.character }}</h4>
-                        <p><strong>Readings:</strong> {{ daily_kanji.onyomi }} (on'yomi), {{ daily_kanji.kunyomi }} (kun'yomi)</p>
-                        <p><strong>Meaning:</strong> {{ daily_kanji.meaning }}</p>
-                        <p><strong>Example:</strong> {{ daily_kanji.example_sentence }} ({{ daily_kanji.example_translation }})</p>
-                        <a href="{% url 'kanji_detail' daily_kanji.id %}" class="btn btn-outline-dark">Learn More</a>
-                    {% else %}
-                        <p>No Kanji available for today.</p>
-                    {% endif %}
+                    <p>No Kanji available for today.</p>
                 </div>
             </div>
         </div>
@@ -103,9 +95,6 @@
                     <a href="{% url 'quiz' 'N4' %}" class="btn btn-outline-dark mb-2">
                         <i class="fas fa-question-circle me-2"></i> Take Quiz
                     </a>
-                    <a href="{% url 'n4_kanji' %}" class="btn btn-info">
-                        <i class="fas fa-eye me-2"></i> View Kanji
-                    </a>
                 </div>
             </div>
         </div>
@@ -119,9 +108,6 @@
                     </a>
                     <a href="{% url 'quiz' 'N3' %}" class="btn btn-outline-dark mb-2">
                         <i class="fas fa-question-circle me-2"></i> Take Quiz
-                    </a>
-                    <a href="{% url 'n3_kanji' %}" class="btn btn-info">
-                        <i class="fas fa-eye me-2"></i> View Kanji
                     </a>
                 </div>
             </div>
@@ -137,9 +123,6 @@
                     <a href="{% url 'quiz' 'N2' %}" class="btn btn-outline-dark mb-2">
                         <i class="fas fa-question-circle me-2"></i> Take Quiz
                     </a>
-                    <a href="{% url 'n2_kanji' %}" class="btn btn-info">
-                        <i class="fas fa-eye me-2"></i> View Kanji
-                    </a>
                 </div>
             </div>
         </div>
@@ -153,9 +136,6 @@
                     </a>
                     <a href="{% url 'quiz' 'N1' %}" class="btn btn-outline-dark mb-2">
                         <i class="fas fa-question-circle me-2"></i> Take Quiz
-                    </a>
-                    <a href="{% url 'n1_kanji' %}" class="btn btn-info">
-                        <i class="fas fa-eye me-2"></i> View Kanji
                     </a>
                 </div>
             </div>

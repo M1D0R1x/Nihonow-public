@@ -17,7 +17,7 @@ from datetime import timedelta, datetime
 from .models import UserProgress, DailyWord, Kanji, QuizQuestion, DailyKanji
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.core.mail import send_mail
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
@@ -31,20 +31,9 @@ def home(request):
     # Fallback: If no word for today, get the earliest word and reuse it
     if not daily_word:
         daily_word = DailyWord.objects.order_by('date').first()
-        if daily_word and request.user.is_superuser:
-            messages.info(request, "No new word for today; showing an earlier one.")
-    #
-    # # Debug: Minimal DailyKanji fetching
-    # daily_kanji = None
-    # try:
-    #     daily_kanji = DailyKanji.objects.filter(date=today).first()
-    #     print(f"DailyKanji fetched: {daily_kanji}")  # Debug print
-    # except Exception as e:
-    #     print(f"Error fetching DailyKanji: {e}")  # Capture any exception
 
     context = {
         'daily_word': daily_word,
-        # 'daily_kanji': daily_kanji,
     }
     return render(request, 'home.html', context)
 
@@ -71,10 +60,13 @@ def katakana(request):
 
 def n5(request):
     return render(request, 'level_detail.html', {'level': 'N5'})
+
 def n5_quiz(request):
     return render(request, 'quiz.html', {'level': 'N5'})
+
 def n5_kanji(request):
-    return render(request, 'kanji_list.html', {'level': 'N5'})
+    return render(request, 'kanji/n5_kanji.html')
+
 
 def n4(request):
     return render(request, 'level_detail.html', {'level': 'N4'})
