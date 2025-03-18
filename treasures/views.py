@@ -4,7 +4,7 @@ import logging
 import random
 import re
 
-from NihongoDekita import settings
+from Nihonow import settings
 
 logger = logging.getLogger(__name__)
 
@@ -159,8 +159,8 @@ def register(request):
 
         # Send confirmation email
         confirmation_url = request.build_absolute_uri(reverse('confirm_email', kwargs={'token': token}))
-        subject = 'Confirm Your Email for NihongoDekita'
-        message = f'Hi {username},\n\nPlease confirm your email by clicking the link below:\n{confirmation_url}\n\nThank you for joining NihongoDekita!'
+        subject = 'Confirm Your Email for Nihonow'
+        message = f'Hi {username},\n\nPlease confirm your email by clicking the link below:\n{confirmation_url}\n\nThank you for joining Nihonow!'
         send_mail(
             subject,
             message,
@@ -243,8 +243,8 @@ def resend_confirmation(request):
 
                     # Send confirmation email
                     confirmation_url = request.build_absolute_uri(reverse('confirm_email', kwargs={'token': token}))
-                    subject = 'Resend Verify Your NihongoDekita Account'
-                    message = f'Hi {user.username},\n\nPlease confirm your email by clicking the link below:\n{confirmation_url}\n\nThank you for using NihongoDekita!'
+                    subject = 'Resend Verify Your Nihonow Account'
+                    message = f'Hi {user.username},\n\nPlease confirm your email by clicking the link below:\n{confirmation_url}\n\nThank you for using Nihonow!'
                     send_mail(
                         subject,
                         message,
