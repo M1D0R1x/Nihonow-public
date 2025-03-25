@@ -1,112 +1,185 @@
 {% extends 'base.html' %}
-
-{% block title %}N5 Kanji{% endblock %}
-
+{% block title %}N5 Kanji - Nihonow{% endblock %}
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-4">N5 Kanji List</h1>
+<div class="container my-5">
+    <h1 class="text-center mb-4" style="color: #333;">JLPT N5 Kanji</h1>
+    <!-- Bootstrap Tabs -->
+    <ul class="nav nav-tabs mb-4" id="kanjiTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="numbers-tab" data-bs-toggle="tab" data-bs-target="#numbers" type="button" role="tab" aria-controls="numbers" aria-selected="true">Numbers</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="environment-tab" data-bs-toggle="tab" data-bs-target="#environment" type="button" role="tab" aria-controls="environment" aria-selected="false">Environment</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="people-tab" data-bs-toggle="tab" data-bs-target="#people" type="button" role="tab" aria-controls="people" aria-selected="false">People & Body</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="directions-tab" data-bs-toggle="tab" data-bs-target="#directions" type="button" role="tab" aria-controls="directions" aria-selected="false">Directions</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="verbs-tab" data-bs-toggle="tab" data-bs-target="#verbs" type="button" role="tab" aria-controls="verbs" aria-selected="false">Verbs</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="adjectives-tab" data-bs-toggle="tab" data-bs-target="#adjectives" type="button" role="tab" aria-controls="adjectives" aria-selected="false">Adjectives</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="misc-tab" data-bs-toggle="tab" data-bs-target="#misc" type="button" role="tab" aria-controls="misc" aria-selected="false">Miscellaneous</button>
+        </li>
+    </ul>
 
-    <!-- Single Kanji List -->
-    <div class="row">
-        <!-- Numbers -->
-        <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="card-title">一</h3>
-                    <p><strong>Readings:</strong> イチ (on'yomi), ひと- (kun'yomi)</p>
-                    <p><strong>Meaning:</strong> one</p>
-                    <p><strong>Stroke Count:</strong> 1</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="card-title">二</h3>
-                    <p><strong>Readings:</strong> ニ (on'yomi), ふた- (kun'yomi)</p>
-                    <p><strong>Meaning:</strong> two</p>
-                    <p><strong>Stroke Count:</strong> 2</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="card-title">三</h3>
-                    <p><strong>Readings:</strong> サン (on'yomi), み- (kun'yomi)</p>
-                    <p><strong>Meaning:</strong> three</p>
-                    <p><strong>Stroke Count:</strong> 3</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="card-title">四</h3>
-                    <p><strong>Readings:</strong> シ (on'yomi), よん- (kun'yomi)</p>
-                    <p><strong>Meaning:</strong> four</p>
-                    <p><strong>Stroke Count:</strong> 5</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="card-title">五</h3>
-                    <p><strong>Readings:</strong> ゴ (on'yomi), いつ- (kun'yomi)</p>
-                    <p><strong>Meaning:</strong> five</p>
-                    <p><strong>Stroke Count:</strong> 4</p>
-                </div>
-            </div>
-        </div>
+    <!-- Download Button -->
+    <div class="text-center mb-4">
+        <a href="https://fczdt0xol8zxbzng.public.blob.vercel-storage.com/N5_Kanji_Chart-SOOBpLLaBB9PX77G8AwudEn7TmHFyF.pdf?download=1"
+           class="btn btn-lg"
+           style="background-color: #ff4500; border-color: #ff4500; padding: 10px 20px; font-size: 18px; font-weight: bold; text-decoration: none; border-radius: 5px; color: #ffffff;"
+           onmouseover="this.style.backgroundColor='#e03e00'; this.style.borderColor='#e03e00';"
+           onmouseout="this.style.backgroundColor='#ff4500'; this.style.borderColor='#ff4500';"
+           download>
+            Download N5 Kanji Chart
+        </a>
+    </div>
 
-        <!-- Nature -->
-        <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="card-title">山</h3>
-                    <p><strong>Readings:</strong> サン (on'yomi), やま (kun'yomi)</p>
-                    <p><strong>Meaning:</strong> mountain</p>
-                    <p><strong>Stroke Count:</strong> 3</p>
+    <!-- Tab Content -->
+    <div class="tab-content" id="kanjiTabContent">
+        <!-- Numbers Tab -->
+        <div class="tab-pane fade show active" id="numbers" role="tabpanel" aria-labelledby="numbers-tab">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for kanji in numbers %}
+                <div class="col">
+                    <div class="card h-100 text-center" style="border: 1px solid #e0e0e0;">
+                        <div class="card-body">
+                            <h2 class="card-title" style="color: #ff4500; font-size: 2rem;">{{ kanji.character }}</h2>
+                            <p class="card-text"><strong>On’yomi:</strong> {{ kanji.onyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Kun’yomi:</strong> {{ kanji.kunyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Meaning:</strong> {{ kanji.meaning }}</p>
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
 
-        <!-- People -->
-        <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="card-title">人</h3>
-                    <p><strong>Readings:</strong> ジン (on'yomi), ひと (kun'yomi)</p>
-                    <p><strong>Meaning:</strong> person</p>
-                    <p><strong>Stroke Count:</strong> 2</p>
+        <!-- Environment Tab -->
+        <div class="tab-pane fade" id="environment" role="tabpanel" aria-labelledby="environment-tab">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for kanji in environment %}
+                <div class="col">
+                    <div class="card h-100 text-center" style="border: 1px solid #e0e0e0;">
+                        <div class="card-body">
+                            <h2 class="card-title" style="color: #ff4500; font-size: 2rem;">{{ kanji.character }}</h2>
+                            <p class="card-text"><strong>On’yomi:</strong> {{ kanji.onyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Kun’yomi:</strong> {{ kanji.kunyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Meaning:</strong> {{ kanji.meaning }}</p>
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
 
-        <!-- Time -->
-        <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="card-title">日</h3>
-                    <p><strong>Readings:</strong> ニチ (on'yomi), ひ (kun'yomi)</p>
-                    <p><strong>Meaning:</strong> day</p>
-                    <p><strong>Stroke Count:</strong> 4</p>
+        <!-- People & Body Tab -->
+        <div class="tab-pane fade" id="people" role="tabpanel" aria-labelledby="people-tab">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for kanji in people %}
+                <div class="col">
+                    <div class="card h-100 text-center" style="border: 1px solid #e0e0e0;">
+                        <div class="card-body">
+                            <h2 class="card-title" style="color: #ff4500; font-size: 2rem;">{{ kanji.character }}</h2>
+                            <p class="card-text"><strong>On’yomi:</strong> {{ kanji.onyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Kun’yomi:</strong> {{ kanji.kunyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Meaning:</strong> {{ kanji.meaning }}</p>
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
 
-        <!-- Others -->
-        <div class="col-md-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <h3 class="card-title">口</h3>
-                    <p><strong>Readings:</strong> コウ (on'yomi), くち (kun'yomi)</p>
-                    <p><strong>Meaning:</strong> mouth</p>
-                    <p><strong>Stroke Count:</strong> 3</p>
+        <!-- Directions Tab -->
+        <div class="tab-pane fade" id="directions" role="tabpanel" aria-labelledby="directions-tab">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for kanji in directions %}
+                <div class="col">
+                    <div class="card h-100 text-center" style="border: 1px solid #e0e0e0;">
+                        <div class="card-body">
+                            <h2 class="card-title" style="color: #ff4500; font-size: 2rem;">{{ kanji.character }}</h2>
+                            <p class="card-text"><strong>On’yomi:</strong> {{ kanji.onyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Kun’yomi:</strong> {{ kanji.kunyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Meaning:</strong> {{ kanji.meaning }}</p>
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Verbs Tab -->
+        <div class="tab-pane fade" id="verbs" role="tabpanel" aria-labelledby="verbs-tab">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for kanji in verbs %}
+                <div class="col">
+                    <div class="card h-100 text-center" style="border: 1px solid #e0e0e0;">
+                        <div class="card-body">
+                            <h2 class="card-title" style="color: #ff4500; font-size: 2rem;">{{ kanji.character }}</h2>
+                            <p class="card-text"><strong>On’yomi:</strong> {{ kanji.onyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Kun’yomi:</strong> {{ kanji.kunyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Meaning:</strong> {{ kanji.meaning }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Adjectives Tab -->
+        <div class="tab-pane fade" id="adjectives" role="tabpanel" aria-labelledby="adjectives-tab">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for kanji in adjectives %}
+                <div class="col">
+                    <div class="card h-100 text-center" style="border: 1px solid #e0e0e0;">
+                        <div class="card-body">
+                            <h2 class="card-title" style="color: #ff4500; font-size: 2rem;">{{ kanji.character }}</h2>
+                            <p class="card-text"><strong>On’yomi:</strong> {{ kanji.onyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Kun’yomi:</strong> {{ kanji.kunyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Meaning:</strong> {{ kanji.meaning }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Miscellaneous Tab -->
+        <div class="tab-pane fade" id="misc" role="tabpanel" aria-labelledby="misc-tab">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for kanji in misc %}
+                <div class="col">
+                    <div class="card h-100 text-center" style="border: 1px solid #e0e0e0;">
+                        <div class="card-body">
+                            <h2 class="card-title" style="color: #ff4500; font-size: 2rem;">{{ kanji.character }}</h2>
+                            <p class="card-text"><strong>On’yomi:</strong> {{ kanji.onyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Kun’yomi:</strong> {{ kanji.kunyomi|default:"–" }}</p>
+                            <p class="card-text"><strong>Meaning:</strong> {{ kanji.meaning }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.nav-tabs .nav-link {
+    color: #333;
+}
+.nav-tabs .nav-link:hover {
+    color: #006666;
+}
+.nav-tabs .nav-link.active {
+    color: #ff4500;
+    border-bottom: 2px solid #ff4500;
+}
+</style>
 {% endblock %}
