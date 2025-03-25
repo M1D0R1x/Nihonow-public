@@ -1,4 +1,3 @@
-# treasures/views.py
 import csv
 import logging
 import random
@@ -60,308 +59,268 @@ def n5(request):
 def n5_quiz(request):
     return render(request, 'quiz.html', {'level': 'N5'})
 
+# Kanji data for n5_kanji view
+n5_kanji_data = [
+    {'character': '安', 'onyomi': 'AN', 'kunyomi': 'yasu(i)', 'meaning': 'peace, cheap, safety'},
+    {'character': '一', 'onyomi': 'ICHI, ITSU', 'kunyomi': 'hito(tsu), hito-', 'meaning': 'one'},
+    {'character': '飲', 'onyomi': 'IN', 'kunyomi': 'no(mu)', 'meaning': 'to drink'},
+    {'character': '右', 'onyomi': 'U, YUU', 'kunyomi': 'migi', 'meaning': 'right'},
+    {'character': '雨', 'onyomi': 'U', 'kunyomi': 'ame', 'meaning': 'rain'},
+    {'character': '駅', 'onyomi': 'EKI', 'kunyomi': '–', 'meaning': 'station'},
+    {'character': '円', 'onyomi': 'EN', 'kunyomi': 'maru(i)', 'meaning': 'circle, Yen, round'},
+    {'character': '火', 'onyomi': 'KA', 'kunyomi': 'hi', 'meaning': 'fire'},
+    {'character': '花', 'onyomi': 'KA', 'kunyomi': 'hana', 'meaning': 'flower, blossom'},
+    {'character': '下', 'onyomi': 'KA, GE', 'kunyomi': 'shimo, sa(geru), o(rosu), ku(daru)', 'meaning': 'below, down'},
+    {'character': '何', 'onyomi': 'KA', 'kunyomi': 'nani', 'meaning': 'what, how many, which'},
+    {'character': '会', 'onyomi': 'KAI, E', 'kunyomi': 'a(u)', 'meaning': 'to meet, to come together, society'},
+    {'character': '外', 'onyomi': 'GAI, GE', 'kunyomi': 'soto, hoka, hazu(reru), hazu(su)', 'meaning': 'outside, other, disconnect'},
+    {'character': '学', 'onyomi': 'GAKU', 'kunyomi': 'mana(bu)', 'meaning': 'school, science, learning'},
+    {'character': '間', 'onyomi': 'KAN, KEN', 'kunyomi': 'aida', 'meaning': 'time, time span'},
+    {'character': '気', 'onyomi': 'KI, KE', 'kunyomi': '–', 'meaning': 'soul, spirit'},
+    {'character': '九', 'onyomi': 'KYUU, KU', 'kunyomi': 'kokono(tsu), kokono-', 'meaning': 'nine'},
+    {'character': '休', 'onyomi': 'KYUU', 'kunyomi': 'yasu(mu)', 'meaning': 'to rest'},
+    {'character': '魚', 'onyomi': 'GYO', 'kunyomi': 'sakana, uo', 'meaning': 'fish'},
+    {'character': '金', 'onyomi': 'KIN, KON', 'kunyomi': 'kane', 'meaning': 'gold, metal, money'},
+    {'character': '空', 'onyomi': 'KUU', 'kunyomi': 'sora, a(keru), kara', 'meaning': 'sky, to become free, empty'},
+    {'character': '月', 'onyomi': 'GETSU, GATSU', 'kunyomi': 'tsuki', 'meaning': 'month, moon'},
+    {'character': '見', 'onyomi': 'KEN', 'kunyomi': 'mi(ru), mi(eru), mi(seru)', 'meaning': 'to see, to be visible, to show'},
+    {'character': '言', 'onyomi': 'GEN, GON', 'kunyomi': 'i(u)', 'meaning': 'word, to talk'},
+    {'character': '古', 'onyomi': 'KO', 'kunyomi': 'furu(i)', 'meaning': 'old, used'},
+    {'character': '五', 'onyomi': 'GO', 'kunyomi': 'itsu(tsu), itsu-', 'meaning': 'five'},
+    {'character': '後', 'onyomi': 'GO, KOU', 'kunyomi': 'ato, oku(reru), nochi', 'meaning': 'after, later, back, to stay behind'},
+    {'character': '午', 'onyomi': 'GO', 'kunyomi': '–', 'meaning': 'noon'},
+    {'character': '語', 'onyomi': 'GO', 'kunyomi': 'kata(ru), kata(rau)', 'meaning': 'word, to talk'},
+    {'character': '校', 'onyomi': 'KOU', 'kunyomi': '–', 'meaning': 'school'},
+    {'character': '口', 'onyomi': 'KOU, KU', 'kunyomi': 'kuchi', 'meaning': 'mouth'},
+    {'character': '行', 'onyomi': 'KOU', 'kunyomi': 'i(ku), yu(ku), okona(u)', 'meaning': 'to walk, to go, to do, to carry out'},
+    {'character': '高', 'onyomi': 'KOU', 'kunyomi': 'taka(i), taka(maru), taka(meru)', 'meaning': 'high, expensive, increase, quantity'},
+    {'character': '国', 'onyomi': 'KOKU', 'kunyomi': 'kuni', 'meaning': 'country'},
+    {'character': '今', 'onyomi': 'KON, KIN', 'kunyomi': 'ima', 'meaning': 'now'},
+    {'character': '左', 'onyomi': 'SA', 'kunyomi': 'hidari', 'meaning': 'left'},
+    {'character': '三', 'onyomi': 'SAN', 'kunyomi': 'mit(tsu), mi-', 'meaning': 'three'},
+    {'character': '山', 'onyomi': 'SAN', 'kunyomi': 'yama', 'meaning': 'mountain'},
+    {'character': '四', 'onyomi': 'SHI', 'kunyomi': 'yo(ttsu), yu(tsu), yo-, yon-', 'meaning': 'four'},
+    {'character': '子', 'onyomi': 'SHI, SU', 'kunyomi': 'ko', 'meaning': 'child'},
+    {'character': '耳', 'onyomi': 'JI', 'kunyomi': 'mimi', 'meaning': 'ear'},
+    {'character': '時', 'onyomi': 'JI', 'kunyomi': 'toki', 'meaning': 'time, hour'},
+    {'character': '七', 'onyomi': 'SHICHI', 'kunyomi': 'nana(tsu), nana-, nano-', 'meaning': 'seven'},
+    {'character': '車', 'onyomi': 'SHA', 'kunyomi': 'kuruma', 'meaning': 'car, wheel'},
+    {'character': '社', 'onyomi': 'SHA', 'kunyomi': 'yashiro', 'meaning': 'shinto shrine, society'},
+    {'character': '手', 'onyomi': 'SHU', 'kunyomi': 'te', 'meaning': 'hand'},
+    {'character': '週', 'onyomi': 'SHUU', 'kunyomi': '–', 'meaning': 'week'},
+    {'character': '十', 'onyomi': 'JUU, JI', 'kunyomi': 'too, to-', 'meaning': 'ten, cross'},
+    {'character': '出', 'onyomi': 'SHUTSU', 'kunyomi': 'da(su), de(ru)', 'meaning': 'to leave, to get out, to take out'},
+    {'character': '書', 'onyomi': 'SHO', 'kunyomi': 'ka(ku)', 'meaning': 'to write'},
+    {'character': '女', 'onyomi': 'JO, NYO', 'kunyomi': 'onna, me', 'meaning': 'woman, female'},
+    {'character': '小', 'onyomi': 'SHOU', 'kunyomi': 'chii(sai), ko-, o-', 'meaning': 'small'},
+    {'character': '少', 'onyomi': 'SHOU', 'kunyomi': 'suko(shi), suku(nai)', 'meaning': 'a little'},
+    {'character': '上', 'onyomi': 'SHOU, JOU', 'kunyomi': 'ue, kami, a(geru), a(garu)', 'meaning': 'above, upper'},
+    {'character': '食', 'onyomi': 'SHOKU', 'kunyomi': 'ta(beru), ku(ru), ku(rau)', 'meaning': 'to eat'},
+    {'character': '新', 'onyomi': 'SHIN', 'kunyomi': 'atara(shii), ara(ta), nii-', 'meaning': 'new'},
+    {'character': '人', 'onyomi': 'JIN, NIN', 'kunyomi': 'hito', 'meaning': 'person'},
+    {'character': '水', 'onyomi': 'SUI', 'kunyomi': 'mizu', 'meaning': 'water'},
+    {'character': '生', 'onyomi': 'SEI, SHOU', 'kunyomi': 'i(kiru), u(mu), ha(yasu), nama, ki', 'meaning': 'to live, to grow, to be born, raw'},
+    {'character': '西', 'onyomi': 'SEI, SAI', 'kunyomi': 'nishi', 'meaning': 'west'},
+    {'character': '川', 'onyomi': 'SEN', 'kunyomi': 'kawa', 'meaning': 'river'},
+    {'character': '千', 'onyomi': 'SEN', 'kunyomi': 'chi', 'meaning': 'thousand'},
+    {'character': '先', 'onyomi': 'SEN', 'kunyomi': 'saki', 'meaning': 'before, in future'},
+    {'character': '前', 'onyomi': 'ZEN', 'kunyomi': 'mae', 'meaning': 'before'},
+    {'character': '足', 'onyomi': 'SOKU', 'kunyomi': 'ashi, ta(riru), ta(su)', 'meaning': 'foot, to be sufficient, to add'},
+    {'character': '多', 'onyomi': 'TA', 'kunyomi': 'oo(i)', 'meaning': 'many'},
+    {'character': '大', 'onyomi': 'DAI, TAI', 'kunyomi': 'ou(kii), oo(i)', 'meaning': 'big, a lot'},
+    {'character': '男', 'onyomi': 'DAN, NAN', 'kunyomi': 'otoko', 'meaning': 'man, male'},
+    {'character': '中', 'onyomi': 'CHUU', 'kunyomi': 'naka', 'meaning': 'inner, center, between'},
+    {'character': '長', 'onyomi': 'CHOU', 'kunyomi': 'naga(i)', 'meaning': 'long, leader'},
+    {'character': '天', 'onyomi': 'TEN', 'kunyomi': 'ame, ama', 'meaning': 'sky'},
+    {'character': '店', 'onyomi': 'TEN', 'kunyomi': 'mise', 'meaning': 'shop'},
+    {'character': '電', 'onyomi': 'DEN', 'kunyomi': '–', 'meaning': 'electricity'},
+    {'character': '土', 'onyomi': 'DO, TO', 'kunyomi': 'tsuchi', 'meaning': 'earth, ground'},
+    {'character': '東', 'onyomi': 'TOU', 'kunyomi': 'higashi', 'meaning': 'east'},
+    {'character': '道', 'onyomi': 'DOU', 'kunyomi': 'michi', 'meaning': 'street, path'},
+    {'character': '読', 'onyomi': 'DOKU', 'kunyomi': 'yo(mu)', 'meaning': 'to read'},
+    {'character': '南', 'onyomi': 'NAN', 'kunyomi': 'minami', 'meaning': 'south'},
+    {'character': 'ニ', 'onyomi': 'NI', 'kunyomi': 'futa(tsu), futa-', 'meaning': 'two'},
+    {'character': '日', 'onyomi': 'NICHI, JITSU', 'kunyomi': 'hi, -ka', 'meaning': 'day, sun'},
+    {'character': '入', 'onyomi': 'NYUU', 'kunyomi': 'hai(ru), i(ru), i(reru)', 'meaning': 'to enter, to insert'},
+    {'character': '年', 'onyomi': 'NEN', 'kunyomi': 'toshi', 'meaning': 'year'},
+    {'character': '買', 'onyomi': 'BAI', 'kunyomi': 'ka(u)', 'meaning': 'to buy'},
+    {'character': '白', 'onyomi': 'HAKU, BYAKU', 'kunyomi': 'shiro(i), shiro', 'meaning': 'white'},
+    {'character': '八', 'onyomi': 'HACHI', 'kunyomi': 'yat(tsu), ya(tsu), ya-, you-', 'meaning': 'eight'},
+    {'character': '半', 'onyomi': 'HAN', 'kunyomi': 'naka(ba)', 'meaning': 'half, middle, semi-'},
+    {'character': '百', 'onyomi': 'HYAKU', 'kunyomi': '–', 'meaning': 'hundred'},
+    {'character': '父', 'onyomi': 'FU', 'kunyomi': 'chichi', 'meaning': 'father'},
+    {'character': '分', 'onyomi': 'BUN, BU, FUN', 'kunyomi': 'wa(keru), wa(kareru), wa(karu)', 'meaning': 'part, minute, to divide, to understand'},
+    {'character': '聞', 'onyomi': 'BUN, MON', 'kunyomi': 'ki(ku), ki(koeru)', 'meaning': 'to hear, to listen, to ask'},
+    {'character': '母', 'onyomi': 'BO', 'kunyomi': 'haha', 'meaning': 'mother'},
+    {'character': '北', 'onyomi': 'HOKU', 'kunyomi': 'kita', 'meaning': 'north'},
+    {'character': '木', 'onyomi': 'BOKU, MOKU', 'kunyomi': 'ki, ko', 'meaning': 'tree, wood'},
+    {'character': '本', 'onyomi': 'HON', 'kunyomi': 'moto', 'meaning': 'book, source, main-'},
+    {'character': '毎', 'onyomi': 'MAI', 'kunyomi': '–', 'meaning': 'each, every'},
+    {'character': '万', 'onyomi': 'MAN, BAN', 'kunyomi': '–', 'meaning': 'ten thousand, all, many'},
+    {'character': '名', 'onyomi': 'MEI, MYOU', 'kunyomi': 'na', 'meaning': 'name, reputation'},
+    {'character': '目', 'onyomi': 'MOKU', 'kunyomi': 'me', 'meaning': 'eye'},
+    {'character': '友', 'onyomi': 'YUU', 'kunyomi': 'tomo', 'meaning': 'friend'},
+    {'character': '来', 'onyomi': 'RAI', 'kunyomi': 'ku(ru), kita(ru), kita(su)', 'meaning': 'to come'},
+    {'character': '立', 'onyomi': 'RITSU', 'kunyomi': 'ta(tsu), ta(teru)', 'meaning': 'to stand, to establish'},
+    {'character': '六', 'onyomi': 'ROKU', 'kunyomi': 'mutt(su), mu(tsu), mu, mui', 'meaning': 'six'},
+    {'character': '話', 'onyomi': 'WA', 'kunyomi': 'hanashi, hana(su)', 'meaning': 'speech, to talk, story, conversation'},
+]
+
+# Categorize the kanji for n5_kanji
+n5_number_order = ['一', 'ニ', '三', '四', '五', '六', '七', '八', '九', '十', '百', '千', '万']
+kanji_numbers = [k for k in n5_kanji_data if k['character'] in n5_number_order]
+kanji_numbers = sorted(kanji_numbers, key=lambda k: n5_number_order.index(k['character']))
+kanji_environment = [k for k in n5_kanji_data if k['character'] in ['雨', '火', '花', '山', '川', '空', '月', '気', '魚', '金', '木', '水', '土', '日', '電', '天']]
+kanji_people = [k for k in n5_kanji_data if k['character'] in ['人', '子', '女', '男', '父', '母', '友', '手', '足', '耳', '目', '口', '名', '生']]
+kanji_directions = [k for k in n5_kanji_data if k['character'] in ['上', '下', '左', '右', '中', '外', '前', '後', '西', '東', '南', '北']]
+kanji_verbs = [k for k in n5_kanji_data if k['character'] in ['飲', '会', '出', '見', '言', '休', '行', '書', '食', '入', '買', '聞', '読', '来', '立', '話', '学', '分']]
+kanji_adjectives = [k for k in n5_kanji_data if k['character'] in ['安', '多', '大', '小', '少', '新', '古', '高', '長', '白', '半']]
+kanji_misc = [k for k in n5_kanji_data if k['character'] not in (
+    [k['character'] for k in kanji_numbers] + [k['character'] for k in kanji_environment] +
+    [k['character'] for k in kanji_people] + [k['character'] for k in kanji_directions] +
+    [k['character'] for k in kanji_verbs] + [k['character'] for k in kanji_adjectives]
+)]
+
 def n5_kanji(request):
-    # Full list of 103 N5 kanji from your provided data
-    kanji_data = [
-        {'character': '安', 'onyomi': 'AN', 'kunyomi': 'yasu(i)', 'meaning': 'peace, cheap, safety'},
-        {'character': '一', 'onyomi': 'ICHI, ITSU', 'kunyomi': 'hito(tsu), hito-', 'meaning': 'one'},
-        {'character': '飲', 'onyomi': 'IN', 'kunyomi': 'no(mu)', 'meaning': 'to drink'},
-        {'character': '右', 'onyomi': 'U, YUU', 'kunyomi': 'migi', 'meaning': 'right'},
-        {'character': '雨', 'onyomi': 'U', 'kunyomi': 'ame', 'meaning': 'rain'},
-        {'character': '駅', 'onyomi': 'EKI', 'kunyomi': '–', 'meaning': 'station'},
-        {'character': '円', 'onyomi': 'EN', 'kunyomi': 'maru(i)', 'meaning': 'circle, Yen, round'},
-        {'character': '火', 'onyomi': 'KA', 'kunyomi': 'hi', 'meaning': 'fire'},
-        {'character': '花', 'onyomi': 'KA', 'kunyomi': 'hana', 'meaning': 'flower, blossom'},
-        {'character': '下', 'onyomi': 'KA, GE', 'kunyomi': 'shimo, sa(geru), o(rosu), ku(daru)', 'meaning': 'below, down'},
-        {'character': '何', 'onyomi': 'KA', 'kunyomi': 'nani', 'meaning': 'what, how many, which'},
-        {'character': '会', 'onyomi': 'KAI, E', 'kunyomi': 'a(u)', 'meaning': 'to meet, to come together, society'},
-        {'character': '外', 'onyomi': 'GAI, GE', 'kunyomi': 'soto, hoka, hazu(reru), hazu(su)', 'meaning': 'outside, other, disconnect'},
-        {'character': '学', 'onyomi': 'GAKU', 'kunyomi': 'mana(bu)', 'meaning': 'school, science, learning'},
-        {'character': '間', 'onyomi': 'KAN, KEN', 'kunyomi': 'aida', 'meaning': 'time, time span'},
-        {'character': '気', 'onyomi': 'KI, KE', 'kunyomi': '–', 'meaning': 'soul, spirit'},
-        {'character': '九', 'onyomi': 'KYUU, KU', 'kunyomi': 'kokono(tsu), kokono-', 'meaning': 'nine'},
-        {'character': '休', 'onyomi': 'KYUU', 'kunyomi': 'yasu(mu)', 'meaning': 'to rest'},
-        {'character': '魚', 'onyomi': 'GYO', 'kunyomi': 'sakana, uo', 'meaning': 'fish'},
-        {'character': '金', 'onyomi': 'KIN, KON', 'kunyomi': 'kane', 'meaning': 'gold, metal, money'},
-        {'character': '空', 'onyomi': 'KUU', 'kunyomi': 'sora, a(keru), kara', 'meaning': 'sky, to become free, empty'},
-        {'character': '月', 'onyomi': 'GETSU, GATSU', 'kunyomi': 'tsuki', 'meaning': 'month, moon'},
-        {'character': '見', 'onyomi': 'KEN', 'kunyomi': 'mi(ru), mi(eru), mi(seru)', 'meaning': 'to see, to be visible, to show'},
-        {'character': '言', 'onyomi': 'GEN, GON', 'kunyomi': 'i(u)', 'meaning': 'word, to talk'},
-        {'character': '古', 'onyomi': 'KO', 'kunyomi': 'furu(i)', 'meaning': 'old, used'},
-        {'character': '五', 'onyomi': 'GO', 'kunyomi': 'itsu(tsu), itsu-', 'meaning': 'five'},
-        {'character': '後', 'onyomi': 'GO, KOU', 'kunyomi': 'ato, oku(reru), nochi', 'meaning': 'after, later, back, to stay behind'},
-        {'character': '午', 'onyomi': 'GO', 'kunyomi': '–', 'meaning': 'noon'},
-        {'character': '語', 'onyomi': 'GO', 'kunyomi': 'kata(ru), kata(rau)', 'meaning': 'word, to talk'},
-        {'character': '校', 'onyomi': 'KOU', 'kunyomi': '–', 'meaning': 'school'},
-        {'character': '口', 'onyomi': 'KOU, KU', 'kunyomi': 'kuchi', 'meaning': 'mouth'},
-        {'character': '行', 'onyomi': 'KOU', 'kunyomi': 'i(ku), yu(ku), okona(u)', 'meaning': 'to walk, to go, to do, to carry out'},
-        {'character': '高', 'onyomi': 'KOU', 'kunyomi': 'taka(i), taka(maru), taka(meru)', 'meaning': 'high, expensive, increase, quantity'},
-        {'character': '国', 'onyomi': 'KOKU', 'kunyomi': 'kuni', 'meaning': 'country'},
-        {'character': '今', 'onyomi': 'KON, KIN', 'kunyomi': 'ima', 'meaning': 'now'},
-        {'character': '左', 'onyomi': 'SA', 'kunyomi': 'hidari', 'meaning': 'left'},
-        {'character': '三', 'onyomi': 'SAN', 'kunyomi': 'mit(tsu), mi-', 'meaning': 'three'},
-        {'character': '山', 'onyomi': 'SAN', 'kunyomi': 'yama', 'meaning': 'mountain'},
-        {'character': '四', 'onyomi': 'SHI', 'kunyomi': 'yo(ttsu), yu(tsu), yo-, yon-', 'meaning': 'four'},
-        {'character': '子', 'onyomi': 'SHI, SU', 'kunyomi': 'ko', 'meaning': 'child'},
-        {'character': '耳', 'onyomi': 'JI', 'kunyomi': 'mimi', 'meaning': 'ear'},
-        {'character': '時', 'onyomi': 'JI', 'kunyomi': 'toki', 'meaning': 'time, hour'},
-        {'character': '七', 'onyomi': 'SHICHI', 'kunyomi': 'nana(tsu), nana-, nano-', 'meaning': 'seven'},
-        {'character': '車', 'onyomi': 'SHA', 'kunyomi': 'kuruma', 'meaning': 'car, wheel'},
-        {'character': '社', 'onyomi': 'SHA', 'kunyomi': 'yashiro', 'meaning': 'shinto shrine, society'},
-        {'character': '手', 'onyomi': 'SHU', 'kunyomi': 'te', 'meaning': 'hand'},
-        {'character': '週', 'onyomi': 'SHUU', 'kunyomi': '–', 'meaning': 'week'},
-        {'character': '十', 'onyomi': 'JUU, JI', 'kunyomi': 'too, to-', 'meaning': 'ten, cross'},
-        {'character': '出', 'onyomi': 'SHUTSU', 'kunyomi': 'da(su), de(ru)', 'meaning': 'to leave, to get out, to take out'},
-        {'character': '書', 'onyomi': 'SHO', 'kunyomi': 'ka(ku)', 'meaning': 'to write'},
-        {'character': '女', 'onyomi': 'JO, NYO', 'kunyomi': 'onna, me', 'meaning': 'woman, female'},
-        {'character': '小', 'onyomi': 'SHOU', 'kunyomi': 'chii(sai), ko-, o-', 'meaning': 'small'},
-        {'character': '少', 'onyomi': 'SHOU', 'kunyomi': 'suko(shi), suku(nai)', 'meaning': 'a little'},
-        {'character': '上', 'onyomi': 'SHOU, JOU', 'kunyomi': 'ue, kami, a(geru), a(garu)', 'meaning': 'above, upper'},
-        {'character': '食', 'onyomi': 'SHOKU', 'kunyomi': 'ta(beru), ku(ru), ku(rau)', 'meaning': 'to eat'},
-        {'character': '新', 'onyomi': 'SHIN', 'kunyomi': 'atara(shii), ara(ta), nii-', 'meaning': 'new'},
-        {'character': '人', 'onyomi': 'JIN, NIN', 'kunyomi': 'hito', 'meaning': 'person'},
-        {'character': '水', 'onyomi': 'SUI', 'kunyomi': 'mizu', 'meaning': 'water'},
-        {'character': '生', 'onyomi': 'SEI, SHOU', 'kunyomi': 'i(kiru), u(mu), ha(yasu), nama, ki', 'meaning': 'to live, to grow, to be born, raw'},
-        {'character': '西', 'onyomi': 'SEI, SAI', 'kunyomi': 'nishi', 'meaning': 'west'},
-        {'character': '川', 'onyomi': 'SEN', 'kunyomi': 'kawa', 'meaning': 'river'},
-        {'character': '千', 'onyomi': 'SEN', 'kunyomi': 'chi', 'meaning': 'thousand'},
-        {'character': '先', 'onyomi': 'SEN', 'kunyomi': 'saki', 'meaning': 'before, in future'},
-        {'character': '前', 'onyomi': 'ZEN', 'kunyomi': 'mae', 'meaning': 'before'},
-        {'character': '足', 'onyomi': 'SOKU', 'kunyomi': 'ashi, ta(riru), ta(su)', 'meaning': 'foot, to be sufficient, to add'},
-        {'character': '多', 'onyomi': 'TA', 'kunyomi': 'oo(i)', 'meaning': 'many'},
-        {'character': '大', 'onyomi': 'DAI, TAI', 'kunyomi': 'ou(kii), oo(i)', 'meaning': 'big, a lot'},
-        {'character': '男', 'onyomi': 'DAN, NAN', 'kunyomi': 'otoko', 'meaning': 'man, male'},
-        {'character': '中', 'onyomi': 'CHUU', 'kunyomi': 'naka', 'meaning': 'inner, center, between'},
-        {'character': '長', 'onyomi': 'CHOU', 'kunyomi': 'naga(i)', 'meaning': 'long, leader'},
-        {'character': '天', 'onyomi': 'TEN', 'kunyomi': 'ame, ama', 'meaning': 'sky'},
-        {'character': '店', 'onyomi': 'TEN', 'kunyomi': 'mise', 'meaning': 'shop'},
-        {'character': '電', 'onyomi': 'DEN', 'kunyomi': '–', 'meaning': 'electricity'},
-        {'character': '土', 'onyomi': 'DO, TO', 'kunyomi': 'tsuchi', 'meaning': 'earth, ground'},
-        {'character': '東', 'onyomi': 'TOU', 'kunyomi': 'higashi', 'meaning': 'east'},
-        {'character': '道', 'onyomi': 'DOU', 'kunyomi': 'michi', 'meaning': 'street, path'},
-        {'character': '読', 'onyomi': 'DOKU', 'kunyomi': 'yo(mu)', 'meaning': 'to read'},
-        {'character': '南', 'onyomi': 'NAN', 'kunyomi': 'minami', 'meaning': 'south'},
-        {'character': 'ニ', 'onyomi': 'NI', 'kunyomi': 'futa(tsu), futa-', 'meaning': 'two'},
-        {'character': '日', 'onyomi': 'NICHI, JITSU', 'kunyomi': 'hi, -ka', 'meaning': 'day, sun'},
-        {'character': '入', 'onyomi': 'NYUU', 'kunyomi': 'hai(ru), i(ru), i(reru)', 'meaning': 'to enter, to insert'},
-        {'character': '年', 'onyomi': 'NEN', 'kunyomi': 'toshi', 'meaning': 'year'},
-        {'character': '買', 'onyomi': 'BAI', 'kunyomi': 'ka(u)', 'meaning': 'to buy'},
-        {'character': '白', 'onyomi': 'HAKU, BYAKU', 'kunyomi': 'shiro(i), shiro', 'meaning': 'white'},
-        {'character': '八', 'onyomi': 'HACHI', 'kunyomi': 'yat(tsu), ya(tsu), ya-, you-', 'meaning': 'eight'},
-        {'character': '半', 'onyomi': 'HAN', 'kunyomi': 'naka(ba)', 'meaning': 'half, middle, semi-'},
-        {'character': '百', 'onyomi': 'HYAKU', 'kunyomi': '–', 'meaning': 'hundred'},
-        {'character': '父', 'onyomi': 'FU', 'kunyomi': 'chichi', 'meaning': 'father'},
-        {'character': '分', 'onyomi': 'BUN, BU, FUN', 'kunyomi': 'wa(keru), wa(kareru), wa(karu)', 'meaning': 'part, minute, to divide, to understand'},
-        {'character': '聞', 'onyomi': 'BUN, MON', 'kunyomi': 'ki(ku), ki(koeru)', 'meaning': 'to hear, to listen, to ask'},
-        {'character': '母', 'onyomi': 'BO', 'kunyomi': 'haha', 'meaning': 'mother'},
-        {'character': '北', 'onyomi': 'HOKU', 'kunyomi': 'kita', 'meaning': 'north'},
-        {'character': '木', 'onyomi': 'BOKU, MOKU', 'kunyomi': 'ki, ko', 'meaning': 'tree, wood'},
-        {'character': '本', 'onyomi': 'HON', 'kunyomi': 'moto', 'meaning': 'book, source, main-'},
-        {'character': '毎', 'onyomi': 'MAI', 'kunyomi': '–', 'meaning': 'each, every'},
-        {'character': '万', 'onyomi': 'MAN, BAN', 'kunyomi': '–', 'meaning': 'ten thousand, all, many'},
-        {'character': '名', 'onyomi': 'MEI, MYOU', 'kunyomi': 'na', 'meaning': 'name, reputation'},
-        {'character': '目', 'onyomi': 'MOKU', 'kunyomi': 'me', 'meaning': 'eye'},
-        {'character': '友', 'onyomi': 'YUU', 'kunyomi': 'tomo', 'meaning': 'friend'},
-        {'character': '来', 'onyomi': 'RAI', 'kunyomi': 'ku(ru), kita(ru), kita(su)', 'meaning': 'to come'},
-        {'character': '立', 'onyomi': 'RITSU', 'kunyomi': 'ta(tsu), ta(teru)', 'meaning': 'to stand, to establish'},
-        {'character': '六', 'onyomi': 'ROKU', 'kunyomi': 'mutt(su), mu(tsu), mu, mui', 'meaning': 'six'},
-        {'character': '話', 'onyomi': 'WA', 'kunyomi': 'hanashi, hana(su)', 'meaning': 'speech, to talk, story, conversation'},
-    ]
-
-    # Categorize the kanji
-    # Define the order for numbers explicitly to ensure increasing order
-    number_order = ['一', 'ニ', '三', '四', '五', '六', '七', '八', '九', '十', '百', '千', '万']
-    numbers = [k for k in kanji_data if k['character'] in number_order]
-    # Sort numbers according to the defined order
-    numbers = sorted(numbers, key=lambda k: number_order.index(k['character']))
-
-    environment = [k for k in kanji_data if k['character'] in ['雨', '火', '花', '山', '川', '空', '月', '気', '魚', '金', '木', '水', '土', '日', '電', '天']]
-    people = [k for k in kanji_data if k['character'] in ['人', '子', '女', '男', '父', '母', '友', '手', '足', '耳', '目', '口', '名', '生']]
-    directions = [k for k in kanji_data if k['character'] in ['上', '下', '左', '右', '中', '外', '前', '後', '西', '東', '南', '北']]
-    verbs = [k for k in kanji_data if k['character'] in ['飲', '会', '出', '見', '言', '休', '行', '書', '食', '入', '買', '聞', '読', '来', '立', '話', '学', '分']]
-    adjectives = [k for k in kanji_data if k['character'] in ['安', '多', '大', '小', '少', '新', '古', '高', '長', '白', '半']]
-    misc = [k for k in kanji_data if k['character'] not in (
-        [k['character'] for k in numbers] + [k['character'] for k in environment] +
-        [k['character'] for k in people] + [k['character'] for k in directions] +
-        [k['character'] for k in verbs] + [k['character'] for k in adjectives]
-    )]
-
-    from django.shortcuts import render
-
-    def n5kanji_chart(request):
-        # Full list of 103 N5 kanji from your provided data
-        kanji_data = [
-            {'character': '安', 'onyomi': 'AN', 'kunyomi': 'yasu(i)', 'meaning': 'peace, cheap, safety'},
-            {'character': '一', 'onyomi': 'ICHI, ITSU', 'kunyomi': 'hito(tsu), hito-', 'meaning': 'one'},
-            {'character': '飲', 'onyomi': 'IN', 'kunyomi': 'no(mu)', 'meaning': 'to drink'},
-            {'character': '右', 'onyomi': 'U, YUU', 'kunyomi': 'migi', 'meaning': 'right'},
-            {'character': '雨', 'onyomi': 'U', 'kunyomi': 'ame', 'meaning': 'rain'},
-            {'character': '駅', 'onyomi': 'EKI', 'kunyomi': '–', 'meaning': 'station'},
-            {'character': '円', 'onyomi': 'EN', 'kunyomi': 'maru(i)', 'meaning': 'circle, Yen, round'},
-            {'character': '火', 'onyomi': 'KA', 'kunyomi': 'hi', 'meaning': 'fire'},
-            {'character': '花', 'onyomi': 'KA', 'kunyomi': 'hana', 'meaning': 'flower, blossom'},
-            {'character': '下', 'onyomi': 'KA, GE', 'kunyomi': 'shimo, sa(geru), o(rosu), ku(daru)',
-             'meaning': 'below, down'},
-            {'character': '何', 'onyomi': 'KA', 'kunyomi': 'nani', 'meaning': 'what, how many, which'},
-            {'character': '会', 'onyomi': 'KAI, E', 'kunyomi': 'a(u)', 'meaning': 'to meet, to come together, society'},
-            {'character': '外', 'onyomi': 'GAI, GE', 'kunyomi': 'soto, hoka, hazu(reru), hazu(su)',
-             'meaning': 'outside, other, disconnect'},
-            {'character': '学', 'onyomi': 'GAKU', 'kunyomi': 'mana(bu)', 'meaning': 'school, science, learning'},
-            {'character': '間', 'onyomi': 'KAN, KEN', 'kunyomi': 'aida', 'meaning': 'time, time span'},
-            {'character': '気', 'onyomi': 'KI, KE', 'kunyomi': '–', 'meaning': 'soul, spirit'},
-            {'character': '九', 'onyomi': 'KYUU, KU', 'kunyomi': 'kokono(tsu), kokono-', 'meaning': 'nine'},
-            {'character': '休', 'onyomi': 'KYUU', 'kunyomi': 'yasu(mu)', 'meaning': 'to rest'},
-            {'character': '魚', 'onyomi': 'GYO', 'kunyomi': 'sakana, uo', 'meaning': 'fish'},
-            {'character': '金', 'onyomi': 'KIN, KON', 'kunyomi': 'kane', 'meaning': 'gold, metal, money'},
-            {'character': '空', 'onyomi': 'KUU', 'kunyomi': 'sora, a(keru), kara',
-             'meaning': 'sky, to become free, empty'},
-            {'character': '月', 'onyomi': 'GETSU, GATSU', 'kunyomi': 'tsuki', 'meaning': 'month, moon'},
-            {'character': '見', 'onyomi': 'KEN', 'kunyomi': 'mi(ru), mi(eru), mi(seru)',
-             'meaning': 'to see, to be visible, to show'},
-            {'character': '言', 'onyomi': 'GEN, GON', 'kunyomi': 'i(u)', 'meaning': 'word, to talk'},
-            {'character': '古', 'onyomi': 'KO', 'kunyomi': 'furu(i)', 'meaning': 'old, used'},
-            {'character': '五', 'onyomi': 'GO', 'kunyomi': 'itsu(tsu), itsu-', 'meaning': 'five'},
-            {'character': '後', 'onyomi': 'GO, KOU', 'kunyomi': 'ato, oku(reru), nochi',
-             'meaning': 'after, later, back, to stay behind'},
-            {'character': '午', 'onyomi': 'GO', 'kunyomi': '–', 'meaning': 'noon'},
-            {'character': '語', 'onyomi': 'GO', 'kunyomi': 'kata(ru), kata(rau)', 'meaning': 'word, to talk'},
-            {'character': '校', 'onyomi': 'KOU', 'kunyomi': '–', 'meaning': 'school'},
-            {'character': '口', 'onyomi': 'KOU, KU', 'kunyomi': 'kuchi', 'meaning': 'mouth'},
-            {'character': '行', 'onyomi': 'KOU', 'kunyomi': 'i(ku), yu(ku), okona(u)',
-             'meaning': 'to walk, to go, to do, to carry out'},
-            {'character': '高', 'onyomi': 'KOU', 'kunyomi': 'taka(i), taka(maru), taka(meru)',
-             'meaning': 'high, expensive, increase, quantity'},
-            {'character': '国', 'onyomi': 'KOKU', 'kunyomi': 'kuni', 'meaning': 'country'},
-            {'character': '今', 'onyomi': 'KON, KIN', 'kunyomi': 'ima', 'meaning': 'now'},
-            {'character': '左', 'onyomi': 'SA', 'kunyomi': 'hidari', 'meaning': 'left'},
-            {'character': '三', 'onyomi': 'SAN', 'kunyomi': 'mit(tsu), mi-', 'meaning': 'three'},
-            {'character': '山', 'onyomi': 'SAN', 'kunyomi': 'yama', 'meaning': 'mountain'},
-            {'character': '四', 'onyomi': 'SHI', 'kunyomi': 'yo(ttsu), yu(tsu), yo-, yon-', 'meaning': 'four'},
-            {'character': '子', 'onyomi': 'SHI, SU', 'kunyomi': 'ko', 'meaning': 'child'},
-            {'character': '耳', 'onyomi': 'JI', 'kunyomi': 'mimi', 'meaning': 'ear'},
-            {'character': '時', 'onyomi': 'JI', 'kunyomi': 'toki', 'meaning': 'time, hour'},
-            {'character': '七', 'onyomi': 'SHICHI', 'kunyomi': 'nana(tsu), nana-, nano-', 'meaning': 'seven'},
-            {'character': '車', 'onyomi': 'SHA', 'kunyomi': 'kuruma', 'meaning': 'car, wheel'},
-            {'character': '社', 'onyomi': 'SHA', 'kunyomi': 'yashiro', 'meaning': 'shinto shrine, society'},
-            {'character': '手', 'onyomi': 'SHU', 'kunyomi': 'te', 'meaning': 'hand'},
-            {'character': '週', 'onyomi': 'SHUU', 'kunyomi': '–', 'meaning': 'week'},
-            {'character': '十', 'onyomi': 'JUU, JI', 'kunyomi': 'too, to-', 'meaning': 'ten, cross'},
-            {'character': '出', 'onyomi': 'SHUTSU', 'kunyomi': 'da(su), de(ru)',
-             'meaning': 'to leave, to get out, to take out'},
-            {'character': '書', 'onyomi': 'SHO', 'kunyomi': 'ka(ku)', 'meaning': 'to write'},
-            {'character': '女', 'onyomi': 'JO, NYO', 'kunyomi': 'onna, me', 'meaning': 'woman, female'},
-            {'character': '小', 'onyomi': 'SHOU', 'kunyomi': 'chii(sai), ko-, o-', 'meaning': 'small'},
-            {'character': '少', 'onyomi': 'SHOU', 'kunyomi': 'suko(shi), suku(nai)', 'meaning': 'a little'},
-            {'character': '上', 'onyomi': 'SHOU, JOU', 'kunyomi': 'ue, kami, a(geru), a(garu)',
-             'meaning': 'above, upper'},
-            {'character': '食', 'onyomi': 'SHOKU', 'kunyomi': 'ta(beru), ku(ru), ku(rau)', 'meaning': 'to eat'},
-            {'character': '新', 'onyomi': 'SHIN', 'kunyomi': 'atara(shii), ara(ta), nii-', 'meaning': 'new'},
-            {'character': '人', 'onyomi': 'JIN, NIN', 'kunyomi': 'hito', 'meaning': 'person'},
-            {'character': '水', 'onyomi': 'SUI', 'kunyomi': 'mizu', 'meaning': 'water'},
-            {'character': '生', 'onyomi': 'SEI, SHOU', 'kunyomi': 'i(kiru), u(mu), ha(yasu), nama, ki',
-             'meaning': 'to live, to grow, to be born, raw'},
-            {'character': '西', 'onyomi': 'SEI, SAI', 'kunyomi': 'nishi', 'meaning': 'west'},
-            {'character': '川', 'onyomi': 'SEN', 'kunyomi': 'kawa', 'meaning': 'river'},
-            {'character': '千', 'onyomi': 'SEN', 'kunyomi': 'chi', 'meaning': 'thousand'},
-            {'character': '先', 'onyomi': 'SEN', 'kunyomi': 'saki', 'meaning': 'before, in future'},
-            {'character': '前', 'onyomi': 'ZEN', 'kunyomi': 'mae', 'meaning': 'before'},
-            {'character': '足', 'onyomi': 'SOKU', 'kunyomi': 'ashi, ta(riru), ta(su)',
-             'meaning': 'foot, to be sufficient, to add'},
-            {'character': '多', 'onyomi': 'TA', 'kunyomi': 'oo(i)', 'meaning': 'many'},
-            {'character': '大', 'onyomi': 'DAI, TAI', 'kunyomi': 'ou(kii), oo(i)', 'meaning': 'big, a lot'},
-            {'character': '男', 'onyomi': 'DAN, NAN', 'kunyomi': 'otoko', 'meaning': 'man, male'},
-            {'character': '中', 'onyomi': 'CHUU', 'kunyomi': 'naka', 'meaning': 'inner, center, between'},
-            {'character': '長', 'onyomi': 'CHOU', 'kunyomi': 'naga(i)', 'meaning': 'long, leader'},
-            {'character': '天', 'onyomi': 'TEN', 'kunyomi': 'ame, ama', 'meaning': 'sky'},
-            {'character': '店', 'onyomi': 'TEN', 'kunyomi': 'mise', 'meaning': 'shop'},
-            {'character': '電', 'onyomi': 'DEN', 'kunyomi': '–', 'meaning': 'electricity'},
-            {'character': '土', 'onyomi': 'DO, TO', 'kunyomi': 'tsuchi', 'meaning': 'earth, ground'},
-            {'character': '東', 'onyomi': 'TOU', 'kunyomi': 'higashi', 'meaning': 'east'},
-            {'character': '道', 'onyomi': 'DOU', 'kunyomi': 'michi', 'meaning': 'street, path'},
-            {'character': '読', 'onyomi': 'DOKU', 'kunyomi': 'yo(mu)', 'meaning': 'to read'},
-            {'character': '南', 'onyomi': 'NAN', 'kunyomi': 'minami', 'meaning': 'south'},
-            {'character': 'ニ', 'onyomi': 'NI', 'kunyomi': 'futa(tsu), futa-', 'meaning': 'two'},
-            {'character': '日', 'onyomi': 'NICHI, JITSU', 'kunyomi': 'hi, -ka', 'meaning': 'day, sun'},
-            {'character': '入', 'onyomi': 'NYUU', 'kunyomi': 'hai(ru), i(ru), i(reru)',
-             'meaning': 'to enter, to insert'},
-            {'character': '年', 'onyomi': 'NEN', 'kunyomi': 'toshi', 'meaning': 'year'},
-            {'character': '買', 'onyomi': 'BAI', 'kunyomi': 'ka(u)', 'meaning': 'to buy'},
-            {'character': '白', 'onyomi': 'HAKU, BYAKU', 'kunyomi': 'shiro(i), shiro', 'meaning': 'white'},
-            {'character': '八', 'onyomi': 'HACHI', 'kunyomi': 'yat(tsu), ya(tsu), ya-, you-', 'meaning': 'eight'},
-            {'character': '半', 'onyomi': 'HAN', 'kunyomi': 'naka(ba)', 'meaning': 'half, middle, semi-'},
-            {'character': '百', 'onyomi': 'HYAKU', 'kunyomi': '–', 'meaning': 'hundred'},
-            {'character': '父', 'onyomi': 'FU', 'kunyomi': 'chichi', 'meaning': 'father'},
-            {'character': '分', 'onyomi': 'BUN, BU, FUN', 'kunyomi': 'wa(keru), wa(kareru), wa(karu)',
-             'meaning': 'part, minute, to divide, to understand'},
-            {'character': '聞', 'onyomi': 'BUN, MON', 'kunyomi': 'ki(ku), ki(koeru)',
-             'meaning': 'to hear, to listen, to ask'},
-            {'character': '母', 'onyomi': 'BO', 'kunyomi': 'haha', 'meaning': 'mother'},
-            {'character': '北', 'onyomi': 'HOKU', 'kunyomi': 'kita', 'meaning': 'north'},
-            {'character': '木', 'onyomi': 'BOKU, MOKU', 'kunyomi': 'ki, ko', 'meaning': 'tree, wood'},
-            {'character': '本', 'onyomi': 'HON', 'kunyomi': 'moto', 'meaning': 'book, source, main-'},
-            {'character': '毎', 'onyomi': 'MAI', 'kunyomi': '–', 'meaning': 'each, every'},
-            {'character': '万', 'onyomi': 'MAN, BAN', 'kunyomi': '–', 'meaning': 'ten thousand, all, many'},
-            {'character': '名', 'onyomi': 'MEI, MYOU', 'kunyomi': 'na', 'meaning': 'name, reputation'},
-            {'character': '目', 'onyomi': 'MOKU', 'kunyomi': 'me', 'meaning': 'eye'},
-            {'character': '友', 'onyomi': 'YUU', 'kunyomi': 'tomo', 'meaning': 'friend'},
-            {'character': '来', 'onyomi': 'RAI', 'kunyomi': 'ku(ru), kita(ru), kita(su)', 'meaning': 'to come'},
-            {'character': '立', 'onyomi': 'RITSU', 'kunyomi': 'ta(tsu), ta(teru)', 'meaning': 'to stand, to establish'},
-            {'character': '六', 'onyomi': 'ROKU', 'kunyomi': 'mutt(su), mu(tsu), mu, mui', 'meaning': 'six'},
-            {'character': '話', 'onyomi': 'WA', 'kunyomi': 'hanashi, hana(su)',
-             'meaning': 'speech, to talk, story, conversation'},
-        ]
-
-        # Categorize the kanji
-        # Define the order for numbers explicitly to ensure increasing order
-        number_order = ['一', 'ニ', '三', '四', '五', '六', '七', '八', '九', '十', '百', '千', '万']
-        numbers = [k for k in kanji_data if k['character'] in number_order]
-        numbers = sorted(numbers, key=lambda k: number_order.index(k['character']))
-
-        environment = [k for k in kanji_data if
-                       k['character'] in ['雨', '火', '花', '山', '川', '空', '月', '気', '魚', '金', '木', '水', '土',
-                                          '日', '電', '天']]
-        people = [k for k in kanji_data if
-                  k['character'] in ['人', '子', '女', '男', '父', '母', '友', '手', '足', '耳', '目', '口', '名',
-                                     '生']]
-        directions = [k for k in kanji_data if
-                      k['character'] in ['上', '下', '左', '右', '中', '外', '前', '後', '西', '東', '南', '北']]
-        verbs = [k for k in kanji_data if
-                 k['character'] in ['飲', '会', '出', '見', '言', '休', '行', '書', '食', '入', '買', '聞', '読', '来',
-                                    '立', '話', '学', '分']]
-        adjectives = [k for k in kanji_data if
-                      k['character'] in ['安', '多', '大', '小', '少', '新', '古', '高', '長', '白', '半']]
-        misc = [k for k in kanji_data if k['character'] not in (
-                [k['character'] for k in numbers] + [k['character'] for k in environment] +
-                [k['character'] for k in people] + [k['character'] for k in directions] +
-                [k['character'] for k in verbs] + [k['character'] for k in adjectives]
-        )]
-
-        # Context dictionary to pass to the template
-        context = {
-            'numbers': numbers,
-            'environment': environment,
-            'people': people,
-            'directions': directions,
-            'verbs': verbs,
-            'adjectives': adjectives,
-            'misc': misc,
-        }
-
-        return render(request, 'kanji/n5kanji_chart.html', context)
-
-    # Context dictionary to pass to the template
     context = {
-        'numbers': numbers,
-        'environment': environment,
-        'people': people,
-        'directions': directions,
-        'verbs': verbs,
-        'adjectives': adjectives,
-        'misc': misc,
+        'numbers': kanji_numbers,
+        'environment': kanji_environment,
+        'people': kanji_people,
+        'directions': kanji_directions,
+        'verbs': kanji_verbs,
+        'adjectives': kanji_adjectives,
+        'misc': kanji_misc,
     }
-
     return render(request, 'kanji/n5_kanji.html', context)
 
+# Kanji data for flashcards (same as used in n5_kanji_flashcards.html)
+flashcard_kanji_data = [
+    {'character': '一', 'onyomi': 'ICHI, ITSU', 'kunyomi': 'hito(tsu), hito-', 'meaning': 'one'},
+    {'character': '二', 'onyomi': 'NI', 'kunyomi': 'futa(tsu), futa-', 'meaning': 'two'},
+    {'character': '三', 'onyomi': 'SAN', 'kunyomi': 'mit(tsu), mi-', 'meaning': 'three'},
+    {'character': '四', 'onyomi': 'SHI', 'kunyomi': 'yon, yo(tsu), yo-', 'meaning': 'four'},
+    {'character': '五', 'onyomi': 'GO', 'kunyomi': 'itsu(tsu), itsu-', 'meaning': 'five'},
+    {'character': '六', 'onyomi': 'ROKU', 'kunyomi': 'mut(tsu), mu-', 'meaning': 'six'},
+    {'character': '七', 'onyomi': 'SHICHI', 'kunyomi': 'nana(tsu), nana-', 'meaning': 'seven'},
+    {'character': '八', 'onyomi': 'HACHI', 'kunyomi': 'yat(tsu), ya-', 'meaning': 'eight'},
+    {'character': '九', 'onyomi': 'KYUU, KU', 'kunyomi': 'kokono(tsu), kokono-', 'meaning': 'nine'},
+    {'character': '十', 'onyomi': 'JUU', 'kunyomi': 'too, to-', 'meaning': 'ten'},
+    {'character': '百', 'onyomi': 'HYAKU', 'kunyomi': '–', 'meaning': 'hundred'},
+    {'character': '千', 'onyomi': 'SEN', 'kunyomi': '–', 'meaning': 'thousand'},
+    {'character': '万', 'onyomi': 'MAN', 'kunyomi': '–', 'meaning': 'ten thousand'},
+    {'character': '雨', 'onyomi': 'U', 'kunyomi': 'ame, ama-', 'meaning': 'rain'},
+    {'character': '火', 'onyomi': 'KA', 'kunyomi': 'hi, -bi', 'meaning': 'fire'},
+    {'character': '花', 'onyomi': 'KA', 'kunyomi': 'hana', 'meaning': 'flower'},
+    {'character': '山', 'onyomi': 'SAN', 'kunyomi': 'yama', 'meaning': 'mountain'},
+    {'character': '川', 'onyomi': 'SEN', 'kunyomi': 'kawa', 'meaning': 'river'},
+    {'character': '空', 'onyomi': 'KUU', 'kunyomi': 'sora, a(keru), kara', 'meaning': 'sky, empty'},
+    {'character': '月', 'onyomi': 'GETSU, GATSU', 'kunyomi': 'tsuki', 'meaning': 'moon, month'},
+    {'character': '気', 'onyomi': 'KI, KE', 'kunyomi': '–', 'meaning': 'spirit, air'},
+    {'character': '魚', 'onyomi': 'GYO', 'kunyomi': 'sakana, uo', 'meaning': 'fish'},
+    {'character': '金', 'onyomi': 'KIN, KON', 'kunyomi': 'kane', 'meaning': 'gold, money'},
+    {'character': '木', 'onyomi': 'BOKU, MOKU', 'kunyomi': 'ki, ko-', 'meaning': 'tree, wood'},
+    {'character': '水', 'onyomi': 'SUI', 'kunyomi': 'mizu, mizu-', 'meaning': 'water'},
+    {'character': '土', 'onyomi': 'DO, TO', 'kunyomi': 'tsuchi', 'meaning': 'earth, soil'},
+    {'character': '日', 'onyomi': 'NICHI, JITSU', 'kunyomi': 'hi, -ka', 'meaning': 'day, sun'},
+    {'character': '電', 'onyomi': 'DEN', 'kunyomi': '–', 'meaning': 'electricity'},
+    {'character': '天', 'onyomi': 'TEN', 'kunyomi': 'ame, ama-', 'meaning': 'heaven, sky'},
+    {'character': '人', 'onyomi': 'JIN, NIN', 'kunyomi': 'hito', 'meaning': 'person'},
+    {'character': '子', 'onyomi': 'SHI, SU', 'kunyomi': 'ko, -ko', 'meaning': 'child'},
+    {'character': '女', 'onyomi': 'JO, NYO', 'kunyomi': 'onna, me', 'meaning': 'woman'},
+    {'character': '男', 'onyomi': 'DAN, NAN', 'kunyomi': 'otoko', 'meaning': 'man'},
+    {'character': '父', 'onyomi': 'FU', 'kunyomi': 'tō, chichi', 'meaning': 'father'},
+    {'character': '母', 'onyomi': 'BO', 'kunyomi': 'haha', 'meaning': 'mother'},
+    {'character': '友', 'onyomi': 'YUU', 'kunyomi': 'tomo', 'meaning': 'friend'},
+    {'character': '手', 'onyomi': 'SHU', 'kunyomi': 'te', 'meaning': 'hand'},
+    {'character': '足', 'onyomi': 'SOKU', 'kunyomi': 'ashi, ta(riru)', 'meaning': 'foot, leg'},
+    {'character': '耳', 'onyomi': 'JI', 'kunyomi': 'mimi', 'meaning': 'ear'},
+    {'character': '目', 'onyomi': 'MOKU', 'kunyomi': 'me, -me', 'meaning': 'eye'},
+    {'character': '口', 'onyomi': 'KOU', 'kunyomi': 'kuchi, -guchi', 'meaning': 'mouth'},
+    {'character': '名', 'onyomi': 'MEI, MYOU', 'kunyomi': 'na', 'meaning': 'name'},
+    {'character': '生', 'onyomi': 'SEI, SHOU', 'kunyomi': 'i(kiru), u(mareru), ha(yasu)', 'meaning': 'life, birth'},
+    {'character': '上', 'onyomi': 'JOU', 'kunyomi': 'ue, u(wari), a(geru), nobo(ru)', 'meaning': 'up, above'},
+    {'character': '下', 'onyomi': 'KA, GE', 'kunyomi': 'shita, sa(geru), o(riru)', 'meaning': 'down, below'},
+    {'character': '左', 'onyomi': 'SA', 'kunyomi': 'hidari', 'meaning': 'left'},
+    {'character': '右', 'onyomi': 'U, YUU', 'kunyomi': 'migi', 'meaning': 'right'},
+    {'character': '中', 'onyomi': 'CHUU', 'kunyomi': 'naka', 'meaning': 'middle, inside'},
+    {'character': '外', 'onyomi': 'GAI', 'kunyomi': 'soto, hoka', 'meaning': 'outside'},
+    {'character': '前', 'onyomi': 'ZEN', 'kunyomi': 'mae', 'meaning': 'front, before'},
+    {'character': '後', 'onyomi': 'GO, KOU', 'kunyomi': 'ushiro, ato', 'meaning': 'behind, after'},
+    {'character': '西', 'onyomi': 'SEI', 'kunyomi': 'nishi', 'meaning': 'west'},
+    {'character': '東', 'onyomi': 'TOU', 'kunyomi': 'higashi', 'meaning': 'east'},
+    {'character': '南', 'onyomi': 'NAN', 'kunyomi': 'minami', 'meaning': 'south'},
+    {'character': '北', 'onyomi': 'HOKU', 'kunyomi': 'kita', 'meaning': 'north'},
+    {'character': '飲', 'onyomi': 'IN', 'kunyomi': 'no(mu)', 'meaning': 'drink'},
+    {'character': '会', 'onyomi': 'KAI, E', 'kunyomi': 'a(u)', 'meaning': 'meet'},
+    {'character': '出', 'onyomi': 'SHUTSU', 'kunyomi': 'de(ru), da(su)', 'meaning': 'exit, go out'},
+    {'character': '見', 'onyomi': 'KEN', 'kunyomi': 'mi(ru), mi(eru)', 'meaning': 'see'},
+    {'character': '言', 'onyomi': 'GEN, GON', 'kunyomi': 'i(u), koto', 'meaning': 'say, word'},
+    {'character': '休', 'onyomi': 'KYUU', 'kunyomi': 'yasu(mu)', 'meaning': 'rest'},
+    {'character': '行', 'onyomi': 'KOU', 'kunyomi': 'i(ku), yu(ku), okona(u)', 'meaning': 'go'},
+    {'character': '書', 'onyomi': 'SHO', 'kunyomi': 'ka(ku)', 'meaning': 'write'},
+    {'character': '食', 'onyomi': 'SHOKU', 'kunyomi': 'ta(beru), ku(u)', 'meaning': 'eat'},
+    {'character': '入', 'onyomi': 'NYUU', 'kunyomi': 'i(ru), hai(ru)', 'meaning': 'enter'},
+    {'character': '買', 'onyomi': 'BAI', 'kunyomi': 'ka(u)', 'meaning': 'buy'},
+    {'character': '聞', 'onyomi': 'BUN, MON', 'kunyomi': 'ki(ku)', 'meaning': 'hear, listen'},
+    {'character': '読', 'onyomi': 'DOKU', 'kunyomi': 'yo(mu)', 'meaning': 'read'},
+    {'character': '来', 'onyomi': 'RAI', 'kunyomi': 'ku(ru)', 'meaning': 'come'},
+    {'character': '立', 'onyomi': 'RITSU', 'kunyomi': 'ta(tsu)', 'meaning': 'stand'},
+    {'character': '話', 'onyomi': 'WA', 'kunyomi': 'hanashi, hana(su)', 'meaning': 'talk, story'},
+    {'character': '学', 'onyomi': 'GAKU', 'kunyomi': 'mana(bu)', 'meaning': 'study, learn'},
+    {'character': '分', 'onyomi': 'BUN, FUN', 'kunyomi': 'wa(karu)', 'meaning': 'minute, understand'},
+    {'character': '安', 'onyomi': 'AN', 'kunyomi': 'yasu(i)', 'meaning': 'peace, cheap, safety'},
+    {'character': '多', 'onyomi': 'TA', 'kunyomi': 'oo(i)', 'meaning': 'many, much'},
+    {'character': '大', 'onyomi': 'DAI, TAI', 'kunyomi': 'ou(kii), oo(i)', 'meaning': 'big, a lot'},
+    {'character': '小', 'onyomi': 'SHOU', 'kunyomi': 'chii(sai), ko-', 'meaning': 'small'},
+    {'character': '少', 'onyomi': 'SHOU', 'kunyomi': 'suko(shi), suku(nai)', 'meaning': 'few, little'},
+    {'character': '新', 'onyomi': 'SHIN', 'kunyomi': 'atara(shii)', 'meaning': 'new'},
+    {'character': '古', 'onyomi': 'KO', 'kunyomi': 'furu(i)', 'meaning': 'old'},
+    {'character': '高', 'onyomi': 'KOU', 'kunyomi': 'taka(i)', 'meaning': 'high, tall, expensive'},
+    {'character': '長', 'onyomi': 'CHOU', 'kunyomi': 'naga(i)', 'meaning': 'long, leader'},
+    {'character': '白', 'onyomi': 'HAKU', 'kunyomi': 'shiro, shiro(i)', 'meaning': 'white'},
+    {'character': '半', 'onyomi': 'HAN', 'kunyomi': '–', 'meaning': 'half'},
+    {'character': '今', 'onyomi': 'KON', 'kunyomi': 'ima', 'meaning': 'now'},
+    {'character': '何', 'onyomi': 'KA', 'kunyomi': 'nani, nan', 'meaning': 'what'},
+    {'character': '時', 'onyomi': 'JI', 'kunyomi': 'toki, -doki', 'meaning': 'time, hour'},
+    {'character': '間', 'onyomi': 'KAN', 'kunyomi': 'aida, ma', 'meaning': 'interval, space'},
+    {'character': '年', 'onyomi': 'NEN', 'kunyomi': 'toshi', 'meaning': 'year'},
+    {'character': '円', 'onyomi': 'EN', 'kunyomi': 'maru(i)', 'meaning': 'yen, circle'},
+    {'character': '先', 'onyomi': 'SEN', 'kunyomi': 'saki', 'meaning': 'previous, ahead'},
+    {'character': '毎', 'onyomi': 'MAI', 'kunyomi': '–', 'meaning': 'every'},
+    {'character': '本', 'onyomi': 'HON', 'kunyomi': 'moto', 'meaning': 'book, origin'},
+    {'character': '校', 'onyomi': 'KOU', 'kunyomi': '–', 'meaning': 'school'},
+    {'character': '駅', 'onyomi': 'EKI', 'kunyomi': '–', 'meaning': 'station'},
+    {'character': '店', 'onyomi': 'TEN', 'kunyomi': 'mise', 'meaning': 'shop'},
+    {'character': '道', 'onyomi': 'DOU', 'kunyomi': 'michi', 'meaning': 'road, way'},
+]
+
+# Categorize the kanji for flashcards
+flashcard_number_order = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '百', '千', '万']
+flashcard_kanji_numbers = [k for k in flashcard_kanji_data if k['character'] in flashcard_number_order]
+flashcard_kanji_numbers = sorted(flashcard_kanji_numbers, key=lambda k: flashcard_number_order.index(k['character']))
+flashcard_kanji_environment = [k for k in flashcard_kanji_data if k['character'] in ['雨', '火', '花', '山', '川', '空', '月', '気', '魚', '金', '木', '水', '土', '日', '電', '天']]
+flashcard_kanji_people = [k for k in flashcard_kanji_data if k['character'] in ['人', '子', '女', '男', '父', '母', '友', '手', '足', '耳', '目', '口', '名', '生']]
+flashcard_kanji_directions = [k for k in flashcard_kanji_data if k['character'] in ['上', '下', '左', '右', '中', '外', '前', '後', '西', '東', '南', '北']]
+flashcard_kanji_verbs = [k for k in flashcard_kanji_data if k['character'] in ['飲', '会', '出', '見', '言', '休', '行', '書', '食', '入', '買', '聞', '読', '来', '立', '話', '学', '分']]
+flashcard_kanji_adjectives = [k for k in flashcard_kanji_data if k['character'] in ['安', '多', '大', '小', '少', '新', '古', '高', '長', '白', '半']]
+flashcard_kanji_misc = [k for k in flashcard_kanji_data if k['character'] not in (
+    [k['character'] for k in flashcard_kanji_numbers] + [k['character'] for k in flashcard_kanji_environment] +
+    [k['character'] for k in flashcard_kanji_people] + [k['character'] for k in flashcard_kanji_directions] +
+    [k['character'] for k in flashcard_kanji_verbs] + [k['character'] for k in flashcard_kanji_adjectives]
+)]
+
+def flashcards_n5_kanji(request):
+    context = {
+        'numbers': flashcard_kanji_numbers,
+        'environment': flashcard_kanji_environment,
+        'people': flashcard_kanji_people,
+        'directions': flashcard_kanji_directions,
+        'verbs': flashcard_kanji_verbs,
+        'adjectives': flashcard_kanji_adjectives,
+        'misc': flashcard_kanji_misc,
+        'all_kanji': flashcard_kanji_data,
+    }
+    return render(request, 'flashcards/n5_kanji_flashcards.html', context)
 
 def n4(request):
     return render(request, 'level_detail.html', {'level': 'N4'})

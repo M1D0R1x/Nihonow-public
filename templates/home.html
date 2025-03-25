@@ -5,13 +5,21 @@
 {% block title %}Nihonow{% endblock %}
 
 {% block content %}
-<!-- Greeting Section -->
+<!-- Greeting Section with Inline Styles -->
 {% if user.is_authenticated %}
-    <div class="greeting-container">
+    <div style="background: linear-gradient(135deg, #ff9a9e, #fad0c4); padding: 20px 0; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin: 20px 0;">
         <div class="container mt-3 text-center">
-            <h4 class="greeting-text" style="color: #d4a017;">{% get_greeting user.username %}</h4>
+            <h4 style="font-size: 2rem; font-weight: 700; background: linear-gradient(90deg, #ff6f61, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); animation: fadeIn 1.5s ease-in-out; margin: 0;">
+                {% get_greeting user.username %}
+            </h4>
         </div>
     </div>
+    <style>
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 {% endif %}
 
 <!-- Hero Section -->

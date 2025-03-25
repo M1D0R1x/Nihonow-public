@@ -1,8 +1,37 @@
 {% extends 'base.html' %}
 {% block title %}N5 Kanji - Nihonow{% endblock %}
 {% block content %}
-<div class="container my-5">
+<div class="container my-5" style="background: linear-gradient(135deg, #f6d365, #fda085); padding: 20px; border-radius: 10px;">
     <h1 class="text-center mb-4" style="color: #333;">JLPT N5 Kanji</h1>
+
+    <!-- Introductory Section -->
+    <div class="card mb-4 shadow-sm" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb); border-color: #3498db;">
+        <div class="card-body">
+            <h2 class="card-title text-center" style="color: #3498db;">About JLPT N5 Kanji</h2>
+            <p class="text-dark">The Japanese Language Proficiency Test (JLPT) N5 is the beginner level of a globally recognized exam that tests your Japanese language skills. At the N5 level, you are expected to know approximately 100 kanji characters, which are essential for reading and writing basic Japanese.</p>
+            <p class="text-dark">Kanji are Chinese characters used in Japanese to represent words or ideas. The 103 kanji listed here cover numbers, directions, verbs, adjectives, and more, forming the foundation for everyday communication. Learning these kanji will help you read simple texts, such as signs, menus, and basic sentences.</p>
+            <p class="text-dark"><strong>Tips for Learning Kanji:</strong></p>
+            <ul class="text-dark">
+                <li>Focus on <strong>stroke order</strong>: Writing kanji in the correct order helps with memorization and proper form. Check <a href="https://www.tofugu.com/japanese/kanji-stroke-order/" target="_blank">this resource</a> for guidance.</li>
+                <li>Learn the <strong>readings</strong>: Each kanji has On’yomi (Chinese reading) and Kun’yomi (Japanese reading). Some kanji may have multiple readings depending on the context.</li>
+                <li>Use <strong>mnemonics</strong>: Create stories or associations to remember the meaning and readings of each kanji.</li>
+                <li>Practice regularly with flashcards <a href="/flashcards/n5-kanji/" target="_blank">on our website</a>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Download Button -->
+    <div class="text-center mb-4">
+        <a href="https://fczdt0xol8zxbzng.public.blob.vercel-storage.com/N5_Kanji_Chart-SOOBpLLaBB9PX77G8AwudEn7TmHFyF.pdf?download=1"
+           class="btn btn-lg"
+           style="background-color: #ff4500; border-color: #ff4500; padding: 10px 20px; font-size: 18px; font-weight: bold; text-decoration: none; border-radius: 5px; color: #ffffff;"
+           onmouseover="this.style.backgroundColor='#e03e00'; this.style.borderColor='#e03e00';"
+           onmouseout="this.style.backgroundColor='#ff4500'; this.style.borderColor='#ff4500';"
+           download>
+            Download N5 Kanji Chart
+        </a>
+    </div>
+
     <!-- Bootstrap Tabs -->
     <ul class="nav nav-tabs mb-4" id="kanjiTabs" role="tablist">
         <li class="nav-item" role="presentation">
@@ -27,18 +56,6 @@
             <button class="nav-link" id="misc-tab" data-bs-toggle="tab" data-bs-target="#misc" type="button" role="tab" aria-controls="misc" aria-selected="false">Miscellaneous</button>
         </li>
     </ul>
-
-    <!-- Download Button -->
-    <div class="text-center mb-4">
-        <a href="https://fczdt0xol8zxbzng.public.blob.vercel-storage.com/N5_Kanji_Chart-SOOBpLLaBB9PX77G8AwudEn7TmHFyF.pdf?download=1"
-           class="btn btn-lg"
-           style="background-color: #ff4500; border-color: #ff4500; padding: 10px 20px; font-size: 18px; font-weight: bold; text-decoration: none; border-radius: 5px; color: #ffffff;"
-           onmouseover="this.style.backgroundColor='#e03e00'; this.style.borderColor='#e03e00';"
-           onmouseout="this.style.backgroundColor='#ff4500'; this.style.borderColor='#ff4500';"
-           download>
-            Download N5 Kanji Chart
-        </a>
-    </div>
 
     <!-- Tab Content -->
     <div class="tab-content" id="kanjiTabContent">

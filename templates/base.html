@@ -93,6 +93,15 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'hiragana' %}">Hiragana</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'katakana' %}">Katakana</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'resources' %}">Resources</a></li>
+                    <!-- Add Flashcards Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="flashcardsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Flashcards
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="flashcardsDropdown">
+                            <li><a class="dropdown-item" href="{% url 'flashcards_n5_kanji' %}">N5 Kanji</a></li>
+                        </ul>
+                    </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

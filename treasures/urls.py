@@ -37,4 +37,5 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('admin-bulk-upload/', views.admin_bulk_upload, name='admin_bulk_upload'),
     path('n5_kanji/', views.n5_kanji, name='n5_kanji'),
+    path('flashcards/n5-kanji/', views.flashcards_n5_kanji, name='flashcards_n5_kanji'),
 ]

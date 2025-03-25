@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% block title %}N5 Kanji Flashcards - Nihonow{% endblock %}
+{% block content %}
+<!-- Set the page background and custom styles -->
+<style>
+    body {
+        background: linear-gradient(135deg, #fff5f5, #fffde7);
+    }
+    .container-shadow {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow to match home.html cards */
+    }
+    .subtype-btn {
+        border-color: #ff6f61; /* Coral red outline */
+        color: #ff6f61;
+        border-radius: 20px; /* Rounded corners to match screenshot */
+        transition: all 0.3s;
+    }
+    .subtype-btn:hover {
+        background-color: #ff6f61;
+        color: #fff;
+    }
+    .option-btn {
+        border-color: #2c3e50; /* Dark blue-gray outline */
+        color: #2c3e50;
+        border-radius: 15px; /* Slightly rounded for consistency */
+        transition: all 0.3s;
+    }
+    .option-btn:hover {
+        background-color: #e68a8e; /* Darker shade of N5 coral for hover */
+        color: #fff;
+    }
+    .btn-next {
+        background-color: #ff6f61; /* Coral red */
+        color: #fff;
+        border: none;
+        border-radius: 15px;
+        transition: all 0.3s;
+    }
+    .btn-next:hover {
+        background-color: #e65a50; /* Slightly darker coral */
+    }
+    .btn-back {
+        background-color: #ffd700; /* Golden yellow */
+        color: #333;
+        border: none;
+        border-radius: 15px;
+        transition: all 0.3s;
+    }
+    .btn-back:hover {
+        background-color: #e6c200; /* Slightly darker yellow */
+    }
+    .kanji-card {
+        max-width: 400px; /* Increased size */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow to match home.html */
+    }
+    .kanji-display {
+        font-size: 4.5rem; /* Increased kanji size */
+    }
+    .card-text {
+        font-size: 1.1rem; /* Slightly larger text for better readability */
+    }
+</style>
+
+<div class="container my-5 container-shadow" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4); padding: 20px; border-radius: 10px;">
+    <h1 class="text-center mb-4" style="color: #d32f2f;">N5 Kanji Flashcards</h1>
+
+    <!-- Subtype Selection -->
+    <div id="subtypeSelection" class="mb-4">
+        <h3 class="text-center mb-3" style="color: #d32f2f;">Select a Category to Practice</h3>
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+            <button class="btn subtype-btn" data-subtype="numbers">Numbers</button>
+            <button class="btn subtype-btn" data-subtype="environment">Environment</button>
+            <button class="btn subtype-btn" data-subtype="people">People & Body</button>
+            <button class="btn subtype-btn" data-subtype="directions">Directions</button>
+            <button class="btn subtype-btn" data-subtype="verbs">Verbs</button>
+            <button class="btn subtype-btn" data-subtype="adjectives">Adjectives</button>
+            <button class="btn subtype-btn" data-subtype="misc">Miscellaneous</button>
+            <button class="btn subtype-btn" data-subtype="all_kanji">All</button>
+        </div>
+    </div>
+
+    <!-- Flashcard Area (Hidden Initially) -->
+    <div id="flashcardArea" class="d-none">
+        <!-- Score Display -->
+        <div class="text-center mb-3">
+            <h4 style="color: #d32f2f;">Score: <span id="score">0</span></h4>
+        </div>
+
+        <!-- Kanji Card -->
+        <div class="card mb-4 mx-auto kanji-card" style="background-color: #f7f1e3; border: none;">
+            <div class="card-body text-center">
+                <h2 id="kanjiDisplay" class="kanji-display" style="color: #d32f2f;">一</h2>
+                <p class="card-text" style="color: #333;">Select the correct meaning:</p>
+            </div>
+        </div>
+
+        <!-- Options -->
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
+            <button class="btn option-btn" data-option="0"></button>
+            <button class="btn option-btn" data-option="1"></button>
+            <button class="btn option-btn" data-option="2"></button>
+            <button class="btn option-btn" data-option="3"></button>
+        </div>
+
+        <!-- Feedback -->
+        <div id="feedback" class="text-center mb-3"></div>
+
+        <!-- Next Question Button -->
+        <div class="text-center">
+            <button id="nextQuestionBtn" class="btn btn-next d-none">Next Question</button>
+        </div>
+
+        <!-- Back to Selection Button -->
+        <div class="text-center mt-3">
+            <button id="backToSelectionBtn" class="btn btn-back">Back to Selection</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Kanji data passed from the view
+const kanjiData = {
+    numbers: {{ numbers|safe }},
+    environment: {{ environment|safe }},
+    people: {{ people|safe }},
+    directions: {{ directions|safe }},
+    verbs: {{ verbs|safe }},
+    adjectives: {{ adjectives|safe }},
+    misc: {{ misc|safe }},
+    all_kanji: {{ all_kanji|safe }}
+};
+
+// Initialize variables
+let currentKanjiList = [];
+let currentKanjiIndex = 0;
+let score = 0;
+let correctAnswer = '';
+let options = [];
+
+// DOM elements
+const subtypeSelection = document.getElementById('subtypeSelection');
+const flashcardArea = document.getElementById('flashcardArea');
+const kanjiDisplay = document.getElementById('kanjiDisplay');
+const optionButtons = document.querySelectorAll('.option-btn');
+const feedback = document.getElementById('feedback');
+const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+const backToSelectionBtn = document.getElementById('backToSelectionBtn');
+const scoreDisplay = document.getElementById('score');
+
+// Function to shuffle an array (Fisher-Yates algorithm)
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// Function to generate 4 options (1 correct, 3 incorrect)
+function generateOptions(correctKanji) {
+    const allMeanings = kanjiData.all_kanji.map(k => k.meaning);
+    const incorrectOptions = allMeanings.filter(m => m !== correctKanji.meaning);
+    const shuffledIncorrect = shuffle(incorrectOptions).slice(0, 3); // Pick 3 incorrect meanings
+    options = [...shuffledIncorrect, correctKanji.meaning];
+    shuffle(options); // Shuffle the options
+    correctAnswer = correctKanji.meaning;
+
+    // Update the option buttons
+    optionButtons.forEach((btn, index) => {
+        btn.textContent = options[index];
+        btn.disabled = false;
+        btn.classList.remove('btn-success', 'btn-danger');
+        btn.classList.add('option-btn');
+    });
+}
+
+// Function to display the current kanji and options
+function displayKanji() {
+    const kanji = currentKanjiList[currentKanjiIndex];
+    kanjiDisplay.textContent = kanji.character;
+    generateOptions(kanji);
+    feedback.textContent = '';
+    nextQuestionBtn.classList.add('d-none');
+    optionButtons.forEach(btn => btn.disabled = false);
+}
+
+// Function to handle option selection
+function handleOptionSelection(selectedOption) {
+    const selectedMeaning = options[selectedOption];
+    optionButtons.forEach(btn => btn.disabled = true); // Disable all buttons after selection
+
+    if (selectedMeaning === correctAnswer) {
+        feedback.textContent = 'Correct!';
+        feedback.style.color = '#96e6a1'; // Light green from N3 palette
+        optionButtons[selectedOption].classList.remove('option-btn');
+        optionButtons[selectedOption].classList.add('btn-success');
+        score += 10; // Add 10 points for a correct answer
+        scoreDisplay.textContent = score;
+    } else {
+        feedback.textContent = `Incorrect! The correct answer is '${correctAnswer}'.`;
+        feedback.style.color = '#d32f2f'; // Deep red from N5 palette
+        optionButtons[selectedOption].classList.remove('option-btn');
+        optionButtons[selectedOption].classList.add('btn-danger');
+        const correctIndex = options.indexOf(correctAnswer);
+        optionButtons[correctIndex].classList.remove('option-btn');
+        optionButtons[correctIndex].classList.add('btn-success');
+    }
+
+    // Show the Next Question button (no automatic transition)
+    nextQuestionBtn.classList.remove('d-none');
+}
+
+// Event listeners for subtype selection
+document.querySelectorAll('.subtype-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const subtype = btn.getAttribute('data-subtype');
+        currentKanjiList = [...kanjiData[subtype]]; // Create a copy of the array
+        currentKanjiList = shuffle(currentKanjiList); // Shuffle the kanji
+        currentKanjiIndex = 0;
+        subtypeSelection.classList.add('d-none');
+        flashcardArea.classList.remove('d-none');
+        displayKanji();
+    });
+});
+
+// Event listener for option buttons
+optionButtons.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+        handleOptionSelection(index);
+    });
+});
+
+// Event listener for Next Question button
+nextQuestionBtn.addEventListener('click', () => {
+    if (currentKanjiIndex < currentKanjiList.length - 1) {
+        currentKanjiIndex++;
+        displayKanji();
+    } else {
+        feedback.textContent = 'You’ve completed this category! Select another category to continue.';
+        nextQuestionBtn.classList.add('d-none');
+    }
+});
+
+// Event listener for Back to Selection button
+backToSelectionBtn.addEventListener('click', () => {
+    flashcardArea.classList.add('d-none');
+    subtypeSelection.classList.remove('d-none');
+    feedback.textContent = '';
+    currentKanjiIndex = 0;
+});
+</script>
+{% endblock %}
