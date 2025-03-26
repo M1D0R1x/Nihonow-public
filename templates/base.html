@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     {% load static %}
-<!--    <link rel="stylesheet" href="{% static 'css/styles.css' %}">-->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <!-- Embedded Favicon SVG -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiA8ZGVmcz4KICA8ZmlsdGVyIGlkPSJzdmdfMl9ibHVyIj4KICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMCIgaW49IlNvdXJjZUdyYXBoaWMiLz4KICA8L2ZpbHRlcj4KIDwvZGVmcz4KIDxnPgogIDx0aXRsZT5MYXllciAxPC90aXRsZT4KICA8cmVjdCBpZD0ic3ZnXzEiIGZpbGw9IiNmZjQ1MDAiIGhlaWdodD0iNjQiIHdpZHRoPSI2NCIvPgogIDxjaXJjbGUgZmlsdGVyPSJ1cmwoI3N2Z18yX2JsdXIpIiBpZD0ic3ZnXzIiIGZpbGw9IiNmZmZmZmYiIHI9IjIyIiBjeT0iMzIiIGN4PSIzMiIvPgogIDxwYXRoIHN0cm9rZT0ibnVsbCIgaWQ9InN2Z18zIiBmaWxsPSIjZmY0NTAwIiBkPSJtNDAuODY5NTYsNDNsMCwtMjBsLTQuODE5ODcsMGwwLDEybC03LjIyOTgxLC0xMmwwLDBsLTQuODE5ODcsMGwwLDIwbDQuODE5ODcsMGwwLC0xMmw3LjIyOTgxLDEybDQuODE5ODcsMHoiLz4KICA8cGF0aCBkPSJtLTI4LjM0NzgyLDUuMTg4NGMwLC0wLjE0NDkzIDAsLTAuMTQ0OTMgMCwtMC41Nzk3MWMwLC0wLjE0NDkzIDAsLTAuNTc5NzEgMCwtMC43MjQ2NGMwLC0wLjU3OTcxIC0wLjAzNTQyLC0xLjAxNjY2IDAsLTEuMzA0MzVjMC4wNzMwMSwtMC41OTMwNyAwLjIxOTAyLC0xLjE2Mzc2IDAuMjg5ODUsLTEuNzM5MTNjMC4wNzMwMSwtMC41OTMwNyAwLjI3NTg2LC0xLjE2MTg3IDAuNDM0NzgsLTIuMDI4OTljMC4xMzMyMiwtMC43MjY4OCAwLjI4OTg1LC0xLjMwNDM1IDAuNDM0NzgsLTEuODg0MDZjMC4xNDQ5MywtMC41Nzk3MSAwLjI4OTg1LC0xLjE1OTQyIDAuNDM0NzgsLTEuNzM5MTNjMC4xNDQ5MywtMC41Nzk3MSAwLjIxMTQyLC0xLjExNDk5IDAuMjg5ODYsLTEuMzA0MzVjMC4xNjYzOCwtMC40MDE2OSAwLjIxMTQyLC0wLjk3MDA2IDAuMjg5ODUsLTEuMTU5NDJjMC4xNjYzOCwtMC40MDE2OSAwLC0wLjQzNDc4IDAuMTQ0OTMsLTAuNTc5NzFsMCwtMC4yODk4NiIgaWQ9InN2Z180IiBmaWxsPSJub25lIi8+CiAgPHBhdGggc3Ryb2tlPSJudWxsIiBkPSJtMTkuMDQzNDgsMjcuOTQyMDJjMCwtMC4xNDQ5MyAwLC0wLjI4OTg1IDAsLTAuMjg5ODVjMCwtMC41Nzk3MSAwLC0xLjAxNDQ5IDAsLTEuMTU5NDJjMCwtMC43MjQ2NCAtMC4yMDk5MSwtMS4yNzYxOCAtMC40MzQ3OCwtMS44ODQwNmMtMC4yMDczMiwtMC41NjA0MyAtMC41Nzk3MSwtMS4wMTQ0OSAtMC41Nzk3MSwtMS41OTQyYzAsLTAuNTc5NzEgLTAuMDcxOTIsLTEuMDAxMTMgLTAuMTQ0OTMsLTEuNTk0MmMtMC4wMTc3MSwtMC4xNDM4NCAwLC0wLjU3OTcxIDAsLTAuNzI0NjRjMCwtMC4xNDQ5MyAwLC0wLjU3OTcxIDAsLTAuNzI0NjRjMCwtMC4yODk4NiAwLjIxNjQ0LC0wLjQxNzE4IDAuMjg5ODUsLTAuODY5NTdjMC4wMjMyMSwtMC4xNDMwNiAwLjIxMTQyLC0wLjUzNTI4IDAuMjg5ODYsLTAuNzI0NjRjMC4xNjYzOCwtMC40MDE2OSAwLjExMTYzLC0wLjU4MzU5IDAuMTQ0OTMsLTAuNzI0NjRjMC4wNzQ0NiwtMC4zMTU0IDAuMTg3MzcsLTAuMzMyMyAwLjI4OTg1LC0wLjQzNDc4YzAuMTAyNDgsLTAuMTAyNDggMCwtMC40MzQ3OCAwLjE0NDkzLC0wLjQzNDc4bDAsLTAuMTQ0OTMiIGlkPSJzdmdfNSIgZmlsbD0ibm9uZSIvPgogPC9nPgo8L3N2Zz4=">
     <style>
@@ -78,55 +78,6 @@
         footer p {
             margin-bottom: 0;
         }
-        body {
-    font-family: 'Noto Sans Japanese', sans-serif; /* Japanese font */
-    background-color: #f8f8f8; /* Light gray background */
-}
-
-.navbar {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-    transition: background-color 0.3s;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-}
-
-.card {
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.table th, .table td {
-    text-align: center;
-    vertical-align: middle;
-}
-
-.dashboard-header { /* Style the main heading */
-    color: #333; /* Dark gray text */
-    font-size: 2.5rem;
-}
-
-.progress-bar {
-    background-color: #007bff; /* Blue progress bar */
-}
-
-.recent-activity, .next-steps {
-    background-color: #fff; /* White background for sections */
-    border: 1px solid #e0e0e0; /* Light gray border */
-    padding: 20px;
-    border-radius: 5px;
-}
-
-.register-container {
-    min-height: 100vh;
-    padding-bottom: 100px;
-}
     </style>
 </head>
 <body>
