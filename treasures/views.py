@@ -699,3 +699,13 @@ def admin_bulk_upload(request):
         return redirect('admin_bulk_upload')
 
     return render(request, 'admin_bulk_upload.html')
+
+
+def flashcards_home(request):
+    return render(request, 'flashcards/flashcards_home.html')
+
+def flashcards_katakana(request):
+    return render(request, 'flashcards/katakana_flashcards.html')
+
+def flashcards_hiragana(request):
+    return render(request, 'flashcards/hiragana_flashcards.html')
