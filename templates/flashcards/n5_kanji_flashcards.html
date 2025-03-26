@@ -7,12 +7,12 @@
         background: linear-gradient(135deg, #fff5f5, #fffde7);
     }
     .container-shadow {
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow to match home.html cards */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
     .subtype-btn {
-        border-color: #ff6f61; /* Coral red outline */
+        border-color: #ff6f61;
         color: #ff6f61;
-        border-radius: 20px; /* Rounded corners to match screenshot */
+        border-radius: 20px;
         transition: all 0.3s;
     }
     .subtype-btn:hover {
@@ -20,53 +20,53 @@
         color: #fff;
     }
     .option-btn {
-        border-color: #2c3e50; /* Dark blue-gray outline */
+        border-color: #2c3e50;
         color: #2c3e50;
-        border-radius: 15px; /* Slightly rounded for consistency */
+        border-radius: 15px;
         transition: all 0.3s;
     }
     .option-btn:hover {
-        background-color: #e68a8e; /* Darker shade of N5 coral for hover */
+        background-color: #e68a8e;
         color: #fff;
     }
     .btn-next {
-        background-color: #ff6f61; /* Coral red */
+        background-color: #ff6f61;
         color: #fff;
         border: none;
         border-radius: 15px;
         transition: all 0.3s;
     }
     .btn-next:hover {
-        background-color: #e65a50; /* Slightly darker coral */
+        background-color: #e65a50;
     }
     .btn-back {
-        background-color: #ffd700; /* Golden yellow */
+        background-color: #ffd700;
         color: #333;
         border: none;
         border-radius: 15px;
         transition: all 0.3s;
     }
     .btn-back:hover {
-        background-color: #e6c200; /* Slightly darker yellow */
+        background-color: #e6c200;
     }
     .kanji-card {
-        max-width: 400px; /* Increased size */
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow to match home.html */
+        max-width: 400px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
     .kanji-display {
-        font-size: 4.5rem; /* Increased kanji size */
+        font-size: 4.5rem;
     }
     .card-text {
-        font-size: 1.1rem; /* Slightly larger text for better readability */
+        font-size: 1.1rem;
     }
 </style>
 
-<div class="container my-5 container-shadow" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4); padding: 20px; border-radius: 10px;">
+<div class="container my-5 container-shadow" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4); padding: 20px; border-radius: 15px;">
     <h1 class="text-center mb-4" style="color: #d32f2f;">N5 Kanji Flashcards</h1>
 
     <!-- Subtype Selection -->
-    <div id="subtypeSelection" class="mb-4">
-        <h3 class="text-center mb-3" style="color: #d32f2f;">Select a Category to Practice</h3>
+    <div id="subtypeSelection" class="text-center" style="padding: 20px;">
+        <h3 class="mb-3" style="color: #d32f2f;">Select a Category to Practice</h3>
         <div class="d-flex flex-wrap justify-content-center gap-2">
             <button class="btn subtype-btn" data-subtype="numbers">Numbers</button>
             <button class="btn subtype-btn" data-subtype="environment">Environment</button>
@@ -82,12 +82,12 @@
     <!-- Flashcard Area (Hidden Initially) -->
     <div id="flashcardArea" class="d-none">
         <!-- Score Display -->
-        <div class="text-center mb-3">
-            <h4 style="color: #d32f2f;">Score: <span id="score">0</span></h4>
+        <div class="text-center" style="padding: 20px;">
+            <h4 style="color: #d32f2f;">Score: <span id="score">0</span> / <span id="total">0</span></h4>
         </div>
 
         <!-- Kanji Card -->
-        <div class="card mb-4 mx-auto kanji-card" style="background-color: #f7f1e3; border: none;">
+        <div class="card mb-4 mx-auto kanji-card" style="background-color: #f7f1e3; border: none; padding: 20px;">
             <div class="card-body text-center">
                 <h2 id="kanjiDisplay" class="kanji-display" style="color: #d32f2f;">一</h2>
                 <p class="card-text" style="color: #333;">Select the correct meaning:</p>
@@ -95,7 +95,7 @@
         </div>
 
         <!-- Options -->
-        <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
+        <div class="d-flex flex-wrap justify-content-center gap-2" style="padding: 20px;">
             <button class="btn option-btn" data-option="0"></button>
             <button class="btn option-btn" data-option="1"></button>
             <button class="btn option-btn" data-option="2"></button>
@@ -103,37 +103,158 @@
         </div>
 
         <!-- Feedback -->
-        <div id="feedback" class="text-center mb-3"></div>
+        <div id="feedback" class="text-center" style="padding: 20px;"></div>
 
         <!-- Next Question Button -->
-        <div class="text-center">
+        <div class="text-center" style="padding: 20px;">
             <button id="nextQuestionBtn" class="btn btn-next d-none">Next Question</button>
         </div>
 
         <!-- Back to Selection Button -->
-        <div class="text-center mt-3">
+        <div class="text-center" style="padding: 20px;">
             <button id="backToSelectionBtn" class="btn btn-back">Back to Selection</button>
         </div>
     </div>
 </div>
 
 <script>
-// Kanji data passed from the view
+// Kanji data embedded in the HTML
+const flashcard_kanji_data = [
+    {'character': '一', 'onyomi': 'ICHI, ITSU', 'kunyomi': 'hito(tsu), hito-', 'meaning': 'one'},
+    {'character': '二', 'onyomi': 'NI', 'kunyomi': 'futa(tsu), futa-', 'meaning': 'two'},
+    {'character': '三', 'onyomi': 'SAN', 'kunyomi': 'mit(tsu), mi-', 'meaning': 'three'},
+    {'character': '四', 'onyomi': 'SHI', 'kunyomi': 'yon, yo(tsu), yo-', 'meaning': 'four'},
+    {'character': '五', 'onyomi': 'GO', 'kunyomi': 'itsu(tsu), itsu-', 'meaning': 'five'},
+    {'character': '六', 'onyomi': 'ROKU', 'kunyomi': 'mut(tsu), mu-', 'meaning': 'six'},
+    {'character': '七', 'onyomi': 'SHICHI', 'kunyomi': 'nana(tsu), nana-', 'meaning': 'seven'},
+    {'character': '八', 'onyomi': 'HACHI', 'kunyomi': 'yat(tsu), ya-', 'meaning': 'eight'},
+    {'character': '九', 'onyomi': 'KYUU, KU', 'kunyomi': 'kokono(tsu), kokono-', 'meaning': 'nine'},
+    {'character': '十', 'onyomi': 'JUU', 'kunyomi': 'too, to-', 'meaning': 'ten'},
+    {'character': '百', 'onyomi': 'HYAKU', 'kunyomi': '–', 'meaning': 'hundred'},
+    {'character': '千', 'onyomi': 'SEN', 'kunyomi': '–', 'meaning': 'thousand'},
+    {'character': '万', 'onyomi': 'MAN', 'kunyomi': '–', 'meaning': 'ten thousand'},
+    {'character': '雨', 'onyomi': 'U', 'kunyomi': 'ame, ama-', 'meaning': 'rain'},
+    {'character': '火', 'onyomi': 'KA', 'kunyomi': 'hi, -bi', 'meaning': 'fire'},
+    {'character': '花', 'onyomi': 'KA', 'kunyomi': 'hana', 'meaning': 'flower'},
+    {'character': '山', 'onyomi': 'SAN', 'kunyomi': 'yama', 'meaning': 'mountain'},
+    {'character': '川', 'onyomi': 'SEN', 'kunyomi': 'kawa', 'meaning': 'river'},
+    {'character': '空', 'onyomi': 'KUU', 'kunyomi': 'sora, a(keru), kara', 'meaning': 'sky, empty'},
+    {'character': '月', 'onyomi': 'GETSU, GATSU', 'kunyomi': 'tsuki', 'meaning': 'moon, month'},
+    {'character': '気', 'onyomi': 'KI, KE', 'kunyomi': '–', 'meaning': 'spirit, air'},
+    {'character': '魚', 'onyomi': 'GYO', 'kunyomi': 'sakana, uo', 'meaning': 'fish'},
+    {'character': '金', 'onyomi': 'KIN, KON', 'kunyomi': 'kane', 'meaning': 'gold, money'},
+    {'character': '木', 'onyomi': 'BOKU, MOKU', 'kunyomi': 'ki, ko-', 'meaning': 'tree, wood'},
+    {'character': '水', 'onyomi': 'SUI', 'kunyomi': 'mizu, mizu-', 'meaning': 'water'},
+    {'character': '土', 'onyomi': 'DO, TO', 'kunyomi': 'tsuchi', 'meaning': 'earth, soil'},
+    {'character': '日', 'onyomi': 'NICHI, JITSU', 'kunyomi': 'hi, -ka', 'meaning': 'day, sun'},
+    {'character': '電', 'onyomi': 'DEN', 'kunyomi': '–', 'meaning': 'electricity'},
+    {'character': '天', 'onyomi': 'TEN', 'kunyomi': 'ame, ama-', 'meaning': 'heaven, sky'},
+    {'character': '人', 'onyomi': 'JIN, NIN', 'kunyomi': 'hito', 'meaning': 'person'},
+    {'character': '子', 'onyomi': 'SHI, SU', 'kunyomi': 'ko, -ko', 'meaning': 'child'},
+    {'character': '女', 'onyomi': 'JO, NYO', 'kunyomi': 'onna, me', 'meaning': 'woman'},
+    {'character': '男', 'onyomi': 'DAN, NAN', 'kunyomi': 'otoko', 'meaning': 'man'},
+    {'character': '父', 'onyomi': 'FU', 'kunyomi': 'tō, chichi', 'meaning': 'father'},
+    {'character': '母', 'onyomi': 'BO', 'kunyomi': 'haha', 'meaning': 'mother'},
+    {'character': '友', 'onyomi': 'YUU', 'kunyomi': 'tomo', 'meaning': 'friend'},
+    {'character': '手', 'onyomi': 'SHU', 'kunyomi': 'te', 'meaning': 'hand'},
+    {'character': '足', 'onyomi': 'SOKU', 'kunyomi': 'ashi, ta(riru)', 'meaning': 'foot, leg'},
+    {'character': '耳', 'onyomi': 'JI', 'kunyomi': 'mimi', 'meaning': 'ear'},
+    {'character': '目', 'onyomi': 'MOKU', 'kunyomi': 'me, -me', 'meaning': 'eye'},
+    {'character': '口', 'onyomi': 'KOU', 'kunyomi': 'kuchi, -guchi', 'meaning': 'mouth'},
+    {'character': '名', 'onyomi': 'MEI, MYOU', 'kunyomi': 'na', 'meaning': 'name'},
+    {'character': '生', 'onyomi': 'SEI, SHOU', 'kunyomi': 'i(kiru), u(mareru), ha(yasu)', 'meaning': 'life, birth'},
+    {'character': '上', 'onyomi': 'JOU', 'kunyomi': 'ue, u(wari), a(geru), nobo(ru)', 'meaning': 'up, above'},
+    {'character': '下', 'onyomi': 'KA, GE', 'kunyomi': 'shita, sa(geru), o(riru)', 'meaning': 'down, below'},
+    {'character': '左', 'onyomi': 'SA', 'kunyomi': 'hidari', 'meaning': 'left'},
+    {'character': '右', 'onyomi': 'U, YUU', 'kunyomi': 'migi', 'meaning': 'right'},
+    {'character': '中', 'onyomi': 'CHUU', 'kunyomi': 'naka', 'meaning': 'middle, inside'},
+    {'character': '外', 'onyomi': 'GAI', 'kunyomi': 'soto, hoka', 'meaning': 'outside'},
+    {'character': '前', 'onyomi': 'ZEN', 'kunyomi': 'mae', 'meaning': 'front, before'},
+    {'character': '後', 'onyomi': 'GO, KOU', 'kunyomi': 'ushiro, ato', 'meaning': 'behind, after'},
+    {'character': '西', 'onyomi': 'SEI', 'kunyomi': 'nishi', 'meaning': 'west'},
+    {'character': '東', 'onyomi': 'TOU', 'kunyomi': 'higashi', 'meaning': 'east'},
+    {'character': '南', 'onyomi': 'NAN', 'kunyomi': 'minami', 'meaning': 'south'},
+    {'character': '北', 'onyomi': 'HOKU', 'kunyomi': 'kita', 'meaning': 'north'},
+    {'character': '飲', 'onyomi': 'IN', 'kunyomi': 'no(mu)', 'meaning': 'drink'},
+    {'character': '会', 'onyomi': 'KAI, E', 'kunyomi': 'a(u)', 'meaning': 'meet'},
+    {'character': '出', 'onyomi': 'SHUTSU', 'kunyomi': 'de(ru), da(su)', 'meaning': 'exit, go out'},
+    {'character': '見', 'onyomi': 'KEN', 'kunyomi': 'mi(ru), mi(eru)', 'meaning': 'see'},
+    {'character': '言', 'onyomi': 'GEN, GON', 'kunyomi': 'i(u), koto', 'meaning': 'say, word'},
+    {'character': '休', 'onyomi': 'KYUU', 'kunyomi': 'yasu(mu)', 'meaning': 'rest'},
+    {'character': '行', 'onyomi': 'KOU', 'kunyomi': 'i(ku), yu(ku), okona(u)', 'meaning': 'go'},
+    {'character': '書', 'onyomi': 'SHO', 'kunyomi': 'ka(ku)', 'meaning': 'write'},
+    {'character': '食', 'onyomi': 'SHOKU', 'kunyomi': 'ta(beru), ku(u)', 'meaning': 'eat'},
+    {'character': '入', 'onyomi': 'NYUU', 'kunyomi': 'i(ru), hai(ru)', 'meaning': 'enter'},
+    {'character': '買', 'onyomi': 'BAI', 'kunyomi': 'ka(u)', 'meaning': 'buy'},
+    {'character': '聞', 'onyomi': 'BUN, MON', 'kunyomi': 'ki(ku)', 'meaning': 'hear, listen'},
+    {'character': '読', 'onyomi': 'DOKU', 'kunyomi': 'yo(mu)', 'meaning': 'read'},
+    {'character': '来', 'onyomi': 'RAI', 'kunyomi': 'ku(ru)', 'meaning': 'come'},
+    {'character': '立', 'onyomi': 'RITSU', 'kunyomi': 'ta(tsu)', 'meaning': 'stand'},
+    {'character': '話', 'onyomi': 'WA', 'kunyomi': 'hanashi, hana(su)', 'meaning': 'talk, story'},
+    {'character': '学', 'onyomi': 'GAKU', 'kunyomi': 'mana(bu)', 'meaning': 'study, learn'},
+    {'character': '分', 'onyomi': 'BUN, FUN', 'kunyomi': 'wa(karu)', 'meaning': 'minute, understand'},
+    {'character': '安', 'onyomi': 'AN', 'kunyomi': 'yasu(i)', 'meaning': 'peace, cheap, safety'},
+    {'character': '多', 'onyomi': 'TA', 'kunyomi': 'oo(i)', 'meaning': 'many, much'},
+    {'character': '大', 'onyomi': 'DAI, TAI', 'kunyomi': 'ou(kii), oo(i)', 'meaning': 'big, a lot'},
+    {'character': '小', 'onyomi': 'SHOU', 'kunyomi': 'chii(sai), ko-', 'meaning': 'small'},
+    {'character': '少', 'onyomi': 'SHOU', 'kunyomi': 'suko(shi), suku(nai)', 'meaning': 'few, little'},
+    {'character': '新', 'onyomi': 'SHIN', 'kunyomi': 'atara(shii)', 'meaning': 'new'},
+    {'character': '古', 'onyomi': 'KO', 'kunyomi': 'furu(i)', 'meaning': 'old'},
+    {'character': '高', 'onyomi': 'KOU', 'kunyomi': 'taka(i)', 'meaning': 'high, tall, expensive'},
+    {'character': '長', 'onyomi': 'CHOU', 'kunyomi': 'naga(i)', 'meaning': 'long, leader'},
+    {'character': '白', 'onyomi': 'HAKU', 'kunyomi': 'shiro, shiro(i)', 'meaning': 'white'},
+    {'character': '半', 'onyomi': 'HAN', 'kunyomi': '–', 'meaning': 'half'},
+    {'character': '今', 'onyomi': 'KON', 'kunyomi': 'ima', 'meaning': 'now'},
+    {'character': '何', 'onyomi': 'KA', 'kunyomi': 'nani, nan', 'meaning': 'what'},
+    {'character': '時', 'onyomi': 'JI', 'kunyomi': 'toki, -doki', 'meaning': 'time, hour'},
+    {'character': '間', 'onyomi': 'KAN', 'kunyomi': 'aida, ma', 'meaning': 'interval, space'},
+    {'character': '年', 'onyomi': 'NEN', 'kunyomi': 'toshi', 'meaning': 'year'},
+    {'character': '円', 'onyomi': 'EN', 'kunyomi': 'maru(i)', 'meaning': 'yen, circle'},
+    {'character': '先', 'onyomi': 'SEN', 'kunyomi': 'saki', 'meaning': 'previous, ahead'},
+    {'character': '毎', 'onyomi': 'MAI', 'kunyomi': '–', 'meaning': 'every'},
+    {'character': '本', 'onyomi': 'HON', 'kunyomi': 'moto', 'meaning': 'book, origin'},
+    {'character': '校', 'onyomi': 'KOU', 'kunyomi': '–', 'meaning': 'school'},
+    {'character': '駅', 'onyomi': 'EKI', 'kunyomi': '–', 'meaning': 'station'},
+    {'character': '店', 'onyomi': 'TEN', 'kunyomi': 'mise', 'meaning': 'shop'},
+    {'character': '道', 'onyomi': 'DOU', 'kunyomi': 'michi', 'meaning': 'road, way'},
+];
+
+// Categorize the kanji for flashcards
+const flashcard_number_order = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '百', '千', '万'];
+const flashcard_kanji_numbers = flashcard_kanji_data
+    .filter(k => flashcard_number_order.includes(k.character))
+    .sort((a, b) => flashcard_number_order.indexOf(a.character) - flashcard_number_order.indexOf(b.character));
+const flashcard_kanji_environment = flashcard_kanji_data.filter(k => ['雨', '火', '花', '山', '川', '空', '月', '気', '魚', '金', '木', '水', '土', '日', '電', '天'].includes(k.character));
+const flashcard_kanji_people = flashcard_kanji_data.filter(k => ['人', '子', '女', '男', '父', '母', '友', '手', '足', '耳', '目', '口', '名', '生'].includes(k.character));
+const flashcard_kanji_directions = flashcard_kanji_data.filter(k => ['上', '下', '左', '右', '中', '外', '前', '後', '西', '東', '南', '北'].includes(k.character));
+const flashcard_kanji_verbs = flashcard_kanji_data.filter(k => ['飲', '会', '出', '見', '言', '休', '行', '書', '食', '入', '買', '聞', '読', '来', '立', '話', '学', '分'].includes(k.character));
+const flashcard_kanji_adjectives = flashcard_kanji_data.filter(k => ['安', '多', '大', '小', '少', '新', '古', '高', '長', '白', '半'].includes(k.character));
+const flashcard_kanji_misc = flashcard_kanji_data.filter(k => !(
+    flashcard_kanji_numbers.map(k => k.character).includes(k.character) ||
+    flashcard_kanji_environment.map(k => k.character).includes(k.character) ||
+    flashcard_kanji_people.map(k => k.character).includes(k.character) ||
+    flashcard_kanji_directions.map(k => k.character).includes(k.character) ||
+    flashcard_kanji_verbs.map(k => k.character).includes(k.character) ||
+    flashcard_kanji_adjectives.map(k => k.character).includes(k.character)
+));
+
+// Kanji data object for the flashcards
 const kanjiData = {
-    numbers: {{ numbers|safe }},
-    environment: {{ environment|safe }},
-    people: {{ people|safe }},
-    directions: {{ directions|safe }},
-    verbs: {{ verbs|safe }},
-    adjectives: {{ adjectives|safe }},
-    misc: {{ misc|safe }},
-    all_kanji: {{ all_kanji|safe }}
+    numbers: flashcard_kanji_numbers,
+    environment: flashcard_kanji_environment,
+    people: flashcard_kanji_people,
+    directions: flashcard_kanji_directions,
+    verbs: flashcard_kanji_verbs,
+    adjectives: flashcard_kanji_adjectives,
+    misc: flashcard_kanji_misc,
+    all_kanji: flashcard_kanji_data,
 };
 
 // Initialize variables
 let currentKanjiList = [];
 let currentKanjiIndex = 0;
 let score = 0;
+let total = 0;
 let correctAnswer = '';
 let options = [];
 
@@ -146,6 +267,7 @@ const feedback = document.getElementById('feedback');
 const nextQuestionBtn = document.getElementById('nextQuestionBtn');
 const backToSelectionBtn = document.getElementById('backToSelectionBtn');
 const scoreDisplay = document.getElementById('score');
+const totalDisplay = document.getElementById('total');
 
 // Function to shuffle an array (Fisher-Yates algorithm)
 function shuffle(array) {
@@ -156,26 +278,110 @@ function shuffle(array) {
     return array;
 }
 
+// Function to save state to sessionStorage
+function saveState() {
+    const state = {
+        currentKanjiList: currentKanjiList,
+        currentKanjiIndex: currentKanjiIndex,
+        score: score,
+        total: total,
+        correctAnswer: correctAnswer,
+        options: options
+    };
+    sessionStorage.setItem('kanjiFlashcardState', JSON.stringify(state));
+}
+
+// Function to load state from sessionStorage
+function loadState() {
+    const savedState = sessionStorage.getItem('kanjiFlashcardState');
+    if (savedState) {
+        const state = JSON.parse(savedState);
+        currentKanjiList = state.currentKanjiList;
+        currentKanjiIndex = state.currentKanjiIndex;
+        score = state.score;
+        total = state.total;
+        correctAnswer = state.correctAnswer;
+        options = state.options;
+
+        // Update DOM
+        subtypeSelection.classList.add('d-none');
+        flashcardArea.classList.remove('d-none');
+        scoreDisplay.textContent = score;
+        totalDisplay.textContent = total;
+
+        // Restore the current flashcard
+        if (currentKanjiIndex >= currentKanjiList.length) {
+            kanjiDisplay.textContent = 'Finished!';
+            document.querySelector('.card-text').style.display = 'none';
+            document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-2').innerHTML = '';
+            feedback.textContent = 'You’ve completed this category! Select another category to continue.';
+            nextQuestionBtn.classList.add('d-none');
+        } else {
+            const kanji = currentKanjiList[currentKanjiIndex];
+            kanjiDisplay.textContent = kanji.character;
+            optionButtons.forEach((btn, index) => {
+                btn.textContent = options[index];
+                btn.disabled = false;
+                btn.classList.remove('btn-success', 'btn-danger');
+                btn.classList.add('option-btn');
+                if (feedback.textContent) {
+                    btn.disabled = true;
+                    if (options[index] === correctAnswer) {
+                        btn.classList.remove('option-btn');
+                        btn.classList.add('btn-success');
+                    } else if (feedback.textContent.includes(options[index])) {
+                        btn.classList.remove('option-btn');
+                        btn.classList.add('btn-danger');
+                    }
+                }
+            });
+            if (feedback.textContent) {
+                if (feedback.textContent === 'Correct!') {
+                    feedback.style.color = '#96e6a1';
+                } else {
+                    feedback.style.color = '#d32f2f';
+                }
+                nextQuestionBtn.classList.remove('d-none');
+            }
+        }
+    }
+}
+
+// Function to clear state from sessionStorage
+function clearState() {
+    sessionStorage.removeItem('kanjiFlashcardState');
+}
+
 // Function to generate 4 options (1 correct, 3 incorrect)
 function generateOptions(correctKanji) {
     const allMeanings = kanjiData.all_kanji.map(k => k.meaning);
     const incorrectOptions = allMeanings.filter(m => m !== correctKanji.meaning);
-    const shuffledIncorrect = shuffle(incorrectOptions).slice(0, 3); // Pick 3 incorrect meanings
+    const shuffledIncorrect = shuffle(incorrectOptions).slice(0, 3);
     options = [...shuffledIncorrect, correctKanji.meaning];
-    shuffle(options); // Shuffle the options
+    shuffle(options);
     correctAnswer = correctKanji.meaning;
 
-    // Update the option buttons
     optionButtons.forEach((btn, index) => {
         btn.textContent = options[index];
         btn.disabled = false;
         btn.classList.remove('btn-success', 'btn-danger');
         btn.classList.add('option-btn');
     });
+    saveState();
 }
 
 // Function to display the current kanji and options
 function displayKanji() {
+    if (currentKanjiIndex >= currentKanjiList.length) {
+        kanjiDisplay.textContent = 'Finished!';
+        document.querySelector('.card-text').style.display = 'none';
+        document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-2').innerHTML = '';
+        feedback.textContent = 'You’ve completed this category! Select another category to continue.';
+        nextQuestionBtn.classList.add('d-none');
+        saveState();
+        return;
+    }
+
     const kanji = currentKanjiList[currentKanjiIndex];
     kanjiDisplay.textContent = kanji.character;
     generateOptions(kanji);
@@ -187,18 +393,17 @@ function displayKanji() {
 // Function to handle option selection
 function handleOptionSelection(selectedOption) {
     const selectedMeaning = options[selectedOption];
-    optionButtons.forEach(btn => btn.disabled = true); // Disable all buttons after selection
+    optionButtons.forEach(btn => btn.disabled = true);
 
     if (selectedMeaning === correctAnswer) {
+        score += 1;
         feedback.textContent = 'Correct!';
-        feedback.style.color = '#96e6a1'; // Light green from N3 palette
+        feedback.style.color = '#96e6a1';
         optionButtons[selectedOption].classList.remove('option-btn');
         optionButtons[selectedOption].classList.add('btn-success');
-        score += 10; // Add 10 points for a correct answer
-        scoreDisplay.textContent = score;
     } else {
         feedback.textContent = `Incorrect! The correct answer is '${correctAnswer}'.`;
-        feedback.style.color = '#d32f2f'; // Deep red from N5 palette
+        feedback.style.color = '#d32f2f';
         optionButtons[selectedOption].classList.remove('option-btn');
         optionButtons[selectedOption].classList.add('btn-danger');
         const correctIndex = options.indexOf(correctAnswer);
@@ -206,20 +411,27 @@ function handleOptionSelection(selectedOption) {
         optionButtons[correctIndex].classList.add('btn-success');
     }
 
-    // Show the Next Question button (no automatic transition)
+    scoreDisplay.textContent = score;
+    totalDisplay.textContent = total;
     nextQuestionBtn.classList.remove('d-none');
+    saveState();
 }
 
 // Event listeners for subtype selection
 document.querySelectorAll('.subtype-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const subtype = btn.getAttribute('data-subtype');
-        currentKanjiList = [...kanjiData[subtype]]; // Create a copy of the array
-        currentKanjiList = shuffle(currentKanjiList); // Shuffle the kanji
+        currentKanjiList = [...kanjiData[subtype]];
+        currentKanjiList = shuffle(currentKanjiList);
+        total = currentKanjiList.length; // Set total to the number of kanji in the selected category
         currentKanjiIndex = 0;
+        score = 0;
         subtypeSelection.classList.add('d-none');
         flashcardArea.classList.remove('d-none');
+        scoreDisplay.textContent = score;
+        totalDisplay.textContent = total;
         displayKanji();
+        saveState();
     });
 });
 
@@ -232,13 +444,8 @@ optionButtons.forEach((btn, index) => {
 
 // Event listener for Next Question button
 nextQuestionBtn.addEventListener('click', () => {
-    if (currentKanjiIndex < currentKanjiList.length - 1) {
-        currentKanjiIndex++;
-        displayKanji();
-    } else {
-        feedback.textContent = 'You’ve completed this category! Select another category to continue.';
-        nextQuestionBtn.classList.add('d-none');
-    }
+    currentKanjiIndex++;
+    displayKanji();
 });
 
 // Event listener for Back to Selection button
@@ -247,6 +454,16 @@ backToSelectionBtn.addEventListener('click', () => {
     subtypeSelection.classList.remove('d-none');
     feedback.textContent = '';
     currentKanjiIndex = 0;
+    score = 0;
+    total = 0;
+    scoreDisplay.textContent = score;
+    totalDisplay.textContent = total;
+    clearState();
+});
+
+// Load state on page load
+window.addEventListener('load', () => {
+    loadState();
 });
 </script>
 {% endblock %}
