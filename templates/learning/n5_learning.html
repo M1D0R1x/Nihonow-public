@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}N5 Learning Topics - Nihonow{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #f5f5f5;
+        font-family: 'Noto Sans Japanese', sans-serif;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .sidebar {
+        background-color: #333;
+        padding: 20px;
+        border-radius: 5px;
+        color: #fff;
+    }
+    .sidebar h4 {
+        color: #fff;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+    }
+    .sidebar a {
+        color: #fff;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        transition: all 0.3s;
+    }
+    .sidebar a:hover, .sidebar a.active {
+        background-color: #d32f2f;
+    }
+    .content-section {
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .content-section h3 {
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+    .content-section p {
+        color: #333;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+    .btn-resource {
+        background-color: #d32f2f;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    .btn-resource:hover {
+        background-color: #b71c1c;
+    }
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .sidebar {
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            padding: 8px;
+        }
+    }
+</style>
+
+<div class="container my-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="sidebar">
+                <h4>Lessons</h4>
+                <a href="#hiragana" class="active">Hiragana</a>
+                <a href="#katakana">Katakana</a>
+                <a href="#numbers">Numbers</a>
+                <a href="#basic-vocabulary-phrases">Basic Vocabulary & Phrases</a>
+                <a href="#basic-japanese-grammar">Basic Japanese Grammar</a>
+                <a href="#time-dates">Time & Dates</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- Hiragana -->
+            <div id="hiragana" class="content-section">
+                <h3>Hiragana</h3>
+                <p>Hiragana is one of the foundational Japanese scripts, used primarily for native Japanese words, grammatical endings, and some particles. It consists of 46 basic characters, along with variations like tenten (゛) and maru (゜) for modified sounds. Mastering Hiragana is essential for reading and writing basic Japanese sentences.</p>
+                <a href="{% url 'hiragana' %}" class="btn btn-resource">Learn Hiragana</a>
+                <a href="{% url 'flashcards_hiragana' %}" class="btn btn-resource ms-2">Practice Hiragana Flashcards</a>
+            </div>
+
+            <!-- Katakana -->
+            <div id="katakana" class="content-section">
+                <h3>Katakana</h3>
+                <p>Katakana is another essential Japanese script, typically used for foreign loanwords, onomatopoeia, and emphasis. Like Hiragana, it has 46 basic characters with variations for modified sounds. Learning Katakana is crucial for reading words borrowed from other languages, such as names and technical terms.</p>
+                <a href="{% url 'katakana' %}" class="btn btn-resource">Learn Katakana</a>
+                <a href="{% url 'flashcards_katakana' %}" class="btn btn-resource ms-2">Practice Katakana Flashcards</a>
+            </div>
+
+            <!-- Numbers -->
+            <div id="numbers" class="content-section">
+                <h3>Numbers</h3>
+                <p>Numbers in Japanese are fundamental for everyday communication, such as telling time, counting objects, or discussing prices. At the N5 level, you’ll learn to count from 1 to 10,000, including how to read and write numbers in kanji (e.g., 一 for 1, 十 for 10) and understand basic counters for different objects.</p>
+                <a href="{% url 'numbers' %}" class="btn btn-resource">Learn Numbers</a>
+            </div>
+
+            <!-- Basic Vocabulary & Phrases -->
+            <div id="basic-vocabulary-phrases" class="content-section">
+                <h3>Basic Vocabulary & Phrases</h3>
+                <p>Building a foundational vocabulary is key to communicating in Japanese. At the N5 level, you’ll learn essential words and phrases for everyday situations, such as greetings, family members, common nouns, and basic adjectives and verbs, to help you start forming simple sentences.</p>
+                <a href="#" class="btn btn-resource">Learn Vocabulary & Phrases</a>
+            </div>
+
+            <!-- Basic Japanese Grammar -->
+            <div id="basic-japanese-grammar" class="content-section">
+                <h3>Basic Japanese Grammar</h3>
+                <p>Understanding basic grammar is essential for constructing sentences in Japanese. At the N5 level, you’ll learn the Subject-Object-Verb (SOV) sentence structure, key particles (e.g., は, が, を), verb conjugations, and polite forms (e.g., ます/ません) to communicate effectively.</p>
+                <a href="#" class="btn btn-resource">Learn Grammar</a>
+            </div>
+
+            <!-- Time & Dates -->
+            <div id="time-dates" class="content-section">
+                <h3>Time & Dates</h3>
+                <p>Learning to express time and dates in Japanese is crucial for daily interactions. At the N5 level, you’ll learn how to tell the time (e.g., hours, minutes), days of the week, months, and dates, as well as how to use them in sentences for scheduling and planning.</p>
+                <a href="#" class="btn btn-resource">Learn Time & Dates</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

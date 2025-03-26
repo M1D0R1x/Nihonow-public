@@ -54,7 +54,7 @@ def katakana(request):
     return render(request, 'katakana.html')
 
 def n5(request):
-    return render(request, 'level_detail.html', {'level': 'N5'})
+    return render(request, 'learning/n5_learning.html', {'level': 'N5'})
 
 def n5_quiz(request):
     return render(request, 'quiz.html', {'level': 'N5'})
@@ -582,3 +582,6 @@ def flashcards_katakana(request):
 
 def flashcards_hiragana(request):
     return render(request, 'flashcards/hiragana_flashcards.html')
+
+def n5_learning(request):
+    return render(request, 'learning/n5_learning.html')
