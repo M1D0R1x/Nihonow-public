@@ -48,11 +48,41 @@
         font-size: 2rem;
         margin-bottom: 15px;
     }
+    .content-section h4 {
+        color: #d32f2f;
+        font-size: 1.5rem;
+        margin: 15px 0;
+    }
     .content-section p {
         color: #333;
         font-size: 1.1rem;
         line-height: 1.6;
         margin-bottom: 20px;
+    }
+    .content-section ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    .content-section li {
+        margin-bottom: 10px;
+    }
+    .japanese {
+        color: #d32f2f;
+        font-weight: bold;
+    }
+    .reading {
+        color: #1976d2;
+    }
+    .meaning {
+        color: #388e3c;
+    }
+    .exception-note {
+        color: #d32f2f;
+        font-style: italic;
+    }
+    .exception-star {
+        color:  #6a1b9a;
+        font-weight: bold;
     }
     .btn-resource {
         background-color: #d32f2f;
@@ -62,6 +92,9 @@
         padding: 10px 20px;
         font-size: 1rem;
         transition: all 0.3s;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        display: inline-block;
     }
     .btn-resource:hover {
         background-color: #b71c1c;
@@ -73,6 +106,12 @@
         }
         .sidebar a {
             padding: 8px;
+        }
+        .btn-resource {
+            display: block;
+            margin-bottom: 15px;
+            width: 100%;
+            text-align: center;
         }
     }
 </style>
@@ -88,7 +127,9 @@
                 <a href="#numbers">Numbers</a>
                 <a href="#basic-vocabulary-phrases">Basic Vocabulary & Phrases</a>
                 <a href="#basic-japanese-grammar">Basic Japanese Grammar</a>
-                <a href="#time-dates">Time & Dates</a>
+                <a href="#time">Time</a>
+                <a href="#days-dates">Days & Dates</a>
+                <a href="#months">Months</a>
             </div>
         </div>
 
@@ -99,7 +140,7 @@
                 <h3>Hiragana</h3>
                 <p>Hiragana is one of the foundational Japanese scripts, used primarily for native Japanese words, grammatical endings, and some particles. It consists of 46 basic characters, along with variations like tenten (゛) and maru (゜) for modified sounds. Mastering Hiragana is essential for reading and writing basic Japanese sentences.</p>
                 <a href="{% url 'hiragana' %}" class="btn btn-resource">Learn Hiragana</a>
-                <a href="{% url 'flashcards_hiragana' %}" class="btn btn-resource ms-2">Practice Hiragana Flashcards</a>
+                <a href="{% url 'flashcards_hiragana' %}" class="btn btn-resource">Practice Hiragana Flashcards</a>
             </div>
 
             <!-- Katakana -->
@@ -107,7 +148,7 @@
                 <h3>Katakana</h3>
                 <p>Katakana is another essential Japanese script, typically used for foreign loanwords, onomatopoeia, and emphasis. Like Hiragana, it has 46 basic characters with variations for modified sounds. Learning Katakana is crucial for reading words borrowed from other languages, such as names and technical terms.</p>
                 <a href="{% url 'katakana' %}" class="btn btn-resource">Learn Katakana</a>
-                <a href="{% url 'flashcards_katakana' %}" class="btn btn-resource ms-2">Practice Katakana Flashcards</a>
+                <a href="{% url 'flashcards_katakana' %}" class="btn btn-resource">Practice Katakana Flashcards</a>
             </div>
 
             <!-- Numbers -->
@@ -120,22 +161,209 @@
             <!-- Basic Vocabulary & Phrases -->
             <div id="basic-vocabulary-phrases" class="content-section">
                 <h3>Basic Vocabulary & Phrases</h3>
-                <p>Building a foundational vocabulary is key to communicating in Japanese. At the N5 level, you’ll learn essential words and phrases for everyday situations, such as greetings, family members, common nouns, and basic adjectives and verbs, to help you start forming simple sentences.</p>
-                <a href="#" class="btn btn-resource">Learn Vocabulary & Phrases</a>
+                <p>At the N5 level, you'll master around 800 words and phrases essential for daily life. Here’s a breakdown using mostly hiragana:</p>
+                <h4>Greetings</h4>
+                <ul>
+                    <li><span class="japanese">おはようございます</span> <span class="reading">(ohayou gozaimasu)</span> - <span class="meaning">Good morning (polite)</span></li>
+                    <li><span class="japanese">こんにちは</span> <span class="reading">(konnichiwa)</span> - <span class="meaning">Hello</span></li>
+                    <li><span class="japanese">こんばんは</span> <span class="reading">(konbanwa)</span> - <span class="meaning">Good evening</span></li>
+                    <li><span class="japanese">じゃあね</span> <span class="reading">(jaa ne)</span> - <span class="meaning">See you (casual)</span></li>
+                </ul>
+                <h4>Family</h4>
+                <ul>
+                    <li><span class="japanese">かぞく</span> <span class="reading">(kazoku)</span> - <span class="meaning">Family</span></li>
+                    <li><span class="japanese">はは</span> <span class="reading">(haha)</span> - <span class="meaning">Mother</span></li>
+                    <li><span class="japanese">とう</span> <span class="reading">(tō)</span> - <span class="meaning">Father</span></li>
+                    <li><span class="japanese">あに</span> <span class="reading">(ani)</span> - <span class="meaning">Older brother</span></li>
+                    <li><span class="japanese">あね</span> <span class="reading">(ane)</span> - <span class="meaning">Older sister</span></li>
+                </ul>
+                <h4>Common Nouns</h4>
+                <ul>
+                    <li><span class="japanese">ほん</span> <span class="reading">(hon)</span> - <span class="meaning">Book</span></li>
+                    <li><span class="japanese">みず</span> <span class="reading">(mizu)</span> - <span class="meaning">Water</span></li>
+                    <li><span class="japanese">いぬ</span> <span class="reading">(inu)</span> - <span class="meaning">Dog</span></li>
+                    <li><span class="japanese">ねこ</span> <span class="reading">(neko)</span> - <span class="meaning">Cat</span></li>
+                    <li><span class="japanese">がっこう</span> <span class="reading">(gakkō)</span> - <span class="meaning">School</span></li>
+                </ul>
+                <h4>Adjectives</h4>
+                <ul>
+                    <li><span class="japanese">おおきい</span> <span class="reading">(ōkii)</span> - <span class="meaning">Big</span></li>
+                    <li><span class="japanese">ちいさい</span> <span class="reading">(chiisai)</span> - <span class="meaning">Small</span></li>
+                    <li><span class="japanese">たかい</span> <span class="reading">(takai)</span> - <span class="meaning">Tall/Expensive</span></li>
+                    <li><span class="japanese">やすい</span> <span class="reading">(yasui)</span> - <span class="meaning">Cheap</span></li>
+                </ul>
+                <h4>Phrases</h4>
+                <ul>
+                    <li><span class="japanese">ありがとう</span> <span class="reading">(arigatou)</span> - <span class="meaning">Thank you</span></li>
+                    <li><span class="japanese">すみません</span> <span class="reading">(sumimasen)</span> - <span class="meaning">Excuse me/Sorry</span></li>
+                    <li><span class="japanese">おねがいします</span> <span class="reading">(onegaishimasu)</span> - <span class="meaning">Please</span></li>
+                    <li><span class="japanese">わかりません</span> <span class="reading">(wakarimasen)</span> - <span class="meaning">I don’t understand</span></li>
+                </ul>
             </div>
 
             <!-- Basic Japanese Grammar -->
             <div id="basic-japanese-grammar" class="content-section">
                 <h3>Basic Japanese Grammar</h3>
-                <p>Understanding basic grammar is essential for constructing sentences in Japanese. At the N5 level, you’ll learn the Subject-Object-Verb (SOV) sentence structure, key particles (e.g., は, が, を), verb conjugations, and polite forms (e.g., ます/ません) to communicate effectively.</p>
-                <a href="#" class="btn btn-resource">Learn Grammar</a>
+                <p>N5 grammar covers the essentials for forming basic sentences using mostly hiragana:</p>
+                <h4>Sentence Structure</h4>
+                <ul>
+                    <li><span class="japanese">SOV</span>: Subject-Object-Verb - <span class="meaning">e.g., わたし は みず を のみます (watashi wa mizu o nomimasu - I drink water)</span></li>
+                </ul>
+                <h4>Particles</h4>
+                <ul>
+                    <li><span class="japanese">は</span> <span class="reading">(wa)</span> - <span class="meaning">Topic marker</span></li>
+                    <li><span class="japanese">が</span> <span class="reading">(ga)</span> - <span class="meaning">Subject marker</span></li>
+                    <li><span class="japanese">を</span> <span class="reading">(o)</span> - <span class="meaning">Object marker</span></li>
+                    <li><span class="japanese">に</span> <span class="reading">(ni)</span> - <span class="meaning">Location/Time/Direction</span></li>
+                    <li><span class="japanese">で</span> <span class="reading">(de)</span> - <span class="meaning">Place of action</span></li>
+                </ul>
+                <h4>Verb Conjugations</h4>
+                <ul>
+                    <li><span class="japanese">たべる</span> <span class="reading">(taberu)</span> - <span class="meaning">To eat (plain)</span></li>
+                    <li><span class="japanese">たべます</span> <span class="reading">(tabemasu)</span> - <span class="meaning">To eat (polite)</span></li>
+                    <li><span class="japanese">たべません</span> <span class="reading">(tabemasen)</span> - <span class="meaning">Don’t eat (polite)</span></li>
+                    <li><span class="japanese">のむ</span> <span class="reading">(nomu)</span> - <span class="meaning">To drink (plain)</span></li>
+                    <li><span class="japanese">のみます</span> <span class="reading">(nomimasu)</span> - <span class="meaning">To drink (polite)</span></li>
+                </ul>
+                <h4>Questions & Copula</h4>
+                <ul>
+                    <li><span class="japanese">ですか</span> <span class="reading">(desu ka)</span> - <span class="meaning">Is it? (polite question)</span></li>
+                    <li><span class="japanese">です</span> <span class="reading">(desu)</span> - <span class="meaning">To be (polite)</span></li>
+                    <li><span class="japanese">じゃありません</span> <span class="reading">(ja arimasen)</span> - <span class="meaning">Is not (polite)</span></li>
+                </ul>
             </div>
 
-            <!-- Time & Dates -->
-            <div id="time-dates" class="content-section">
-                <h3>Time & Dates</h3>
-                <p>Learning to express time and dates in Japanese is crucial for daily interactions. At the N5 level, you’ll learn how to tell the time (e.g., hours, minutes), days of the week, months, and dates, as well as how to use them in sentences for scheduling and planning.</p>
-                <a href="#" class="btn btn-resource">Learn Time & Dates</a>
+            <!-- Time -->
+            <div id="time" class="content-section">
+                <h3>Time</h3>
+                <p>At N5, you learn to tell time using hiragana. For minutes, some numbers have special pronunciations when combined with <span class="japanese">ふん/ぷん</span> <span class="reading">(fun/pun)</span>. These exceptions are marked with <span class="exception-star">*</span> below.</p>
+                <p class="exception-note">Note: Normally, you add <span class="japanese">ふん</span> (fun) to numbers, but for 1, 3, 4, 6, 8, and 10, the sound changes to <span class="japanese">ぷん</span> (pun) and sometimes blends with the number (e.g., いち + ふん becomes いっぷん).</p>
+                <h4>Hours</h4>
+                <ul>
+                    <li><span class="japanese">いちじ</span> <span class="reading">(ichi-ji)</span> - <span class="meaning">1 o’clock</span></li>
+                    <li><span class="japanese">にじ</span> <span class="reading">(ni-ji)</span> - <span class="meaning">2 o’clock</span></li>
+                    <li><span class="japanese">さんじ</span> <span class="reading">(san-ji)</span> - <span class="meaning">3 o’clock</span></li>
+                    <li><span class="japanese">よじ</span> <span class="reading">(yo-ji)</span> - <span class="meaning">4 o’clock</span></li>
+                    <li><span class="japanese">ごじ</span> <span class="reading">(go-ji)</span> - <span class="meaning">5 o’clock</span></li>
+                    <li><span class="japanese">ろくじ</span> <span class="reading">(roku-ji)</span> - <span class="meaning">6 o’clock</span></li>
+                    <li><span class="japanese">しちじ</span> <span class="reading">(shichi-ji)</span> - <span class="meaning">7 o’clock</span></li>
+                    <li><span class="japanese">はちじ</span> <span class="reading">(hachi-ji)</span> - <span class="meaning">8 o’clock</span></li>
+                    <li><span class="japanese">くじ</span> <span class="reading">(ku-ji)</span> - <span class="meaning">9 o’clock</span></li>
+                    <li><span class="japanese">じゅうじ</span> <span class="reading">(jū-ji)</span> - <span class="meaning">10 o’clock</span></li>
+                    <li><span class="japanese">じゅういちじ</span> <span class="reading">(jūichi-ji)</span> - <span class="meaning">11 o’clock</span></li>
+                    <li><span class="japanese">じゅうにじ</span> <span class="reading">(jūni-ji)</span> - <span class="meaning">12 o’clock</span></li>
+                </ul>
+                <h4>AM/PM</h4>
+                <ul>
+                    <li><span class="japanese">ごぜん</span> <span class="reading">(gozen)</span> - <span class="meaning">AM (before noon)</span></li>
+                    <li><span class="japanese">ごご</span> <span class="reading">(gogo)</span> - <span class="meaning">PM (after noon)</span></li>
+                </ul>
+                <h4>Minutes</h4>
+                <ul>
+                    <li><span class="exception-star">*</span><span class="japanese">いっぷん</span> <span class="reading">(ippun)</span> - <span class="meaning">1 minute</span></li>
+                    <li><span class="japanese">にふん</span> <span class="reading">(nifun)</span> - <span class="meaning">2 minutes</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">さんぷん</span> <span class="reading">(sanpun)</span> - <span class="meaning">3 minutes</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">よんぷん</span> <span class="reading">(yonpun)</span> - <span class="meaning">4 minutes</span></li>
+                    <li><span class="japanese">ごふん</span> <span class="reading">(gofun)</span> - <span class="meaning">5 minutes</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">ろっぷん</span> <span class="reading">(roppun)</span> - <span class="meaning">6 minutes</span></li>
+                    <li><span class="japanese">しちふん</span> <span class="reading">(shichifun)</span> - <span class="meaning">7 minutes</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">はっぷん</span> <span class="reading">(happun)</span> - <span class="meaning">8 minutes</span></li>
+                    <li><span class="japanese">きゅうふん</span> <span class="reading">(kyūfun)</span> - <span class="meaning">9 minutes</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">じゅっぷん</span> <span class="reading">(jūppun)</span> - <span class="meaning">10 minutes</span></li>
+                    <li><span class="japanese">じゅういっぷん</span> <span class="reading">(jūippun)</span> - <span class="meaning">11 minutes</span></li>
+                    <li><span class="japanese">じゅうにふん</span> <span class="reading">(jūnifun)</span> - <span class="meaning">12 minutes</span></li>
+                    <li><span class="japanese">じゅうごふん</span> <span class="reading">(jūgofun)</span> - <span class="meaning">15 minutes</span></li>
+                    <li><span class="japanese">にじゅっぷん</span> <span class="reading">(nijūppun)</span> - <span class="meaning">20 minutes</span></li>
+                    <li><span class="japanese">さんじゅっぷん</span> <span class="reading">(sanjūppun)</span> - <span class="meaning">30 minutes</span></li>
+                </ul>
+                <h4>Examples</h4>
+                <ul>
+                    <li><span class="japanese">ごぜん はちじ</span> <span class="reading">(gozen hachi-ji)</span> - <span class="meaning">8:00 AM</span></li>
+                    <li><span class="japanese">ごご さんじ さんじゅっぷん</span> <span class="reading">(gogo san-ji sanjūppun)</span> - <span class="meaning">3:30 PM</span></li>
+                    <li><span class="japanese">しちじ ごふん</span> <span class="reading">(shichi-ji gofun)</span> - <span class="meaning">7:05</span></li>
+                </ul>
+            </div>
+
+            <!-- Days & Dates -->
+            <div id="days-dates" class="content-section">
+                <h3>Days & Dates</h3>
+                <h4>Days of the Week</h4>
+                <p>All days follow the pattern of "day name + ようび (yōbi)" with no exceptions.</p>
+                <ul>
+                    <li><span class="japanese">げつようび</span> <span class="reading">(getsuyōbi)</span> - <span class="meaning">Monday</span></li>
+                    <li><span class="japanese">かようび</span> <span class="reading">(kayōbi)</span> - <span class="meaning">Tuesday</span></li>
+                    <li><span class="japanese">すいようび</span> <span class="reading">(suiyōbi)</span> - <span class="meaning">Wednesday</span></li>
+                    <li><span class="japanese">もくようび</span> <span class="reading">(mokuyōbi)</span> - <span class="meaning">Thursday</span></li>
+                    <li><span class="japanese">きんようび</span> <span class="reading">(kin’yōbi)</span> - <span class="meaning">Friday</span></li>
+                    <li><span class="japanese">どようび</span> <span class="reading">(doyōbi)</span> - <span class="meaning">Saturday</span></li>
+                    <li><span class="japanese">にちようび</span> <span class="reading">(nichiyōbi)</span> - <span class="meaning">Sunday</span></li>
+                </ul>
+                <h4>Dates</h4>
+                <p>Use <span class="japanese">にち</span> <span class="reading">(nichi)</span> after numbers. Some dates have special readings, marked with <span class="exception-star">*</span> below.</p>
+                <p class="exception-note">Note: Normally, you add <span class="japanese">にち</span> (nichi) to numbers (e.g., じゅう にち for 10th), but for 1st, 2nd, 3rd, 4th, 5th, 6th, 7th, 8th, 9th, 10th, 14th, 20th, and 24th, the pronunciation changes completely or slightly.</p>
+                <ul>
+                    <li><span class="exception-star">*</span><span class="japanese">ついたち</span> <span class="reading">(tsuitachi)</span> - <span class="meaning">1st</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">ふつか</span> <span class="reading">(futsuka)</span> - <span class="meaning">2nd</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">みっか</span> <span class="reading">(mikka)</span> - <span class="meaning">3rd</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">よっか</span> <span class="reading">(yokka)</span> - <span class="meaning">4th</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">いつか</span> <span class="reading">(itsuka)</span> - <span class="meaning">5th</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">むいか</span> <span class="reading">(muika)</span> - <span class="meaning">6th</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">なのか</span> <span class="reading">(nanoka)</span> - <span class="meaning">7th</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">ようか</span> <span class="reading">(yōka)</span> - <span class="meaning">8th</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">ここのか</span> <span class="reading">(kokonoka)</span> - <span class="meaning">9th</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">とおか</span> <span class="reading">(tōka)</span> - <span class="meaning">10th</span></li>
+                    <li><span class="japanese">じゅういちにち</span> <span class="reading">(jūichinichi)</span> - <span class="meaning">11th</span></li>
+                    <li><span class="japanese">じゅうににち</span> <span class="reading">(jūninichi)</span> - <span class="meaning">12th</span></li>
+                    <li><span class="japanese">じゅうさんにち</span> <span class="reading">(jūsannichi)</span> - <span class="meaning">13th</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">じゅうよっか</span> <span class="reading">(jūyokka)</span> - <span class="meaning">14th</span></li>
+                    <li><span class="japanese">じゅうごにち</span> <span class="reading">(jūgonichi)</span> - <span class="meaning">15th</span></li>
+                    <li><span class="japanese">じゅうろくにち</span> <span class="reading">(jūrokunichi)</span> - <span class="meaning">16th</span></li>
+                    <li><span class="japanese">じゅうしちにち</span> <span class="reading">(jūshichinichi)</span> - <span class="meaning">17th</span></li>
+                    <li><span class="japanese">じゅうはちにち</span> <span class="reading">(jūhachinichi)</span> - <span class="meaning">18th</span></li>
+                    <li><span class="japanese">じゅうくにち</span> <span class="reading">(jūkunichi)</span> - <span class="meaning">19th</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">はつか</span> <span class="reading">(hatsuka)</span> - <span class="meaning">20th</span></li>
+                    <li><span class="japanese">にじゅういちにち</span> <span class="reading">(nijūichinichi)</span> - <span class="meaning">21st</span></li>
+                    <li><span class="japanese">にじゅうににち</span> <span class="reading">(nijūninichi)</span> - <span class="meaning">22nd</span></li>
+                    <li><span class="japanese">にじゅうさんにち</span> <span class="reading">(nijūsannichi)</span> - <span class="meaning">23rd</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">にじゅうよっか</span> <span class="reading">(nijūyokka)</span> - <span class="meaning">24th</span></li>
+                    <li><span class="japanese">にじゅうごにち</span> <span class="reading">(nijūgonichi)</span> - <span class="meaning">25th</span></li>
+                    <li><span class="japanese">にじゅうろくにち</span> <span class="reading">(nijūrokunichi)</span> - <span class="meaning">26th</span></li>
+                    <li><span class="japanese">にじゅうしちにち</span> <span class="reading">(nijūshichinichi)</span> - <span class="meaning">27th</span></li>
+                    <li><span class="japanese">にじゅうはちにち</span> <span class="reading">(nijūhachinichi)</span> - <span class="meaning">28th</span></li>
+                    <li><span class="japanese">にじゅうくにち</span> <span class="reading">(nijūkunichi)</span> - <span class="meaning">29th</span></li>
+                    <li><span class="japanese">さんじゅうにち</span> <span class="reading">(sanjūnichi)</span> - <span class="meaning">30th</span></li>
+                    <li><span class="japanese">さんじゅういちにち</span> <span class="reading">(sanjūichinichi)</span> - <span class="meaning">31st</span></li>
+                </ul>
+            </div>
+
+            <!-- Months -->
+            <div id="months" class="content-section">
+                <h3>Months</h3>
+                <h4>Month Names</h4>
+                <p>Use <span class="japanese">がつ</span> <span class="reading">(gatsu)</span> after numbers. There are no pronunciation exceptions; all follow the same pattern.</p>
+                <ul>
+                    <li><span class="japanese">いちがつ</span> <span class="reading">(ichigatsu)</span> - <span class="meaning">January</span></li>
+                    <li><span class="japanese">にがつ</span> <span class="reading">(nigatsu)</span> - <span class="meaning">February</span></li>
+                    <li><span class="japanese">さんがつ</span> <span class="reading">(sangatsu)</span> - <span class="meaning">March</span></li>
+                    <li><span class="japanese">しがつ</span> <span class="reading">(shigatsu)</span> - <span class="meaning">April</span></li>
+                    <li><span class="japanese">ごがつ</span> <span class="reading">(gogatsu)</span> - <span class="meaning">May</span></li>
+                    <li><span class="japanese">ろくがつ</span> <span class="reading">(rokugatsu)</span> - <span class="meaning">June</span></li>
+                    <li><span class="japanese">しちがつ</span> <span class="reading">(shichigatsu)</span> - <span class="meaning">July</span></li>
+                    <li><span class="japanese">はちがつ</span> <span class="reading">(hachigatsu)</span> - <span class="meaning">August</span></li>
+                    <li><span class="japanese">くがつ</span> <span class="reading">(kugatsu)</span> - <span class="meaning">September</span></li>
+                    <li><span class="japanese">じゅうがつ</span> <span class="reading">(jūgatsu)</span> - <span class="meaning">October</span></li>
+                    <li><span class="japanese">じゅういちがつ</span> <span class="reading">(jūichigatsu)</span> - <span class="meaning">November</span></li>
+                    <li><span class="japanese">じゅうにがつ</span> <span class="reading">(jūnigatsu)</span> - <span class="meaning">December</span></li>
+                </ul>
+                <h4>Phrases Using Time, Days, Dates, and Months</h4>
+                <ul>
+                    <li><span class="japanese">なんじ ですか</span> <span class="reading">(nan-ji desu ka)</span> - <span class="meaning">What time is it?</span></li>
+                    <li><span class="japanese">きょう は なんようび ですか</span> <span class="reading">(kyō wa nan-yōbi desu ka)</span> - <span class="meaning">What day is it today?</span></li>
+                    <li><span class="japanese">きょう は なんにち ですか</span> <span class="reading">(kyō wa nan-nichi desu ka)</span> - <span class="meaning">What’s today’s date?</span></li>
+                    <li><span class="japanese">いま なんがつ ですか</span> <span class="reading">(ima nan-gatsu desu ka)</span> - <span class="meaning">What month is it now?</span></li>
+                    <li><span class="japanese">さんがつ じゅうごにち は すいようび です</span> <span class="reading">(sangatsu jūgonichi wa suiyōbi desu)</span> - <span class="meaning">March 15th is Wednesday</span></li>
+                    <li><span class="japanese">ごぜん じゅうじ に がっこう に いきます</span> <span class="reading">(gozen jū-ji ni gakkō ni ikimasu)</span> - <span class="meaning">I go to school at 10 AM</span></li>
+                </ul>
             </div>
         </div>
     </div>

@@ -1,13 +1,17 @@
+User-agent: *
+Disallow: /login/
+Disallow: /register/
+Disallow: /profile/
+Disallow: /dashboard/
+Disallow: /logout/
+Disallow: /admin/
+
 User-agent: Googlebot
-Disallow:
-User-agent: googlebot-image
-Disallow:
-User-agent: googlebot-mobile
-Disallow:
-User-agent: MSNBot
-Disallow:
-User-agent: Slurp
-Disallow:
-User-agent: Teoma
-Disallow:
+Disallow: /login/
+Disallow: /register/
+Disallow: /profile/
+Disallow: /dashboard/
+Disallow: /logout/
+Disallow: /admin/
+
 Sitemap: https://nihonow.vercel.app/sitemap.xml
