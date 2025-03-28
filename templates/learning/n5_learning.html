@@ -8,22 +8,54 @@
     body {
         background-color: #f5f5f5;
         font-family: 'Noto Sans Japanese', sans-serif;
+        margin: 0;
     }
     .container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 20px;
     }
+    /* Fixed Dropdown Menu */
     .sidebar {
-        background-color: #333;
-        padding: 20px;
-        border-radius: 5px;
-        color: #fff;
+        position: fixed;
+        top: 50px; /* Position below the Nihonow header (adjust if header height is different) */
+        left: 0;
+        right: 0; /* Stretch across the screen */
+        z-index: 1000;
+        background-color: transparent; /* Transparent background for the sidebar container */
+        padding: 10px; /* Padding around the button */
     }
     .sidebar h4 {
         color: #fff;
-        margin-bottom: 20px;
+        margin: 0;
         font-size: 1.2rem;
+        padding: 15px;
+        cursor: pointer;
+        background-color: #444;
+        border-radius: 5px; /* Add border radius to match other elements */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%; /* Ensure the button takes full width */
+        box-sizing: border-box;
+    }
+    .sidebar h4::after {
+        content: '▼'; /* Down arrow to indicate dropdown */
+        font-size: 0.8rem;
+        transition: transform 0.3s;
+    }
+    .sidebar h4.active::after {
+        transform: rotate(180deg); /* Rotate arrow when menu is open */
+    }
+    .sidebar .menu-content {
+        display: none; /* Hidden by default on mobile */
+        padding: 10px;
+        background-color: #333;
+        border-radius: 0 0 5px 5px; /* Rounded corners at the bottom */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Add shadow for better visibility */
+    }
+    .sidebar .menu-content.show {
+        display: block; /* Show when active */
     }
     .sidebar a {
         color: #fff;
@@ -81,7 +113,7 @@
         font-style: italic;
     }
     .exception-star {
-        color:  #6a1b9a;
+        color: #6a1b9a;
         font-weight: bold;
     }
     .btn-resource {
@@ -99,19 +131,39 @@
     .btn-resource:hover {
         background-color: #b71c1c;
     }
-    /* Responsive Design */
-    @media (max-width: 768px) {
+    /* Desktop View */
+    @media (min-width: 769px) {
         .sidebar {
+            position: static;
+            padding: 20px;
+            background-color: #333; /* Restore background for desktop */
+        }
+        .sidebar h4 {
+            cursor: default;
+            background-color: #333;
+            padding: 0;
             margin-bottom: 20px;
+            border-radius: 0; /* No border radius on desktop */
         }
-        .sidebar a {
-            padding: 8px;
+        .sidebar h4::after {
+            content: none; /* Remove arrow on desktop */
         }
+        .sidebar .menu-content {
+            display: block; /* Always visible on desktop */
+            background-color: transparent; /* No background for menu content on desktop */
+            box-shadow: none; /* No shadow on desktop */
+        }
+    }
+    /* Mobile View */
+    @media (max-width: 768px) {
         .btn-resource {
             display: block;
             margin-bottom: 15px;
             width: 100%;
             text-align: center;
+        }
+        .content-section {
+            margin-top: 120px; /* Adjust based on the height of the fixed sidebar + header */
         }
     }
 </style>
@@ -121,15 +173,17 @@
         <!-- Sidebar -->
         <div class="col-md-3">
             <div class="sidebar">
-                <h4>Lessons</h4>
-                <a href="#hiragana" class="active">Hiragana</a>
-                <a href="#katakana">Katakana</a>
-                <a href="#numbers">Numbers</a>
-                <a href="#basic-vocabulary-phrases">Basic Vocabulary & Phrases</a>
-                <a href="#basic-japanese-grammar">Basic Japanese Grammar</a>
-                <a href="#time">Time</a>
-                <a href="#days-dates">Days & Dates</a>
-                <a href="#months">Months</a>
+                <h4 onclick="toggleMenu()" id="dropdownLabel">Lessons</h4>
+                <div class="menu-content" id="menuContent">
+                    <a href="#hiragana" class="active">Hiragana</a>
+                    <a href="#katakana">Katakana</a>
+                    <a href="#numbers">Numbers</a>
+                    <a href="#basic-vocabulary-phrases">Basic Vocabulary & Phrases</a>
+                    <a href="#basic-japanese-grammar">Basic Japanese Grammar</a>
+                    <a href="#time">Time</a>
+                    <a href="#days-dates">Days & Dates</a>
+                    <a href="#months">Months</a>
+                </div>
             </div>
         </div>
 
@@ -240,18 +294,19 @@
                 <p class="exception-note">Note: Normally, you add <span class="japanese">ふん</span> (fun) to numbers, but for 1, 3, 4, 6, 8, and 10, the sound changes to <span class="japanese">ぷん</span> (pun) and sometimes blends with the number (e.g., いち + ふん becomes いっぷん).</p>
                 <h4>Hours</h4>
                 <ul>
-                    <li><span class="japanese">いちじ</span> <span class="reading">(ichi-ji)</span> - <span class="meaning">1 o’clock</span></li>
-                    <li><span class="japanese">にじ</span> <span class="reading">(ni-ji)</span> - <span class="meaning">2 o’clock</span></li>
-                    <li><span class="japanese">さんじ</span> <span class="reading">(san-ji)</span> - <span class="meaning">3 o’clock</span></li>
-                    <li><span class="japanese">よじ</span> <span class="reading">(yo-ji)</span> - <span class="meaning">4 o’clock</span></li>
-                    <li><span class="japanese">ごじ</span> <span class="reading">(go-ji)</span> - <span class="meaning">5 o’clock</span></li>
-                    <li><span class="japanese">ろくじ</span> <span class="reading">(roku-ji)</span> - <span class="meaning">6 o’clock</span></li>
-                    <li><span class="japanese">しちじ</span> <span class="reading">(shichi-ji)</span> - <span class="meaning">7 o’clock</span></li>
-                    <li><span class="japanese">はちじ</span> <span class="reading">(hachi-ji)</span> - <span class="meaning">8 o’clock</span></li>
-                    <li><span class="japanese">くじ</span> <span class="reading">(ku-ji)</span> - <span class="meaning">9 o’clock</span></li>
-                    <li><span class="japanese">じゅうじ</span> <span class="reading">(jū-ji)</span> - <span class="meaning">10 o’clock</span></li>
-                    <li><span class="japanese">じゅういちじ</span> <span class="reading">(jūichi-ji)</span> - <span class="meaning">11 o’clock</span></li>
-                    <li><span class="japanese">じゅうにじ</span> <span class="reading">(jūni-ji)</span> - <span class="meaning">12 o’clock</span></li>
+                    <li><span class="japanese">れいじ</span> <span class="reading">(rei ji)</span> - <span class="meaning">noon or midnight</span></li>
+                    <li><span class="japanese">いちじ</span> <span class="reading">(ichi ji)</span> - <span class="meaning">1 o’clock</span></li>
+                    <li><span class="japanese">にじ</span> <span class="reading">(ni ji)</span> - <span class="meaning">2 o’clock</span></li>
+                    <li><span class="japanese">さんじ</span> <span class="reading">(san ji)</span> - <span class="meaning">3 o’clock</span></li>
+                    <li><span class="japanese">よじ</span> <span class="reading">(yo ji)</span> - <span class="meaning">4 o’clock</span></li>
+                    <li><span class="japanese">ごじ</span> <span class="reading">(go ji)</span> - <span class="meaning">5 o’clock</span></li>
+                    <li><span class="japanese">ろくじ</span> <span class="reading">(roku ji)</span> - <span class="meaning">6 o’clock</span></li>
+                    <li><span class="japanese">しちじ</span> <span class="reading">(shichi ji)</span> - <span class="meaning">7 o’clock</span></li>
+                    <li><span class="japanese">はちじ</span> <span class="reading">(hachi ji)</span> - <span class="meaning">8 o’clock</span></li>
+                    <li><span class="japanese">くじ</span> <span class="reading">(ku ji)</span> - <span class="meaning">9 o’clock</span></li>
+                    <li><span class="japanese">じゅうじ</span> <span class="reading">(juu ji)</span> - <span class="meaning">10 o’clock</span></li>
+                    <li><span class="japanese">じゅういちじ</span> <span class="reading">(juichi ji)</span> - <span class="meaning">11 o’clock</span></li>
+                    <li><span class="japanese">じゅうにじ</span> <span class="reading">(juni ji)</span> - <span class="meaning">12 o’clock</span></li>
                 </ul>
                 <h4>AM/PM</h4>
                 <ul>
@@ -261,20 +316,20 @@
                 <h4>Minutes</h4>
                 <ul>
                     <li><span class="exception-star">*</span><span class="japanese">いっぷん</span> <span class="reading">(ippun)</span> - <span class="meaning">1 minute</span></li>
-                    <li><span class="japanese">にふん</span> <span class="reading">(nifun)</span> - <span class="meaning">2 minutes</span></li>
-                    <li><span class="exception-star">*</span><span class="japanese">さんぷん</span> <span class="reading">(sanpun)</span> - <span class="meaning">3 minutes</span></li>
-                    <li><span class="exception-star">*</span><span class="japanese">よんぷん</span> <span class="reading">(yonpun)</span> - <span class="meaning">4 minutes</span></li>
-                    <li><span class="japanese">ごふん</span> <span class="reading">(gofun)</span> - <span class="meaning">5 minutes</span></li>
+                    <li><span class="japanese">にふん</span> <span class="reading">(ni fun)</span> - <span class="meaning">2 minutes</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">さんぷん</span> <span class="reading">(san pun)</span> - <span class="meaning">3 minutes</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">よんぷん</span> <span class="reading">(yon pun)</span> - <span class="meaning">4 minutes</span></li>
+                    <li><span class="japanese">ごふん</span> <span class="reading">(go fun)</span> - <span class="meaning">5 minutes</span></li>
                     <li><span class="exception-star">*</span><span class="japanese">ろっぷん</span> <span class="reading">(roppun)</span> - <span class="meaning">6 minutes</span></li>
-                    <li><span class="japanese">しちふん</span> <span class="reading">(shichifun)</span> - <span class="meaning">7 minutes</span></li>
+                    <li><span class="japanese">ななふん</span> <span class="reading">(nana fun)</span> - <span class="meaning">7 minutes</span></li>
                     <li><span class="exception-star">*</span><span class="japanese">はっぷん</span> <span class="reading">(happun)</span> - <span class="meaning">8 minutes</span></li>
-                    <li><span class="japanese">きゅうふん</span> <span class="reading">(kyūfun)</span> - <span class="meaning">9 minutes</span></li>
-                    <li><span class="exception-star">*</span><span class="japanese">じゅっぷん</span> <span class="reading">(jūppun)</span> - <span class="meaning">10 minutes</span></li>
-                    <li><span class="japanese">じゅういっぷん</span> <span class="reading">(jūippun)</span> - <span class="meaning">11 minutes</span></li>
-                    <li><span class="japanese">じゅうにふん</span> <span class="reading">(jūnifun)</span> - <span class="meaning">12 minutes</span></li>
-                    <li><span class="japanese">じゅうごふん</span> <span class="reading">(jūgofun)</span> - <span class="meaning">15 minutes</span></li>
-                    <li><span class="japanese">にじゅっぷん</span> <span class="reading">(nijūppun)</span> - <span class="meaning">20 minutes</span></li>
-                    <li><span class="japanese">さんじゅっぷん</span> <span class="reading">(sanjūppun)</span> - <span class="meaning">30 minutes</span></li>
+                    <li><span class="japanese">きゅうふん</span> <span class="reading">(kyuu fun)</span> - <span class="meaning">9 minutes</span></li>
+                    <li><span class="exception-star">*</span><span class="japanese">じゅっぷん</span> <span class="reading">(juppun)</span> - <span class="meaning">10 minutes</span></li>
+                    <li><span class="japanese">じゅういっぷん</span> <span class="reading">(juippun)</span> - <span class="meaning">11 minutes</span></li>
+                    <li><span class="japanese">じゅうにふん</span> <span class="reading">(juni fun)</span> - <span class="meaning">12 minutes</span></li>
+                    <li><span class="japanese">じゅうごふん</span> <span class="reading">(jugo fun)</span> - <span class="meaning">15 minutes</span></li>
+                    <li><span class="japanese">にじゅっぷん</span> <span class="reading">(nijuppun)</span> - <span class="meaning">20 minutes</span></li>
+                    <li><span class="japanese">さんじゅっぷん</span> <span class="reading">(sanjuppun)</span> - <span class="meaning">30 minutes</span></li>
                 </ul>
                 <h4>Examples</h4>
                 <ul>
@@ -368,4 +423,70 @@
         </div>
     </div>
 </div>
+
+<script>
+    function toggleMenu() {
+        const menuContent = document.getElementById('menuContent');
+        const h4 = document.querySelector('.sidebar h4');
+        menuContent.classList.toggle('show');
+        h4.classList.toggle('active'); // Toggle active class for arrow rotation
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const sidebar = document.querySelector('.sidebar');
+        const menuContent = document.getElementById('menuContent');
+        if (!sidebar.contains(event.target) && menuContent.classList.contains('show')) {
+            menuContent.classList.remove('show');
+            document.querySelector('.sidebar h4').classList.remove('active');
+        }
+    });
+
+    // Update dropdown label and active link based on the current section in view
+    let lastSection = 'Lessons'; // Keep track of the last section viewed
+
+    window.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('.content-section');
+        const dropdownLabel = document.getElementById('dropdownLabel');
+        const links = document.querySelectorAll('.menu-content a');
+        let currentSection = '';
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.offsetHeight;
+            const scrollPosition = window.scrollY + 150; // Adjust for the fixed header and dropdown height
+
+            // Check if the section is in view
+            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                currentSection = section.querySelector('h3').textContent;
+                const sectionId = section.getAttribute('id');
+
+                // Update active link
+                links.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${sectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+
+        // Update the dropdown label only if a new section is in view
+        if (currentSection) {
+            lastSection = currentSection; // Update the last section viewed
+            dropdownLabel.textContent = currentSection;
+        } else {
+            // If no section is in view, keep the last section's label
+            dropdownLabel.textContent = lastSection;
+        }
+
+        // Special case: If the user scrolls to the very top (before the first section), revert to "Lessons"
+        if (window.scrollY < sections[0].offsetTop - 150) {
+            lastSection = 'Lessons';
+            dropdownLabel.textContent = 'Lessons';
+            links.forEach(link => link.classList.remove('active'));
+            document.querySelector('.menu-content a[href="#hiragana"]').classList.add('active'); // Default to Hiragana as active
+        }
+    });
+</script>
 {% endblock %}
