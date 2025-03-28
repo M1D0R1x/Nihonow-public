@@ -60,28 +60,29 @@
         }
         /* SVG Logo Styling */
         .navbar-brand svg {
-            width: 50px; /* Reduced size */
-            height: 36px; /* Maintain aspect ratio */
+            width: 50px;
+            height: 36px;
             vertical-align: middle;
         }
         /* Footer Styling */
         footer {
-            background-color: #f8f9fa; /* Light gray background */
-            border-top: 1px solid #e0e0e0; /* Subtle border */
+            background-color: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
             padding: 20px 0;
         }
         footer a {
-            color: #6c757d; /* Muted gray for links */
+            color: #6c757d;
             text-decoration: none;
         }
         footer a:hover {
-            color: #006666; /* Teal on hover */
+            color: #006666;
             text-decoration: underline;
         }
         footer p {
             margin-bottom: 0;
         }
     </style>
+    {% block extra_head %}{% endblock %} <!-- Added block for page-specific styles -->
 </head>
 <body>
     <script>
@@ -135,8 +136,7 @@
         </div>
     </nav>
     <main>
-        {% block content %}
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
     <!-- Footer Section -->
     <footer>

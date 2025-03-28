@@ -59,6 +59,34 @@
     .card-text {
         font-size: 1.1rem;
     }
+    .timer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .timer-message {
+        background: #fff;
+        padding: 20px 40px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    .timer-message h3 {
+        color: #ff6f61;
+        margin-bottom: 10px;
+    }
+    .timer-message span {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
 </style>
 
 <div class="container my-5 container-shadow" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4); padding: 20px; border-radius: 15px;">
@@ -89,7 +117,7 @@
         <!-- Kanji Card -->
         <div class="card mb-4 mx-auto kanji-card" style="background-color: #f7f1e3; border: none; padding: 20px;">
             <div class="card-body text-center">
-                <h2 id="kanjiDisplay" class="kanji-display" style="color: #d32f2f;">一</h2>
+                <h2 id="kanjiDisplay" class="kanji-display" style="color: #d32f2f;"></h2>
                 <p class="card-text" style="color: #333;">Select the correct meaning:</p>
             </div>
         </div>
@@ -113,6 +141,14 @@
         <!-- Back to Selection Button -->
         <div class="text-center" style="padding: 20px;">
             <button id="backToSelectionBtn" class="btn btn-back">Back to Selection</button>
+        </div>
+    </div>
+
+    <!-- Timer Overlay -->
+    <div id="timer-overlay" class="timer-overlay d-none">
+        <div class="timer-message">
+            <h3>Getting flashcards ready for you...</h3>
+            <span id="timer-countdown"></span>
         </div>
     </div>
 </div>
@@ -257,6 +293,11 @@ let score = 0;
 let total = 0;
 let correctAnswer = '';
 let options = [];
+let answered = false;
+let selectedOption = null;
+let feedbackMessage = '';
+let isTimerActive = false;
+let lastInteractionTime = null; // Track the last interaction time
 
 // DOM elements
 const subtypeSelection = document.getElementById('subtypeSelection');
@@ -268,6 +309,8 @@ const nextQuestionBtn = document.getElementById('nextQuestionBtn');
 const backToSelectionBtn = document.getElementById('backToSelectionBtn');
 const scoreDisplay = document.getElementById('score');
 const totalDisplay = document.getElementById('total');
+const timerOverlay = document.getElementById('timer-overlay');
+const timerCountdown = document.getElementById('timer-countdown');
 
 // Function to shuffle an array (Fisher-Yates algorithm)
 function shuffle(array) {
@@ -278,15 +321,43 @@ function shuffle(array) {
     return array;
 }
 
+// Function to reset the game state
+function resetGame() {
+    currentKanjiList = [];
+    currentKanjiIndex = 0;
+    score = 0;
+    total = 0;
+    correctAnswer = '';
+    options = [];
+    answered = false;
+    selectedOption = null;
+    feedbackMessage = '';
+    isTimerActive = false;
+    lastInteractionTime = null;
+    scoreDisplay.textContent = score;
+    totalDisplay.textContent = total;
+    flashcardArea.classList.add('d-none');
+    subtypeSelection.classList.remove('d-none');
+    feedback.textContent = '';
+    nextQuestionBtn.classList.add('d-none');
+    timerOverlay.classList.add('d-none');
+    sessionStorage.removeItem('kanjiFlashcardState');
+}
+
 // Function to save state to sessionStorage
 function saveState() {
+    lastInteractionTime = Date.now();
     const state = {
         currentKanjiList: currentKanjiList,
         currentKanjiIndex: currentKanjiIndex,
         score: score,
         total: total,
         correctAnswer: correctAnswer,
-        options: options
+        options: options,
+        answered: answered,
+        selectedOption: selectedOption,
+        feedbackMessage: feedbackMessage,
+        lastInteractionTime: lastInteractionTime
     };
     sessionStorage.setItem('kanjiFlashcardState', JSON.stringify(state));
 }
@@ -296,70 +367,69 @@ function loadState() {
     const savedState = sessionStorage.getItem('kanjiFlashcardState');
     if (savedState) {
         const state = JSON.parse(savedState);
+        const now = Date.now();
         currentKanjiList = state.currentKanjiList;
         currentKanjiIndex = state.currentKanjiIndex;
         score = state.score;
         total = state.total;
         correctAnswer = state.correctAnswer;
         options = state.options;
+        answered = state.answered;
+        selectedOption = state.selectedOption;
+        feedbackMessage = state.feedbackMessage;
+        lastInteractionTime = state.lastInteractionTime;
 
         // Update DOM
         subtypeSelection.classList.add('d-none');
         flashcardArea.classList.remove('d-none');
         scoreDisplay.textContent = score;
         totalDisplay.textContent = total;
+        feedback.textContent = feedbackMessage;
 
         // Restore the current flashcard
         if (currentKanjiIndex >= currentKanjiList.length) {
             kanjiDisplay.textContent = 'Finished!';
             document.querySelector('.card-text').style.display = 'none';
             document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-2').innerHTML = '';
-            feedback.textContent = 'You’ve completed this category! Select another category to continue.';
+            feedback.textContent = feedbackMessage;
             nextQuestionBtn.classList.add('d-none');
         } else {
             const kanji = currentKanjiList[currentKanjiIndex];
             kanjiDisplay.textContent = kanji.character;
+            document.querySelector('.card-text').style.display = 'block';
             optionButtons.forEach((btn, index) => {
                 btn.textContent = options[index];
-                btn.disabled = false;
+                btn.disabled = answered;
                 btn.classList.remove('btn-success', 'btn-danger');
                 btn.classList.add('option-btn');
-                if (feedback.textContent) {
-                    btn.disabled = true;
+                if (answered) {
                     if (options[index] === correctAnswer) {
                         btn.classList.remove('option-btn');
                         btn.classList.add('btn-success');
-                    } else if (feedback.textContent.includes(options[index])) {
+                    } else if (index === selectedOption) {
                         btn.classList.remove('option-btn');
                         btn.classList.add('btn-danger');
                     }
                 }
             });
-            if (feedback.textContent) {
-                if (feedback.textContent === 'Correct!') {
-                    feedback.style.color = '#96e6a1';
-                } else {
-                    feedback.style.color = '#d32f2f';
-                }
+            if (answered) {
                 nextQuestionBtn.classList.remove('d-none');
+                feedback.style.color = feedbackMessage === 'Correct!' ? '#96e6a1' : '#d32f2f';
             }
         }
     }
-}
-
-// Function to clear state from sessionStorage
-function clearState() {
-    sessionStorage.removeItem('kanjiFlashcardState');
 }
 
 // Function to generate 4 options (1 correct, 3 incorrect)
 function generateOptions(correctKanji) {
     const allMeanings = kanjiData.all_kanji.map(k => k.meaning);
     const incorrectOptions = allMeanings.filter(m => m !== correctKanji.meaning);
-    const shuffledIncorrect = shuffle(incorrectOptions).slice(0, 3);
+    const shuffledIncorrect = shuffle([...incorrectOptions]).slice(0, 3);
     options = [...shuffledIncorrect, correctKanji.meaning];
     shuffle(options);
     correctAnswer = correctKanji.meaning;
+    selectedOption = null;
+    feedbackMessage = '';
 
     optionButtons.forEach((btn, index) => {
         btn.textContent = options[index];
@@ -370,6 +440,29 @@ function generateOptions(correctKanji) {
     saveState();
 }
 
+// Function to show timer and proceed after delay
+function showTimerAndProceed(callback) {
+    if (isTimerActive) return;
+    isTimerActive = true;
+
+    const randomDelay = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000; // 3000-5000ms (3-5s)
+    let timeLeft = Math.floor(randomDelay / 1000);
+
+    timerOverlay.classList.remove('d-none');
+    timerCountdown.textContent = timeLeft;
+
+    const countdown = setInterval(() => {
+        timeLeft--;
+        timerCountdown.textContent = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            timerOverlay.classList.add('d-none');
+            isTimerActive = false;
+            callback();
+        }
+    }, 1000);
+}
+
 // Function to display the current kanji and options
 function displayKanji() {
     if (currentKanjiIndex >= currentKanjiList.length) {
@@ -377,6 +470,7 @@ function displayKanji() {
         document.querySelector('.card-text').style.display = 'none';
         document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-2').innerHTML = '';
         feedback.textContent = 'You’ve completed this category! Select another category to continue.';
+        feedbackMessage = feedback.textContent;
         nextQuestionBtn.classList.add('d-none');
         saveState();
         return;
@@ -384,25 +478,33 @@ function displayKanji() {
 
     const kanji = currentKanjiList[currentKanjiIndex];
     kanjiDisplay.textContent = kanji.character;
+    document.querySelector('.card-text').style.display = 'block';
     generateOptions(kanji);
     feedback.textContent = '';
     nextQuestionBtn.classList.add('d-none');
-    optionButtons.forEach(btn => btn.disabled = false);
+    answered = false;
+    saveState();
 }
 
 // Function to handle option selection
-function handleOptionSelection(selectedOption) {
+function handleOptionSelection(selectedOptionIndex) {
+    if (answered) return;
+    answered = true;
+    selectedOption = selectedOptionIndex;
+
     const selectedMeaning = options[selectedOption];
     optionButtons.forEach(btn => btn.disabled = true);
 
     if (selectedMeaning === correctAnswer) {
         score += 1;
         feedback.textContent = 'Correct!';
+        feedbackMessage = feedback.textContent;
         feedback.style.color = '#96e6a1';
         optionButtons[selectedOption].classList.remove('option-btn');
         optionButtons[selectedOption].classList.add('btn-success');
     } else {
         feedback.textContent = `Incorrect! The correct answer is '${correctAnswer}'.`;
+        feedbackMessage = feedback.textContent;
         feedback.style.color = '#d32f2f';
         optionButtons[selectedOption].classList.remove('option-btn');
         optionButtons[selectedOption].classList.add('btn-danger');
@@ -420,25 +522,30 @@ function handleOptionSelection(selectedOption) {
 // Event listeners for subtype selection
 document.querySelectorAll('.subtype-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+        resetGame();
         const subtype = btn.getAttribute('data-subtype');
         currentKanjiList = [...kanjiData[subtype]];
         currentKanjiList = shuffle(currentKanjiList);
-        total = currentKanjiList.length; // Set total to the number of kanji in the selected category
-        currentKanjiIndex = 0;
-        score = 0;
-        subtypeSelection.classList.add('d-none');
-        flashcardArea.classList.remove('d-none');
+        total = currentKanjiList.length;
         scoreDisplay.textContent = score;
         totalDisplay.textContent = total;
-        displayKanji();
-        saveState();
+
+        subtypeSelection.classList.add('d-none');
+
+        // Show timer before displaying flashcards
+        showTimerAndProceed(() => {
+            flashcardArea.classList.remove('d-none');
+            displayKanji();
+        });
     });
 });
 
 // Event listener for option buttons
 optionButtons.forEach((btn, index) => {
     btn.addEventListener('click', () => {
-        handleOptionSelection(index);
+        if (!answered) {
+            handleOptionSelection(index);
+        }
     });
 });
 
@@ -450,20 +557,19 @@ nextQuestionBtn.addEventListener('click', () => {
 
 // Event listener for Back to Selection button
 backToSelectionBtn.addEventListener('click', () => {
-    flashcardArea.classList.add('d-none');
-    subtypeSelection.classList.remove('d-none');
-    feedback.textContent = '';
-    currentKanjiIndex = 0;
-    score = 0;
-    total = 0;
-    scoreDisplay.textContent = score;
-    totalDisplay.textContent = total;
-    clearState();
+    resetGame();
 });
 
-// Load state on page load
+// Load state on page load (preserves state on reload or tab switch, resets on fresh navigation)
 window.addEventListener('load', () => {
     loadState();
+});
+
+// Reset on back/forward navigation (pageshow with persisted state)
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        resetGame();
+    }
 });
 </script>
 {% endblock %}

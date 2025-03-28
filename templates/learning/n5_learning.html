@@ -3,7 +3,7 @@
 
 {% block title %}N5 Learning Topics - Nihonow{% endblock %}
 
-{% block content %}
+{% block extra_head %}
 <style>
     body {
         background-color: #f5f5f5;
@@ -15,15 +15,15 @@
         margin: 0 auto;
         padding: 20px;
     }
-    /* Fixed Dropdown Menu */
+    /* Sidebar - Mobile (Fixed Dropdown) */
     .sidebar {
         position: fixed;
-        top: 50px; /* Position below the Nihonow header (adjust if header height is different) */
+        top: 80px; /* Space below navbar */
         left: 0;
-        right: 0; /* Stretch across the screen */
+        right: 0;
         z-index: 1000;
-        background-color: transparent; /* Transparent background for the sidebar container */
-        padding: 10px; /* Padding around the button */
+        background-color: transparent;
+        padding: 10px;
     }
     .sidebar h4 {
         color: #fff;
@@ -32,30 +32,30 @@
         padding: 15px;
         cursor: pointer;
         background-color: #444;
-        border-radius: 5px; /* Add border radius to match other elements */
+        border-radius: 5px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        width: 100%; /* Ensure the button takes full width */
+        width: 100%;
         box-sizing: border-box;
     }
     .sidebar h4::after {
-        content: '▼'; /* Down arrow to indicate dropdown */
+        content: '▼';
         font-size: 0.8rem;
         transition: transform 0.3s;
     }
     .sidebar h4.active::after {
-        transform: rotate(180deg); /* Rotate arrow when menu is open */
+        transform: rotate(180deg);
     }
     .sidebar .menu-content {
-        display: none; /* Hidden by default on mobile */
+        display: none;
         padding: 10px;
         background-color: #333;
-        border-radius: 0 0 5px 5px; /* Rounded corners at the bottom */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Add shadow for better visibility */
+        border-radius: 0 0 5px 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     }
     .sidebar .menu-content.show {
-        display: block; /* Show when active */
+        display: block;
     }
     .sidebar a {
         color: #fff;
@@ -69,53 +69,23 @@
     .sidebar a:hover, .sidebar a.active {
         background-color: #d32f2f;
     }
+    /* Content Section */
     .content-section {
         padding: 20px;
         background-color: #fff;
         border-radius: 5px;
         margin-bottom: 20px;
     }
-    .content-section h3 {
-        color: #333;
-        font-size: 2rem;
-        margin-bottom: 15px;
-    }
-    .content-section h4 {
-        color: #d32f2f;
-        font-size: 1.5rem;
-        margin: 15px 0;
-    }
-    .content-section p {
-        color: #333;
-        font-size: 1.1rem;
-        line-height: 1.6;
-        margin-bottom: 20px;
-    }
-    .content-section ul {
-        list-style-type: none;
-        padding-left: 0;
-    }
-    .content-section li {
-        margin-bottom: 10px;
-    }
-    .japanese {
-        color: #d32f2f;
-        font-weight: bold;
-    }
-    .reading {
-        color: #1976d2;
-    }
-    .meaning {
-        color: #388e3c;
-    }
-    .exception-note {
-        color: #d32f2f;
-        font-style: italic;
-    }
-    .exception-star {
-        color: #6a1b9a;
-        font-weight: bold;
-    }
+    .content-section h3 { color: #333; font-size: 2rem; margin-bottom: 15px; }
+    .content-section h4 { color: #d32f2f; font-size: 1.5rem; margin: 15px 0; }
+    .content-section p { color: #333; font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px; }
+    .content-section ul { list-style-type: none; padding-left: 0; }
+    .content-section li { margin-bottom: 10px; }
+    .japanese { color: #d32f2f; font-weight: bold; }
+    .reading { color: #1976d2; }
+    .meaning { color: #388e3c; }
+    .exception-note { color: #d32f2f; font-style: italic; }
+    .exception-star { color: #6a1b9a; font-weight: bold; }
     .btn-resource {
         background-color: #d32f2f;
         color: #fff;
@@ -128,46 +98,52 @@
         margin-bottom: 10px;
         display: inline-block;
     }
-    .btn-resource:hover {
-        background-color: #b71c1c;
-    }
-    /* Desktop View */
+    .btn-resource:hover { background-color: #b71c1c; }
+    /* Desktop View - Fixed Sidebar with Scroll */
     @media (min-width: 769px) {
         .sidebar {
-            position: static;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 250px;
             padding: 20px;
-            background-color: #333; /* Restore background for desktop */
+            background-color: #333;
+            z-index: 100;
+            overflow-y: auto; /* Scrollbar for sidebar content */
+            box-sizing: border-box;
         }
         .sidebar h4 {
             cursor: default;
             background-color: #333;
             padding: 0;
             margin-bottom: 20px;
-            border-radius: 0; /* No border radius on desktop */
+            border-radius: 0;
         }
-        .sidebar h4::after {
-            content: none; /* Remove arrow on desktop */
-        }
+        .sidebar h4::after { content: none; }
         .sidebar .menu-content {
-            display: block; /* Always visible on desktop */
-            background-color: transparent; /* No background for menu content on desktop */
-            box-shadow: none; /* No shadow on desktop */
+            display: block;
+            background-color: transparent;
+            box-shadow: none;
+        }
+        .main-content {
+            margin-left: 250px; /* Match sidebar width */
+            padding: 20px;
         }
     }
     /* Mobile View */
     @media (max-width: 768px) {
-        .btn-resource {
-            display: block;
-            margin-bottom: 15px;
-            width: 100%;
-            text-align: center;
-        }
-        .content-section {
-            margin-top: 120px; /* Adjust based on the height of the fixed sidebar + header */
-        }
+        .btn-resource { display: block; margin-bottom: 15px; width: 100%; text-align: center; }
+        .content-section { margin-top: 90px; } /* Space for fixed sidebar dropdown */
+    }
+    /* Footer visibility fix */
+    footer {
+        position: relative;
+        z-index: 101; /* Higher than sidebar */
     }
 </style>
+{% endblock %}
 
+{% block content %}
 <div class="container my-5">
     <div class="row">
         <!-- Sidebar -->
@@ -188,7 +164,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="col-md-9">
+        <div class="col-md-9 main-content">
             <!-- Hiragana -->
             <div id="hiragana" class="content-section">
                 <h3>Hiragana</h3>
@@ -208,14 +184,14 @@
             <!-- Numbers -->
             <div id="numbers" class="content-section">
                 <h3>Numbers</h3>
-                <p>Numbers in Japanese are fundamental for everyday communication, such as telling time, counting objects, or discussing prices. At the N5 level, you’ll learn to count from 1 to 10,000, including how to read and write numbers in kanji (e.g., 一 for 1, 十 for 10) and understand basic counters for different objects.</p>
+                <p>Numbers in Japanese are fundamental for everyday communication, such as telling time, counting objects, or discussing prices. At the N5 level, you'll learn to count from 1 to 10,000, including how to read and write numbers in kanji (e.g., 一 for 1, 十 for 10) and understand basic counters for different objects.</p>
                 <a href="{% url 'numbers' %}" class="btn btn-resource">Learn Numbers</a>
             </div>
 
             <!-- Basic Vocabulary & Phrases -->
             <div id="basic-vocabulary-phrases" class="content-section">
                 <h3>Basic Vocabulary & Phrases</h3>
-                <p>At the N5 level, you'll master around 800 words and phrases essential for daily life. Here’s a breakdown using mostly hiragana:</p>
+                <p>At the N5 level, you'll master around 800 words and phrases essential for daily life. Here's a breakdown using mostly hiragana:</p>
                 <h4>Greetings</h4>
                 <ul>
                     <li><span class="japanese">おはようございます</span> <span class="reading">(ohayou gozaimasu)</span> - <span class="meaning">Good morning (polite)</span></li>
@@ -226,10 +202,10 @@
                 <h4>Family</h4>
                 <ul>
                     <li><span class="japanese">かぞく</span> <span class="reading">(kazoku)</span> - <span class="meaning">Family</span></li>
+                    <li><span class="japanese">ちち</span> <span class="reading">(chichi)</span> - <span class="meaning">Father</span></li>
                     <li><span class="japanese">はは</span> <span class="reading">(haha)</span> - <span class="meaning">Mother</span></li>
-                    <li><span class="japanese">とう</span> <span class="reading">(tō)</span> - <span class="meaning">Father</span></li>
-                    <li><span class="japanese">あに</span> <span class="reading">(ani)</span> - <span class="meaning">Older brother</span></li>
-                    <li><span class="japanese">あね</span> <span class="reading">(ane)</span> - <span class="meaning">Older sister</span></li>
+                    <li><span class="japanese">おとうと</span> <span class="reading">(otōto)</span> - <span class="meaning">Younger brother</span></li>
+                    <li><span class="japanese">いもうと</span> <span class="reading">(imōto)</span> - <span class="meaning">Younger sister</span></li>
                 </ul>
                 <h4>Common Nouns</h4>
                 <ul>
@@ -251,7 +227,7 @@
                     <li><span class="japanese">ありがとう</span> <span class="reading">(arigatou)</span> - <span class="meaning">Thank you</span></li>
                     <li><span class="japanese">すみません</span> <span class="reading">(sumimasen)</span> - <span class="meaning">Excuse me/Sorry</span></li>
                     <li><span class="japanese">おねがいします</span> <span class="reading">(onegaishimasu)</span> - <span class="meaning">Please</span></li>
-                    <li><span class="japanese">わかりません</span> <span class="reading">(wakarimasen)</span> - <span class="meaning">I don’t understand</span></li>
+                    <li><span class="japanese">わかりません</span> <span class="reading">(wakarimasen)</span> - <span class="meaning">I don't understand</span></li>
                 </ul>
             </div>
 
@@ -275,7 +251,7 @@
                 <ul>
                     <li><span class="japanese">たべる</span> <span class="reading">(taberu)</span> - <span class="meaning">To eat (plain)</span></li>
                     <li><span class="japanese">たべます</span> <span class="reading">(tabemasu)</span> - <span class="meaning">To eat (polite)</span></li>
-                    <li><span class="japanese">たべません</span> <span class="reading">(tabemasen)</span> - <span class="meaning">Don’t eat (polite)</span></li>
+                    <li><span class="japanese">たべません</span> <span class="reading">(tabemasen)</span> - <span class="meaning">Don't eat (polite)</span></li>
                     <li><span class="japanese">のむ</span> <span class="reading">(nomu)</span> - <span class="meaning">To drink (plain)</span></li>
                     <li><span class="japanese">のみます</span> <span class="reading">(nomimasu)</span> - <span class="meaning">To drink (polite)</span></li>
                 </ul>
@@ -295,18 +271,18 @@
                 <h4>Hours</h4>
                 <ul>
                     <li><span class="japanese">れいじ</span> <span class="reading">(rei ji)</span> - <span class="meaning">noon or midnight</span></li>
-                    <li><span class="japanese">いちじ</span> <span class="reading">(ichi ji)</span> - <span class="meaning">1 o’clock</span></li>
-                    <li><span class="japanese">にじ</span> <span class="reading">(ni ji)</span> - <span class="meaning">2 o’clock</span></li>
-                    <li><span class="japanese">さんじ</span> <span class="reading">(san ji)</span> - <span class="meaning">3 o’clock</span></li>
-                    <li><span class="japanese">よじ</span> <span class="reading">(yo ji)</span> - <span class="meaning">4 o’clock</span></li>
-                    <li><span class="japanese">ごじ</span> <span class="reading">(go ji)</span> - <span class="meaning">5 o’clock</span></li>
-                    <li><span class="japanese">ろくじ</span> <span class="reading">(roku ji)</span> - <span class="meaning">6 o’clock</span></li>
-                    <li><span class="japanese">しちじ</span> <span class="reading">(shichi ji)</span> - <span class="meaning">7 o’clock</span></li>
-                    <li><span class="japanese">はちじ</span> <span class="reading">(hachi ji)</span> - <span class="meaning">8 o’clock</span></li>
-                    <li><span class="japanese">くじ</span> <span class="reading">(ku ji)</span> - <span class="meaning">9 o’clock</span></li>
-                    <li><span class="japanese">じゅうじ</span> <span class="reading">(juu ji)</span> - <span class="meaning">10 o’clock</span></li>
-                    <li><span class="japanese">じゅういちじ</span> <span class="reading">(juichi ji)</span> - <span class="meaning">11 o’clock</span></li>
-                    <li><span class="japanese">じゅうにじ</span> <span class="reading">(juni ji)</span> - <span class="meaning">12 o’clock</span></li>
+                    <li><span class="japanese">いちじ</span> <span class="reading">(ichi ji)</span> - <span class="meaning">1 o'clock</span></li>
+                    <li><span class="japanese">にじ</span> <span class="reading">(ni ji)</span> - <span class="meaning">2 o'clock</span></li>
+                    <li><span class="japanese">さんじ</span> <span class="reading">(san ji)</span> - <span class="meaning">3 o'clock</span></li>
+                    <li><span class="japanese">よじ</span> <span class="reading">(yo ji)</span> - <span class="meaning">4 o'clock</span></li>
+                    <li><span class="japanese">ごじ</span> <span class="reading">(go ji)</span> - <span class="meaning">5 o'clock</span></li>
+                    <li><span class="japanese">ろくじ</span> <span class="reading">(roku ji)</span> - <span class="meaning">6 o'clock</span></li>
+                    <li><span class="japanese">しちじ</span> <span class="reading">(shichi ji)</span> - <span class="meaning">7 o'clock</span></li>
+                    <li><span class="japanese">はちじ</span> <span class="reading">(hachi ji)</span> - <span class="meaning">8 o'clock</span></li>
+                    <li><span class="japanese">くじ</span> <span class="reading">(ku ji)</span> - <span class="meaning">9 o'clock</span></li>
+                    <li><span class="japanese">じゅうじ</span> <span class="reading">(juu ji)</span> - <span class="meaning">10 o'clock</span></li>
+                    <li><span class="japanese">じゅういちじ</span> <span class="reading">(juichi ji)</span> - <span class="meaning">11 o'clock</span></li>
+                    <li><span class="japanese">じゅうにじ</span> <span class="reading">(juni ji)</span> - <span class="meaning">12 o'clock</span></li>
                 </ul>
                 <h4>AM/PM</h4>
                 <ul>
@@ -369,6 +345,7 @@
                     <li><span class="exception-star">*</span><span class="japanese">とおか</span> <span class="reading">(tōka)</span> - <span class="meaning">10th</span></li>
                     <li><span class="japanese">じゅういちにち</span> <span class="reading">(jūichinichi)</span> - <span class="meaning">11th</span></li>
                     <li><span class="japanese">じゅうににち</span> <span class="reading">(jūninichi)</span> - <span class="meaning">12th</span></li>
+                    <li><span class="japanese">じゅうさんにち  - <span class="meaning">12th</span></li>
                     <li><span class="japanese">じゅうさんにち</span> <span class="reading">(jūsannichi)</span> - <span class="meaning">13th</span></li>
                     <li><span class="exception-star">*</span><span class="japanese">じゅうよっか</span> <span class="reading">(jūyokka)</span> - <span class="meaning">14th</span></li>
                     <li><span class="japanese">じゅうごにち</span> <span class="reading">(jūgonichi)</span> - <span class="meaning">15th</span></li>
@@ -414,7 +391,7 @@
                 <ul>
                     <li><span class="japanese">なんじ ですか</span> <span class="reading">(nan-ji desu ka)</span> - <span class="meaning">What time is it?</span></li>
                     <li><span class="japanese">きょう は なんようび ですか</span> <span class="reading">(kyō wa nan-yōbi desu ka)</span> - <span class="meaning">What day is it today?</span></li>
-                    <li><span class="japanese">きょう は なんにち ですか</span> <span class="reading">(kyō wa nan-nichi desu ka)</span> - <span class="meaning">What’s today’s date?</span></li>
+                    <li><span class="japanese">きょう は なんにち ですか</span> <span class="reading">(kyō wa nan-nichi desu ka)</span> - <span class="meaning">What's today's date?</span></li>
                     <li><span class="japanese">いま なんがつ ですか</span> <span class="reading">(ima nan-gatsu desu ka)</span> - <span class="meaning">What month is it now?</span></li>
                     <li><span class="japanese">さんがつ じゅうごにち は すいようび です</span> <span class="reading">(sangatsu jūgonichi wa suiyōbi desu)</span> - <span class="meaning">March 15th is Wednesday</span></li>
                     <li><span class="japanese">ごぜん じゅうじ に がっこう に いきます</span> <span class="reading">(gozen jū-ji ni gakkō ni ikimasu)</span> - <span class="meaning">I go to school at 10 AM</span></li>
@@ -429,10 +406,9 @@
         const menuContent = document.getElementById('menuContent');
         const h4 = document.querySelector('.sidebar h4');
         menuContent.classList.toggle('show');
-        h4.classList.toggle('active'); // Toggle active class for arrow rotation
+        h4.classList.toggle('active');
     }
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', function(event) {
         const sidebar = document.querySelector('.sidebar');
         const menuContent = document.getElementById('menuContent');
@@ -442,51 +418,98 @@
         }
     });
 
-    // Update dropdown label and active link based on the current section in view
-    let lastSection = 'Lessons'; // Keep track of the last section viewed
-
+    let lastSection = 'Lessons';
     window.addEventListener('scroll', function() {
         const sections = document.querySelectorAll('.content-section');
         const dropdownLabel = document.getElementById('dropdownLabel');
         const links = document.querySelectorAll('.menu-content a');
+        const sidebar = document.querySelector('.sidebar');
         let currentSection = '';
 
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
             const sectionHeight = section.offsetHeight;
-            const scrollPosition = window.scrollY + 150; // Adjust for the fixed header and dropdown height
+            const scrollPosition = window.scrollY + 150;
 
-            // Check if the section is in view
             if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
                 currentSection = section.querySelector('h3').textContent;
                 const sectionId = section.getAttribute('id');
-
-                // Update active link
                 links.forEach(link => {
                     link.classList.remove('active');
                     if (link.getAttribute('href') === `#${sectionId}`) {
                         link.classList.add('active');
+                        // Auto-scroll sidebar to active link on desktop
+                        if (window.matchMedia('(min-width: 769px)').matches) {
+                            const linkPosition = link.offsetTop - sidebar.offsetTop - 20; // Offset for padding
+                            sidebar.scrollTo({
+                                top: linkPosition,
+                                behavior: 'smooth'
+                            });
+                        }
                     }
                 });
             }
         });
 
-        // Update the dropdown label only if a new section is in view
         if (currentSection) {
-            lastSection = currentSection; // Update the last section viewed
+            lastSection = currentSection;
             dropdownLabel.textContent = currentSection;
         } else {
-            // If no section is in view, keep the last section's label
             dropdownLabel.textContent = lastSection;
         }
 
-        // Special case: If the user scrolls to the very top (before the first section), revert to "Lessons"
         if (window.scrollY < sections[0].offsetTop - 150) {
             lastSection = 'Lessons';
             dropdownLabel.textContent = 'Lessons';
             links.forEach(link => link.classList.remove('active'));
-            document.querySelector('.menu-content a[href="#hiragana"]').classList.add('active'); // Default to Hiragana as active
+            document.querySelector('.menu-content a[href="#hiragana"]').classList.add('active');
+            if (window.matchMedia('(min-width: 769px)').matches) {
+                sidebar.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
     });
+
+    // Improved function to adjust sidebar height and position
+    function adjustLayout() {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const navbar = document.querySelector('.navbar');
+        const footer = document.querySelector('footer');
+
+        if (!sidebar || !navbar || !footer) return;
+
+        const navbarHeight = navbar.offsetHeight || 60; // Default to 60px if not found
+        const footerTop = footer.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+
+        if (window.matchMedia('(min-width: 769px)').matches) {
+            // Calculate available height for sidebar
+            const availableHeight = footerTop - navbarHeight;
+
+            // Set sidebar height and position
+            sidebar.style.height = `${availableHeight}px`;
+            sidebar.style.top = `${navbarHeight}px`;
+
+            // Ensure sidebar doesn't extend into footer
+            if (window.scrollY + windowHeight >= document.body.offsetHeight - footer.offsetHeight) {
+                const bottomSpace = window.scrollY + windowHeight - (document.body.offsetHeight - footer.offsetHeight);
+                sidebar.style.height = `${availableHeight - bottomSpace}px`;
+            }
+        } else {
+            sidebar.style.height = 'auto'; // Reset for mobile dropdown
+            sidebar.style.top = `${navbarHeight}px`; // Adjust for mobile
+        }
+
+        // Main content padding-bottom: footer height + buffer
+        mainContent.style.paddingBottom = `${footerHeight + 20}px`;
+    }
+
+    // Run on load, resize, and scroll
+    window.addEventListener('load', adjustLayout);
+    window.addEventListener('resize', adjustLayout);
+    window.addEventListener('scroll', adjustLayout);
+
+    // Run immediately
+    adjustLayout();
 </script>
 {% endblock %}

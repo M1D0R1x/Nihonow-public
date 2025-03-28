@@ -62,6 +62,34 @@
     .card-text {
         font-size: 1.1rem;
     }
+    .timer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .timer-message {
+        background: #fff;
+        padding: 20px 40px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    .timer-message h3 {
+        color: #c2185b;
+        margin-bottom: 10px;
+    }
+    .timer-message span {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+    }
 </style>
 
 <div class="container my-5 container-shadow" style="background: linear-gradient(135deg, #f8bbd0, #fce4ec); padding: 20px; border-radius: 15px; font-family: 'Noto Sans Japanese', sans-serif;">
@@ -106,12 +134,20 @@
 
         <!-- Next Question Button -->
         <div class="text-center" style="padding: 20px;">
-            <button id="next-btn" class="btn btn-next d-none">Next</button>
+            <button id="nextQuestionBtn" class="btn btn-next d-none">Next Question</button>
         </div>
 
         <!-- Back to Selection Button -->
         <div class="text-center" style="padding: 20px;">
             <button id="back-to-selection-btn" class="btn btn-back">Back to Selection</button>
+        </div>
+    </div>
+
+    <!-- Timer Overlay -->
+    <div id="timer-overlay" class="timer-overlay d-none">
+        <div class="timer-message">
+            <h3>Getting flashcards ready for you...</h3>
+            <span id="timer-countdown"></span>
         </div>
     </div>
 </div>
@@ -153,23 +189,30 @@
         ]
     };
 
-    let shuffledData = [];
-    let currentIndex = 0;
+    // Initialize variables
+    let currentHiraganaList = [];
+    let currentHiraganaIndex = 0;
     let score = 0;
     let total = 0;
-    let answered = false;
+    let correctAnswer = '';
     let options = [];
+    let answered = false;
+    let selectedOption = null;
+    let feedbackMessage = '';
+    let isTimerActive = false;
 
     // DOM elements
     const selectionSection = document.getElementById('selection-section');
     const flashcardSection = document.getElementById('flashcard-section');
     const flashcardChar = document.getElementById('flashcard-char');
     const optionButtons = document.querySelectorAll('.option-btn');
-    const result = document.getElementById('result');
-    const nextBtn = document.getElementById('next-btn');
+    const feedback = document.getElementById('result'); // Renamed to feedback for consistency
+    const nextQuestionBtn = document.getElementById('nextQuestionBtn');
     const backToSelectionBtn = document.getElementById('back-to-selection-btn');
     const scoreDisplay = document.getElementById('score');
     const totalDisplay = document.getElementById('total');
+    const timerOverlay = document.getElementById('timer-overlay');
+    const timerCountdown = document.getElementById('timer-countdown');
 
     // Function to shuffle an array (Fisher-Yates algorithm)
     function shuffle(array) {
@@ -180,15 +223,40 @@
         return array;
     }
 
+    // Function to reset the game state
+    function resetGame() {
+        currentHiraganaList = [];
+        currentHiraganaIndex = 0;
+        score = 0;
+        total = 0;
+        correctAnswer = '';
+        options = [];
+        answered = false;
+        selectedOption = null;
+        feedbackMessage = '';
+        isTimerActive = false;
+        scoreDisplay.textContent = score;
+        totalDisplay.textContent = total;
+        flashcardSection.classList.add('d-none');
+        selectionSection.classList.remove('d-none');
+        feedback.textContent = '';
+        nextQuestionBtn.classList.add('d-none');
+        timerOverlay.classList.add('d-none');
+        sessionStorage.removeItem('hiraganaFlashcardState');
+    }
+
     // Function to save state to sessionStorage
     function saveState() {
         const state = {
-            shuffledData: shuffledData,
-            currentIndex: currentIndex,
+            currentHiraganaList: currentHiraganaList,
+            currentHiraganaIndex: currentHiraganaIndex,
             score: score,
             total: total,
+            correctAnswer: correctAnswer,
+            options: options,
             answered: answered,
-            options: options
+            selectedOption: selectedOption,
+            feedbackMessage: feedbackMessage
         };
         sessionStorage.setItem('hiraganaFlashcardState', JSON.stringify(state));
     }
@@ -198,71 +266,66 @@
         const savedState = sessionStorage.getItem('hiraganaFlashcardState');
         if (savedState) {
             const state = JSON.parse(savedState);
-            shuffledData = state.shuffledData;
-            currentIndex = state.currentIndex;
+            currentHiraganaList = state.currentHiraganaList;
+            currentHiraganaIndex = state.currentHiraganaIndex;
             score = state.score;
             total = state.total;
-            answered = state.answered;
+            correctAnswer = state.correctAnswer;
             options = state.options;
+            answered = state.answered;
+            selectedOption = state.selectedOption;
+            feedbackMessage = state.feedbackMessage;
 
             // Update DOM
             selectionSection.classList.add('d-none');
             flashcardSection.classList.remove('d-none');
             scoreDisplay.textContent = score;
             totalDisplay.textContent = total;
+            feedback.textContent = feedbackMessage;
 
-            // Restore the current flashcard
-            if (currentIndex >= shuffledData.length) {
+            if (currentHiraganaIndex >= currentHiraganaList.length) {
                 flashcardChar.textContent = 'Finished!';
                 document.querySelector('.card-text').style.display = 'none';
                 document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-2').innerHTML = '';
-                result.textContent = 'Well done!';
-                nextBtn.classList.add('d-none');
+                feedback.textContent = feedbackMessage;
+                nextQuestionBtn.classList.add('d-none');
             } else {
-                const currentChar = shuffledData[currentIndex];
-                flashcardChar.textContent = currentChar.char;
+                const hiragana = currentHiraganaList[currentHiraganaIndex];
+                flashcardChar.textContent = hiragana.char;
+                document.querySelector('.card-text').style.display = 'block';
                 optionButtons.forEach((btn, index) => {
                     btn.textContent = options[index];
                     btn.disabled = answered;
+                    btn.classList.remove('btn-success', 'btn-danger');
+                    btn.classList.add('option-btn');
                     if (answered) {
-                        const correctReading = currentChar.reading;
-                        if (options[index] === correctReading) {
+                        if (options[index] === correctAnswer) {
                             btn.classList.remove('option-btn');
                             btn.classList.add('btn-success');
-                        } else if (result.textContent.includes(options[index])) {
+                        } else if (index === selectedOption) {
                             btn.classList.remove('option-btn');
                             btn.classList.add('btn-danger');
                         }
                     }
                 });
                 if (answered) {
-                    const correctReading = currentChar.reading;
-                    const selectedOption = options.find(opt => result.textContent.includes(opt));
-                    if (selectedOption === correctReading) {
-                        result.textContent = 'Correct!';
-                        result.style.color = '#28a745';
-                    } else {
-                        result.textContent = `Incorrect! The correct answer is '${correctReading}'.`;
-                        result.style.color = '#dc3545';
-                    }
-                    nextBtn.classList.remove('d-none');
+                    nextQuestionBtn.classList.remove('d-none');
+                    feedback.style.color = feedbackMessage === 'Correct!' ? '#96e6a1' : '#d32f2f';
                 }
             }
         }
     }
 
-    // Function to clear state from sessionStorage
-    function clearState() {
-        sessionStorage.removeItem('hiraganaFlashcardState');
-    }
-
     // Function to generate 4 options (1 correct, 3 incorrect)
-    function generateOptions(correctChar) {
-        const allReadings = hiraganaData.all ? hiraganaData.all.map(item => item.reading) : Object.values(hiraganaData).flat().map(item => item.reading);
-        const incorrectOptions = allReadings.filter(r => r !== correctChar.reading);
-        const shuffledIncorrect = shuffle(incorrectOptions).slice(0, 3);
-        options = [...shuffledIncorrect, correctChar.reading];
+    function generateOptions(correctHiragana) {
+        const allReadings = Object.values(hiraganaData).flat().map(item => item.reading);
+        const incorrectOptions = allReadings.filter(r => r !== correctHiragana.reading);
+        const shuffledIncorrect = shuffle([...incorrectOptions]).slice(0, 3);
+        options = [...shuffledIncorrect, correctHiragana.reading];
         shuffle(options);
+        correctAnswer = correctHiragana.reading;
+        selectedOption = null;
+        feedbackMessage = '';
 
         optionButtons.forEach((btn, index) => {
             btn.textContent = options[index];
@@ -273,44 +336,73 @@
         saveState();
     }
 
+    // Function to show timer and proceed after delay
+    function showTimerAndProceed(callback) {
+        if (isTimerActive) return;
+        isTimerActive = true;
+
+        const randomDelay = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000; // 3000-5000ms (3-5s)
+        let timeLeft = Math.floor(randomDelay / 1000);
+
+        timerOverlay.classList.remove('d-none');
+        timerCountdown.textContent = timeLeft;
+
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerCountdown.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerOverlay.classList.add('d-none');
+                isTimerActive = false;
+                callback();
+            }
+        }, 1000);
+    }
+
     // Function to display the current hiragana and options
-    function showFlashcard() {
-        if (currentIndex >= shuffledData.length) {
+    function displayHiragana() {
+        if (currentHiraganaIndex >= currentHiraganaList.length) {
             flashcardChar.textContent = 'Finished!';
             document.querySelector('.card-text').style.display = 'none';
             document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-2').innerHTML = '';
-            result.textContent = 'Well done!';
-            nextBtn.classList.add('d-none');
+            feedback.textContent = 'You’ve completed this category! Select another category to continue.';
+            feedbackMessage = feedback.textContent;
+            nextQuestionBtn.classList.add('d-none');
             saveState();
             return;
         }
 
-        const currentChar = shuffledData[currentIndex];
-        flashcardChar.textContent = currentChar.char;
-        generateOptions(currentChar);
-        result.textContent = '';
-        nextBtn.classList.add('d-none');
-        optionButtons.forEach(btn => btn.disabled = false);
+        const hiragana = currentHiraganaList[currentHiraganaIndex];
+        flashcardChar.textContent = hiragana.char;
+        document.querySelector('.card-text').style.display = 'block';
+        generateOptions(hiragana);
+        feedback.textContent = '';
+        nextQuestionBtn.classList.add('d-none');
+        answered = false;
+        saveState();
     }
 
     // Function to handle option selection
-    function handleOptionSelection(selectedOption) {
+    function handleOptionSelection(selectedOptionIndex) {
         if (answered) return;
         answered = true;
+        selectedOption = selectedOptionIndex;
 
         const selectedReading = options[selectedOption];
-        const correctReading = shuffledData[currentIndex].reading;
+        const correctReading = currentHiraganaList[currentHiraganaIndex].reading;
         optionButtons.forEach(btn => btn.disabled = true);
 
         if (selectedReading === correctReading) {
-            score++;
-            result.textContent = 'Correct!';
-            result.style.color = '#28a745';
+            score += 1;
+            feedback.textContent = 'Correct!';
+            feedbackMessage = feedback.textContent;
+            feedback.style.color = '#96e6a1';
             optionButtons[selectedOption].classList.remove('option-btn');
             optionButtons[selectedOption].classList.add('btn-success');
         } else {
-            result.textContent = `Incorrect! The correct answer is '${correctReading}'.`;
-            result.style.color = '#dc3545';
+            feedback.textContent = `Incorrect! The correct answer is '${correctReading}'.`;
+            feedbackMessage = feedback.textContent;
+            feedback.style.color = '#d32f2f';
             optionButtons[selectedOption].classList.remove('option-btn');
             optionButtons[selectedOption].classList.add('btn-danger');
             const correctIndex = options.indexOf(correctReading);
@@ -320,62 +412,62 @@
 
         scoreDisplay.textContent = score;
         totalDisplay.textContent = total;
-        nextBtn.classList.remove('d-none');
+        nextQuestionBtn.classList.remove('d-none');
         saveState();
     }
 
     // Start flashcards
     function startFlashcards(set) {
-        if (set === 'basic') shuffledData = [...hiraganaData.basic];
-        else if (set === 'tenten') shuffledData = [...hiraganaData.tenten];
-        else if (set === 'combinations') shuffledData = [...hiraganaData.combinations];
-        else shuffledData = [...hiraganaData.basic, ...hiraganaData.tenten, ...hiraganaData.combinations];
+        resetGame();
+        if (set === 'basic') currentHiraganaList = [...hiraganaData.basic];
+        else if (set === 'tenten') currentHiraganaList = [...hiraganaData.tenten];
+        else if (set === 'combinations') currentHiraganaList = [...hiraganaData.combinations];
+        else currentHiraganaList = [...hiraganaData.basic, ...hiraganaData.tenten, ...hiraganaData.combinations];
 
-        shuffledData = shuffle(shuffledData);
-        total = shuffledData.length;
-        currentIndex = 0;
-        score = 0;
-        answered = false;
-
+        currentHiraganaList = shuffle(currentHiraganaList);
+        total = currentHiraganaList.length;
         scoreDisplay.textContent = score;
         totalDisplay.textContent = total;
 
         selectionSection.classList.add('d-none');
-        flashcardSection.classList.remove('d-none');
-        showFlashcard();
-        saveState();
+
+        // Show timer before displaying flashcards
+        showTimerAndProceed(() => {
+            flashcardSection.classList.remove('d-none');
+            displayHiragana();
+        });
     }
 
-    // Event listeners for option buttons
+    // Event listener for option buttons
     optionButtons.forEach((btn, index) => {
         btn.addEventListener('click', () => {
-            handleOptionSelection(index);
+            if (!answered) {
+                handleOptionSelection(index);
+            }
         });
     });
 
-    // Event listener for Next button
-    nextBtn.addEventListener('click', () => {
-        currentIndex++;
-        answered = false;
-        showFlashcard();
+    // Event listener for Next Question button
+    nextQuestionBtn.addEventListener('click', () => {
+        currentHiraganaIndex++;
+        displayHiragana();
     });
 
     // Event listener for Back to Selection button
     backToSelectionBtn.addEventListener('click', () => {
-        flashcardSection.classList.add('d-none');
-        selectionSection.classList.remove('d-none');
-        result.textContent = '';
-        currentIndex = 0;
-        score = 0;
-        total = 0;
-        scoreDisplay.textContent = score;
-        totalDisplay.textContent = total;
-        clearState();
+        resetGame();
     });
 
     // Load state on page load
     window.addEventListener('load', () => {
         loadState();
+    });
+
+    // Reset on back/forward navigation
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            resetGame();
+        }
     });
 </script>
 {% endblock %}
