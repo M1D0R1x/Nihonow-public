@@ -63,6 +63,49 @@
         </div>
     </div>
 
+    <!-- Numbers Beyond 10 (N5 Level) -->
+    <div class="card mb-4 shadow-sm" style="background: linear-gradient(135deg, #d4fc79, #96e6a1); border-color: #27ae60;">
+        <div class="card-body">
+            <h2 class="card-title text-center" style="color: #27ae60;">Numbers Beyond 10 (N5 Level)</h2>
+            <p class="text-dark">For JLPT N5, you should understand numbers up to 999. Japanese uses a simple system to build larger numbers by combining the base numbers. Here’s how it works:</p>
+            <ul class="text-dark">
+                <li><strong>Tens (10-90):</strong> Multiply 10 (じゅう, jū) by a number from 1-9. For example:
+                    <ul>
+                        <li>20 = にじゅう (ni-jū) [2 × 10]</li>
+                        <li>30 = さんじゅう (san-jū) [3 × 10]</li>
+                        <li>50 = ごじゅう (go-jū) [5 × 10]</li>
+                        <li>90 = きゅうじゅう (kyū-jū) [9 × 10]</li>
+                    </ul>
+                </li>
+                <li><strong>Tens and Beyond (11-99):</strong> Add a single digit to the tens. For example:
+                    <ul>
+                        <li>11 = じゅういち (jū-ichi) [10 + 1]</li>
+                        <li>25 = にじゅうご (ni-jū-go) [20 + 5]</li>
+                        <li>47 = よんじゅうしち (yon-jū-shichi) [40 + 7] or よんじゅうなな (yon-jū-nana)</li>
+                        <li>99 = きゅうじゅうきゅう (kyū-jū-kyū) [90 + 9]</li>
+                    </ul>
+                </li>
+                <li><strong>Hundreds (100-900):</strong> Use 百 (ひゃく, hyaku) for "hundred" and multiply it by 1-9. Note some sound changes:
+                    <ul>
+                        <li>100 = ひゃく (hyaku)</li>
+                        <li>200 = にひゃく (ni-hyaku)</li>
+                        <li>300 = さんびゃく (san-byaku) [sound change: hyaku → byaku]</li>
+                        <li>600 = ろっぴゃく (rop-pyaku) [sound change: hyaku → pyaku]</li>
+                        <li>800 = はっぴゃく (hap-pyaku) [sound change: hyaku → pyaku]</li>
+                    </ul>
+                </li>
+                <li><strong>Combining Hundreds (101-999):</strong> Add tens and ones after the hundreds. For example:
+                    <ul>
+                        <li>123 = ひゃくにじゅうさん (hyaku-ni-jū-san) [100 + 20 + 3]</li>
+                        <li>456 = よんひゃくごじゅうろく (yon-hyaku-go-jū-roku) [400 + 50 + 6]</li>
+                        <li>789 = ななひゃくはちじゅうきゅう (nana-hyaku-hachi-jū-kyū) [700 + 80 + 9]</li>
+                    </ul>
+                </li>
+            </ul>
+            <p class="text-dark"><strong>Tip:</strong> Practice saying these aloud, as N5 often tests listening comprehension of numbers (e.g., prices, ages, or times).</p>
+        </div>
+    </div>
+
     <!-- Variations in Sounds -->
     <div class="card mb-4 shadow-sm" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb); border-color: #3498db;">
         <div class="card-body">
@@ -81,13 +124,5 @@
             </ul>
             <p class="text-dark">Practice these variations with native speakers or resources to get comfortable!</p>
         </div>
-    </div>
-
-    <!-- Downloadable Chart -->
-    <div class="text-center mb-4">
-        <a href="{% static 'assets/images/numbers_chart.pdf' %}"
-           class="btn btn-success btn-lg" style="background-color: #27ae60; border-color: #27ae60;"
-           download>Download Numbers Chart
-        </a>
     </div>
 {% endblock %}
