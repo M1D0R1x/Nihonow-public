@@ -90,6 +90,74 @@
         font-weight: bold;
         color: #2c3e50;
     }
+    /* Improved auth overlay styles */
+    .auth-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .auth-overlay.show {
+        opacity: 1;
+    }
+    .auth-message {
+        background: #fff;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        max-width: 400px;
+        width: 90%;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+    .auth-overlay.show .auth-message {
+        transform: scale(1);
+    }
+    .auth-message h3 {
+        color: #c2185b;
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+    .auth-message p {
+        color: #333;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+    .auth-message .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 0 10px;
+        border-radius: 15px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+    .auth-message .btn-login {
+        background-color: #c2185b;
+        color: #fff;
+        border: none;
+    }
+    .auth-message .btn-login:hover {
+        background-color: #ad1457;
+    }
+    .auth-message .btn-register {
+        background-color: #c2185b;
+        color: #fff;
+        border: none;
+    }
+    .auth-message .btn-register:hover {
+        background-color: #ad1457;
+    }
 </style>
 
 <div class="container my-5 container-shadow" style="background: linear-gradient(135deg, #f8bbd0, #fce4ec); padding: 20px; border-radius: 15px; font-family: 'Noto Sans Japanese', sans-serif;">
@@ -150,9 +218,25 @@
             <span id="timer-countdown"></span>
         </div>
     </div>
+
+    <!-- Improved Authentication Overlay (Hidden Initially) -->
+    <div id="auth-overlay" class="auth-overlay d-none">
+        <div class="auth-message">
+            <h3>Login Required</h3>
+            <p>Please login or register to access the flashcards.</p>
+            <div>
+                <a href="{% url 'login' %}" class="btn btn-login">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-register">Register</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
+    // Pass Django authentication status and login URL to JavaScript
+    const isAuthenticated = {{ user.is_authenticated|lower }};
+    const loginUrl = "{% url 'login' %}?next={% url 'flashcards_hiragana' %}&message=Please+login+or+register+to+access+the+features";
+
     // Hiragana data
     const hiraganaData = {
         basic: [
@@ -206,13 +290,14 @@
     const flashcardSection = document.getElementById('flashcard-section');
     const flashcardChar = document.getElementById('flashcard-char');
     const optionButtons = document.querySelectorAll('.option-btn');
-    const feedback = document.getElementById('result'); // Renamed to feedback for consistency
+    const feedback = document.getElementById('result');
     const nextQuestionBtn = document.getElementById('nextQuestionBtn');
     const backToSelectionBtn = document.getElementById('back-to-selection-btn');
     const scoreDisplay = document.getElementById('score');
     const totalDisplay = document.getElementById('total');
     const timerOverlay = document.getElementById('timer-overlay');
     const timerCountdown = document.getElementById('timer-countdown');
+    const authOverlay = document.getElementById('auth-overlay');
 
     // Function to shuffle an array (Fisher-Yates algorithm)
     function shuffle(array) {
@@ -242,6 +327,7 @@
         feedback.textContent = '';
         nextQuestionBtn.classList.add('d-none');
         timerOverlay.classList.add('d-none');
+        authOverlay.classList.add('d-none'); // Hide auth overlay on reset
         sessionStorage.removeItem('hiraganaFlashcardState');
     }
 
@@ -276,7 +362,6 @@
             selectedOption = state.selectedOption;
             feedbackMessage = state.feedbackMessage;
 
-            // Update DOM
             selectionSection.classList.add('d-none');
             flashcardSection.classList.remove('d-none');
             scoreDisplay.textContent = score;
@@ -341,7 +426,7 @@
         if (isTimerActive) return;
         isTimerActive = true;
 
-        const randomDelay = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000; // 3000-5000ms (3-5s)
+        const randomDelay = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000;
         let timeLeft = Math.floor(randomDelay / 1000);
 
         timerOverlay.classList.remove('d-none');
@@ -416,8 +501,14 @@
         saveState();
     }
 
-    // Start flashcards
+    // Start flashcards with authentication check and improved overlay
     function startFlashcards(set) {
+        if (!isAuthenticated) {
+            authOverlay.classList.remove('d-none');
+            setTimeout(() => authOverlay.classList.add('show'), 10); // Trigger fade-in animation
+            return;
+        }
+
         resetGame();
         if (set === 'basic') currentHiraganaList = [...hiraganaData.basic];
         else if (set === 'tenten') currentHiraganaList = [...hiraganaData.tenten];
@@ -430,8 +521,6 @@
         totalDisplay.textContent = total;
 
         selectionSection.classList.add('d-none');
-
-        // Show timer before displaying flashcards
         showTimerAndProceed(() => {
             flashcardSection.classList.remove('d-none');
             displayHiragana();

@@ -76,6 +76,7 @@
         border-radius: 5px;
         margin-bottom: 20px;
     }
+    .content-section.restricted { display: none; }
     .content-section h3 { color: #333; font-size: 2rem; margin-bottom: 15px; }
     .content-section h4 { color: #d32f2f; font-size: 1.5rem; margin: 15px 0; }
     .content-section p { color: #333; font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px; }
@@ -99,6 +100,98 @@
         display: inline-block;
     }
     .btn-resource:hover { background-color: #b71c1c; }
+    /* Authentication Prompt */
+    .auth-prompt {
+        text-align: center;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .auth-prompt p {
+        color: #333;
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+    .auth-prompt .btn-auth {
+        background-color: #d32f2f;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        margin: 0 10px;
+    }
+    .auth-prompt .btn-auth:hover { background-color: #b71c1c; }
+    /* Authentication Overlay */
+    .auth-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1001;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .auth-overlay.show {
+        opacity: 1;
+    }
+    .auth-message {
+        background: #fff;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        max-width: 400px;
+        width: 90%;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+    .auth-overlay.show .auth-message {
+        transform: scale(1);
+    }
+    .auth-message h3 {
+        color: #d32f2f;
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+    .auth-message p {
+        color: #333;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+    .auth-message .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 0 10px;
+        border-radius: 15px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+    .auth-message .btn-login {
+        background-color: #d32f2f;
+        color: #fff;
+        border: none;
+    }
+    .auth-message .btn-login:hover {
+        background-color: #b71c1c;
+    }
+    .auth-message .btn-register {
+        background-color: #d32f2f;
+        color: #fff;
+        border: none;
+    }
+    .auth-message .btn-register:hover {
+        background-color: #b71c1c;
+    }
     /* Desktop View - Fixed Sidebar with Scroll */
     @media (min-width: 769px) {
         .sidebar {
@@ -109,7 +202,7 @@
             padding: 20px;
             background-color: #333;
             z-index: 100;
-            overflow-y: auto; /* Scrollbar for sidebar content */
+            overflow-y: auto;
             box-sizing: border-box;
         }
         .sidebar h4 {
@@ -126,19 +219,19 @@
             box-shadow: none;
         }
         .main-content {
-            margin-left: 250px; /* Match sidebar width */
+            margin-left: 250px;
             padding: 20px;
         }
     }
     /* Mobile View */
     @media (max-width: 768px) {
-        .btn-resource { display: block; margin-bottom: 15px; width: 100%; text-align: center; }
-        .content-section { margin-top: 90px; } /* Space for fixed sidebar dropdown */
+        .btn-resource, .auth-prompt .btn-auth { display: block; margin-bottom: 15px; width: 100%; text-align: center; }
+        .content-section { margin-top: 90px; }
     }
     /* Footer visibility fix */
     footer {
         position: relative;
-        z-index: 101; /* Higher than sidebar */
+        z-index: 101;
     }
 </style>
 {% endblock %}
@@ -263,8 +356,17 @@
                 </ul>
             </div>
 
-            <!-- Time -->
-            <div id="time" class="content-section">
+            <!-- Authentication Prompt for Unlogged-in Users -->
+            {% if not user.is_authenticated %}
+            <div class="auth-prompt">
+                <p>Login or register to access more N5 learning content, including Time, Days & Dates, and Months!</p>
+                <a href="#" class="btn btn-auth" onclick="showAuthOverlay()">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-auth">Register</a>
+            </div>
+            {% endif %}
+
+            <!-- Time (Restricted) -->
+            <div id="time" class="content-section restricted">
                 <h3>Time</h3>
                 <p>At N5, you learn to tell time using hiragana. For minutes, some numbers have special pronunciations when combined with <span class="japanese">ふん/ぷん</span> <span class="reading">(fun/pun)</span>. These exceptions are marked with <span class="exception-star">*</span> below.</p>
                 <p class="exception-note">Note: Normally, you add <span class="japanese">ふん</span> (fun) to numbers, but for 1, 3, 4, 6, 8, and 10, the sound changes to <span class="japanese">ぷん</span> (pun) and sometimes blends with the number (e.g., いち + ふん becomes いっぷん).</p>
@@ -315,8 +417,8 @@
                 </ul>
             </div>
 
-            <!-- Days & Dates -->
-            <div id="days-dates" class="content-section">
+            <!-- Days & Dates (Restricted) -->
+            <div id="days-dates" class="content-section restricted">
                 <h3>Days & Dates</h3>
                 <h4>Days of the Week</h4>
                 <p>All days follow the pattern of "day name + ようび (yōubi)" with no exceptions.</p>
@@ -345,7 +447,6 @@
                     <li><span class="exception-star">*</span><span class="japanese">とおか</span> <span class="reading">(tōka)</span> - <span class="meaning">10th</span></li>
                     <li><span class="japanese">じゅういちにち</span> <span class="reading">(jūichinichi)</span> - <span class="meaning">11th</span></li>
                     <li><span class="japanese">じゅうににち</span> <span class="reading">(jūninichi)</span> - <span class="meaning">12th</span></li>
-                    <li><span class="japanese">じゅうさんにち  - <span class="meaning">12th</span></li>
                     <li><span class="japanese">じゅうさんにち</span> <span class="reading">(jūsannichi)</span> - <span class="meaning">13th</span></li>
                     <li><span class="exception-star">*</span><span class="japanese">じゅうよっか</span> <span class="reading">(jūyokka)</span> - <span class="meaning">14th</span></li>
                     <li><span class="japanese">じゅうごにち</span> <span class="reading">(jūgonichi)</span> - <span class="meaning">15th</span></li>
@@ -368,8 +469,8 @@
                 </ul>
             </div>
 
-            <!-- Months -->
-            <div id="months" class="content-section">
+            <!-- Months (Restricted) -->
+            <div id="months" class="content-section restricted">
                 <h3>Months</h3>
                 <h4>Month Names</h4>
                 <p>Use <span class="japanese">がつ</span> <span class="reading">(gatsu)</span> after numbers. There are no pronunciation exceptions; all follow the same pattern.</p>
@@ -399,9 +500,42 @@
             </div>
         </div>
     </div>
+
+    <!-- Authentication Overlay -->
+    <div id="auth-overlay" class="auth-overlay d-none">
+        <div class="auth-message">
+            <h3>Login Required</h3>
+            <p>Please login or register to access more N5 content.</p>
+            <div>
+                <a href="#" class="btn btn-login" onclick="window.location.href=loginUrl">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-register">Register</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
+    // Authentication variables
+    const isAuthenticated = {{ user.is_authenticated|lower }};
+    const loginUrl = "{% url 'login' %}?next={% url 'n5' %}&message=Please+login+or+register+to+access+more+N5+content";
+    const restrictedSections = ['time', 'days-dates', 'months'];
+
+    // DOM elements
+    const authOverlay = document.getElementById('auth-overlay');
+
+    // Function to show authentication overlay
+    function showAuthOverlay() {
+        authOverlay.classList.remove('d-none');
+        setTimeout(() => authOverlay.classList.add('show'), 10); // Trigger fade-in animation
+    }
+
+    // Function to hide authentication overlay
+    function hideAuthOverlay() {
+        authOverlay.classList.remove('show');
+        setTimeout(() => authOverlay.classList.add('d-none'), 300); // Match transition duration
+    }
+
+    // Toggle mobile menu
     function toggleMenu() {
         const menuContent = document.getElementById('menuContent');
         const h4 = document.querySelector('.sidebar h4');
@@ -409,6 +543,7 @@
         h4.classList.toggle('active');
     }
 
+    // Close mobile menu when clicking outside
     document.addEventListener('click', function(event) {
         const sidebar = document.querySelector('.sidebar');
         const menuContent = document.getElementById('menuContent');
@@ -418,6 +553,18 @@
         }
     });
 
+    // Sidebar link click handler
+    document.querySelectorAll('.menu-content a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const sectionId = this.getAttribute('href').substring(1); // Remove '#'
+            if (!isAuthenticated && restrictedSections.includes(sectionId)) {
+                e.preventDefault();
+                showAuthOverlay();
+            }
+        });
+    });
+
+    // Scroll handler with authentication check
     let lastSection = 'Lessons';
     window.addEventListener('scroll', function() {
         const sections = document.querySelectorAll('.content-section');
@@ -432,19 +579,20 @@
             const scrollPosition = window.scrollY + 150;
 
             if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                currentSection = section.querySelector('h3').textContent;
                 const sectionId = section.getAttribute('id');
+                if (!isAuthenticated && restrictedSections.includes(sectionId)) {
+                    showAuthOverlay();
+                    window.scrollTo({ top: document.getElementById('basic-japanese-grammar').offsetTop + sectionHeight - 150, behavior: 'smooth' });
+                    return;
+                }
+                currentSection = section.querySelector('h3').textContent;
                 links.forEach(link => {
                     link.classList.remove('active');
                     if (link.getAttribute('href') === `#${sectionId}`) {
                         link.classList.add('active');
-                        // Auto-scroll sidebar to active link on desktop
                         if (window.matchMedia('(min-width: 769px)').matches) {
-                            const linkPosition = link.offsetTop - sidebar.offsetTop - 20; // Offset for padding
-                            sidebar.scrollTo({
-                                top: linkPosition,
-                                behavior: 'smooth'
-                            });
+                            const linkPosition = link.offsetTop - sidebar.offsetTop - 20;
+                            sidebar.scrollTo({ top: linkPosition, behavior: 'smooth' });
                         }
                     }
                 });
@@ -469,7 +617,7 @@
         }
     });
 
-    // Improved function to adjust sidebar height and position
+    // Adjust layout function
     function adjustLayout() {
         const sidebar = document.querySelector('.sidebar');
         const mainContent = document.querySelector('.main-content');
@@ -478,38 +626,36 @@
 
         if (!sidebar || !navbar || !footer) return;
 
-        const navbarHeight = navbar.offsetHeight || 60; // Default to 60px if not found
+        const navbarHeight = navbar.offsetHeight || 60;
         const footerTop = footer.getBoundingClientRect().top;
         const windowHeight = window.innerHeight;
 
         if (window.matchMedia('(min-width: 769px)').matches) {
-            // Calculate available height for sidebar
             const availableHeight = footerTop - navbarHeight;
-
-            // Set sidebar height and position
             sidebar.style.height = `${availableHeight}px`;
             sidebar.style.top = `${navbarHeight}px`;
-
-            // Ensure sidebar doesn't extend into footer
             if (window.scrollY + windowHeight >= document.body.offsetHeight - footer.offsetHeight) {
                 const bottomSpace = window.scrollY + windowHeight - (document.body.offsetHeight - footer.offsetHeight);
                 sidebar.style.height = `${availableHeight - bottomSpace}px`;
             }
         } else {
-            sidebar.style.height = 'auto'; // Reset for mobile dropdown
-            sidebar.style.top = `${navbarHeight}px`; // Adjust for mobile
+            sidebar.style.height = 'auto';
+            sidebar.style.top = `${navbarHeight}px`;
         }
-
-        // Main content padding-bottom: footer height + buffer
-        mainContent.style.paddingBottom = `${footerHeight + 20}px`;
+        mainContent.style.paddingBottom = `${footer.offsetHeight + 20}px`;
     }
 
-    // Run on load, resize, and scroll
-    window.addEventListener('load', adjustLayout);
+    // Initial setup based on authentication
+    window.addEventListener('load', function() {
+        adjustLayout();
+        if (isAuthenticated) {
+            document.querySelectorAll('.content-section.restricted').forEach(section => {
+                section.style.display = 'block';
+            });
+        }
+    });
+
     window.addEventListener('resize', adjustLayout);
     window.addEventListener('scroll', adjustLayout);
-
-    // Run immediately
-    adjustLayout();
 </script>
 {% endblock %}
