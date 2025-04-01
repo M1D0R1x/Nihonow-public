@@ -23,9 +23,5 @@
       "src": "/(.*)",
       "dest": "Nihonow/wsgi.py"
     }
-  ],
-  "env": {
-    "DJANGO_SECRET_KEY": "django-insecure-po^n&a(ii85f@0xqb_q$*pq#3m8^qcup-pkmof7b*(9bs$%m27",
-    "DATABASE_URL": "postgres://postgres:RZBFSItwfdWjSabpIvRJDFiEuwyoSCVL@shortline.proxy.rlwy.net:26709/railway"
-  }
+  ]
 }
