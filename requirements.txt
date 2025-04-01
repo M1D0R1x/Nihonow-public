@@ -4,3 +4,4 @@ psycopg==3.2.5
 psycopg-binary==3.2.5
 pytz==2025.1
 whitenoise==6.9.0
+requests==2.31.0
