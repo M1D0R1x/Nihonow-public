@@ -4,32 +4,29 @@
 
 {% block extra_head %}
 <style>
-    /* Your existing styles unchanged */
     body { background-color: #f4f4f4; }
     main { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 200px); padding: 20px; }
     .chat-container { width: 80%; max-width: 800px; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); overflow: hidden; }
-    .chat-header { background-color: #ff6f61; color: white; padding: 20px; text-align: left; border-bottom: 2px solid #e0e0e0; }
-    .chat-header h2 { margin: 0; font-size: 1.5rem; }
+    .chat-header { background: linear-gradient(135deg, #ff6f61, #ffd700); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e0e0e0; }
+    .chat-header h2 { margin: 0; font-size: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
     .chat-box { padding: 20px; height: 400px; overflow-y: auto; display: flex; flex-direction: column; }
     .message { background-color: #e4e4e4; color: #333; border-radius: 10px; padding: 10px; margin-bottom: 10px; max-width: 70%; word-wrap: break-word; }
-    .bot-message { background-color: #ff6f61; color: white; align-self: flex-start; }
-    .user-message { align-self: flex-end; background-color: #dcf8c6; }
-    .input-area { padding: 15px; background-color: #f9f9f9; border-top: 1px solid #e0e0e0; display: flex; }
+    .bot-message { background: linear-gradient(135deg, #ff6f61, #ffb347); color: white; align-self: flex-start; }
+    .user-message { align-self: flex-end; background: linear-gradient(135deg, #ffd700, #ffeb3b); color: #333; }
+    .input-area { padding: 15px; background-color: #fff8e1; border-top: 1px solid #e0e0e0; display: flex; }
     .input-area input { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 20px; margin-right: 10px; font-size: 1rem; }
-    .input-area button { background-color: #ff6f61; color: white; border: none; border-radius: 20px; padding: 10px 20px; cursor: pointer; font-size: 1rem; transition: background-color 0.3s; }
-    .input-area button:hover { background-color: #e06054; }
+    .input-area button { background: linear-gradient(135deg, #ff6f61, #ffd700); color: white; border: none; border-radius: 20px; padding: 10px 20px; cursor: pointer; font-size: 1rem; transition: transform 0.3s; }
+    .input-area button:hover { transform: scale(1.05); }
     .suggestion-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; padding: 0 15px; }
-    .suggestion-chip { background: #f0f0f0; border: 1px solid #ddd; border-radius: 20px; padding: 5px 15px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
-    .suggestion-chip:hover { background: #e0e0e0; }
-    .typing-indicator { display: flex; align-items: center; padding: 5px 10px; background-color: #ff6f61; color: white; border-radius: 10px; align-self: flex-start; margin-bottom: 10px; }
+    .suggestion-chip { background: #fff8e1; border: 1px solid #ffd700; border-radius: 20px; padding: 5px 15px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
+    .suggestion-chip:hover { background: #ffecb3; }
+    .typing-indicator { display: flex; align-items: center; padding: 5px 10px; background: linear-gradient(135deg, #ff6f61, #ffd700); color: white; border-radius: 10px; align-self: flex-start; margin-bottom: 10px; }
     .typing-indicator span { height: 8px; width: 8px; float: left; margin: 0 1px; background-color: white; display: block; border-radius: 50%; opacity: 0.4; }
     .typing-indicator span:nth-of-type(1) { animation: 1s blink infinite 0.3333s; }
     .typing-indicator span:nth-of-type(2) { animation: 1s blink infinite 0.6666s; }
     .typing-indicator span:nth-of-type(3) { animation: 1s blink infinite 0.9999s; }
     @keyframes blink { 50% { opacity: 1; } }
-    /* New style for model selector */
-    .model-selector { padding: 10px; background-color: #f9f9f9; text-align: center; }
-    .model-selector select { padding: 5px; font-size: 1rem; border-radius: 5px; }
+    .model-selector select { padding: 5px; font-size: 1rem; border-radius: 5px; background: #fff8e1; border: 1px solid #ffd700; }
 </style>
 {% endblock %}
 
@@ -37,13 +34,13 @@
 <div class="chat-container">
     <div class="chat-header">
         <h2>NihonBot</h2>
-    </div>
-    <div class="model-selector">
-        <select id="model-select">
-            <option value="">Auto-select</option>
-            <option value="local">Local Knowledge Base</option>
-            <option value="deepseek-chat-v3-0324:free">DeepSeek V3 0324</option>
-        </select>
+        <div class="model-selector">
+            <select id="model-select">
+                <option value="">Auto-select</option>
+                <option value="local">Local Knowledge Base</option>
+                <option value="deepseek/deepseek-chat-v3-0324">DeepSeek V3 0324</option> <!-- Updated model name -->
+            </select>
+        </div>
     </div>
     <div class="chat-box" id="chat-box">
         <!-- Messages will be appended here -->
@@ -98,9 +95,16 @@
         }
     }
 
-    // Function to format message text with line breaks
+    // Function to format message text with Markdown
     function formatMessageText(text) {
-        return text.replace(/\n/g, '<br>');
+        let formatted = text.replace(/\n/g, '<br>');
+        // Bold: **text** -> <strong>text</strong>
+        formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // Italic: *text* -> <em>text</em>
+        formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        // Headings: ### text -> <h3>text</h3>
+        formatted = formatted.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+        return formatted;
     }
 
     // Function to send a message
@@ -112,7 +116,7 @@
         // Display user message
         const userMsg = document.createElement('div');
         userMsg.className = 'message user-message';
-        userMsg.textContent = message;
+        userMsg.innerHTML = formatMessageText(message); // Apply formatting to user input too
         chatBox.appendChild(userMsg);
 
         // Clear input
@@ -159,7 +163,7 @@
             // Display error message
             const errorMsg = document.createElement('div');
             errorMsg.className = 'message bot-message';
-            errorMsg.textContent = 'Sorry, there was an error connecting to the server. Please try again.';
+            errorMsg.innerHTML = formatMessageText('Sorry, there was an error connecting to the server. Please try again.');
             chatBox.appendChild(errorMsg);
 
             console.error('Error:', error);
@@ -181,7 +185,7 @@
     window.addEventListener('DOMContentLoaded', () => {
         const botMsg = document.createElement('div');
         botMsg.className = 'message bot-message';
-        botMsg.textContent = 'こんにちは (Konnichiwa)! I can help you learn about Japanese language, culture, and more! Try asking about hiragana, JLPT levels, or use the suggestion chips below.';
+        botMsg.innerHTML = formatMessageText('こんにちは (Konnichiwa)! I can help you learn about Japanese language, culture, and more! Try asking about hiragana, JLPT levels, or use the suggestion chips below.');
         chatBox.appendChild(botMsg);
         chatBox.scrollTop = chatBox.scrollHeight;
     });

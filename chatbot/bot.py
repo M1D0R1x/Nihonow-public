@@ -20,7 +20,7 @@ KNOWLEDGE_BASE = {
 # Model configurations
 MODELS = {
     "local": {"type": "knowledge_base", "active": True},
-    "deepseek/deepseek-chat-v3-0324": {  # Updated model name
+    "deepseek/deepseek-chat-v3-0324": {
         "type": "api",
         "endpoint": "https://openrouter.ai/api/v1/chat/completions",
         "api_key": "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",
@@ -116,7 +116,7 @@ def get_chatbot_response(user_input, selected_model=None):
         response = generate_response(selected_model, user_input)
         if response:
             logger.info(f"Response from {selected_model}: {response[:100]}...")
-            return response
+            return response  # No prefix added
         logger.warning(f"No response from selected model: {selected_model}")
     else:
         logger.debug("No model selected, trying available models in order")
@@ -124,7 +124,7 @@ def get_chatbot_response(user_input, selected_model=None):
             response = generate_response(model_name, user_input)
             if response:
                 logger.info(f"Response from {model_name}: {response[:100]}...")
-                return response if model_name == "local" else f"[{model_name}] {response}"
+                return response  # No prefix added
             logger.debug(f"Model {model_name} failed to respond")
 
     logger.warning("All models failed to respond")
