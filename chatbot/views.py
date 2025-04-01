@@ -1,51 +1,61 @@
-# chatbot/views.py
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
-from .bot import get_chatbot_response
-from .models import ChatLog
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
+import logging
+from .bot import get_chatbot_response, api_rate_limiter
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger('nihonow_views')
+
 
 def chat_page(request):
-    # Pass authentication status to the template
-    return render(request, 'chatbot/chat.html', {'is_authenticated': request.user.is_authenticated})
+    """Render the chat interface page"""
+    return render(request, 'chatbot/chat.html')
 
-@login_required(login_url='login')
-def nihonbot_view(request):
-    if request.method == 'POST':
-        user_input = request.POST.get('message', '').strip()
+
+# Update the view function name to match what's expected in the template
+@csrf_exempt
+@require_http_methods(["POST"])
+def get_response(request):
+    """API endpoint for the chatbot"""
+    try:
+        # Check if the request is JSON
+        if request.content_type == 'application/json':
+            data = json.loads(request.body)
+            user_input = data.get('message', '').strip()
+        else:
+            user_input = request.POST.get('message', '').strip()
+
         if not user_input:
             return JsonResponse({'error': 'No message provided'}, status=400)
+
+        # Log the incoming request
+        logger.info(f"Received message: {user_input}")
+
+        # Check rate limiting
+        if not api_rate_limiter.is_allowed():
+            return JsonResponse({
+                'response': "I'm receiving too many requests right now. Please try again in a moment."
+            })
 
         # Get response from the chatbot
         response = get_chatbot_response(user_input)
 
-        # Log the conversation
-        ChatLog.objects.create(
-            user=request.user,
-            user_input=user_input,
-            bot_response=response
-        )
+        # Log the response
+        logger.info(f"Sending response: {response[:100]}...")
 
         return JsonResponse({'response': response})
 
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        logger.error(f"Error processing request: {str(e)}")
+        return JsonResponse({'error': 'An error occurred while processing your request'}, status=500)
 
-@login_required(login_url='login')
-def chat_history(request):
-    if request.method == 'GET':
-        # Get the last 10 conversations for the current user
-        history = ChatLog.objects.filter(user=request.user).order_by('-timestamp')[:10]
 
-        # Format the history as a list of dictionaries
-        history_list = [
-            {
-                'user_input': log.user_input,
-                'bot_response': log.bot_response,
-                'timestamp': log.timestamp.strftime('%Y-%m-%d %H:%M:%S')
-            }
-            for log in history
-        ]
+# Keep the original nihonbot_view as an alias for compatibility
+nihonbot_view = get_response
 
-        return JsonResponse({'history': history_list})
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)

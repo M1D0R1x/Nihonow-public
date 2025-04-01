@@ -1,412 +1,291 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NihonBot</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+{% extends 'base.html' %}
 
-        .chat-container {
-            width: 80%;
-            max-width: 800px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
+{% block title %}NihonBot - Chat with Nihonow{% endblock %}
 
-        .chat-header {
-            background-color: #ff6f61;
-            color: white;
-            padding: 20px;
-            text-align: left;
-            border-bottom: 2px solid #e0e0e0;
-            position: relative;
-        }
-
-        .chat-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-
-        .chat-box {
-            padding: 20px;
-            height: 400px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .message {
-            background-color: #e4e4e4;
-            color: #333;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 10px;
-            max-width: 70%;
-            word-wrap: break-word;
-        }
-
-        .bot-message {
-            background-color: #ff6f61;
-            color: white;
-            align-self: flex-start;
-        }
-
-        .user-message {
-            align-self: flex-end;
-            background-color: #dcf8c6;
-        }
-
-        .input-area {
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-top: 1px solid #e0e0e0;
-            display: flex;
-        }
-
-        .input-area input {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            margin-right: 10px;
-            font-size: 1rem;
-        }
-
-        .input-area button {
-            background-color: #ff6f61;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s;
-        }
-
-        .input-area button:hover {
-            background-color: #e06054;
-        }
-
-        /* Auth Overlay Styles */
-        .auth-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .auth-content {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-
-        .auth-content h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .auth-content a {
-            color: #ff6f61;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .auth-content a:hover {
-            text-decoration: underline;
-        }
-
-        .history-btn {
-        background: #ff6f61;
+{% block extra_head %}
+<style>
+    /* Chat-specific styling */
+    body {
+        background-color: #f4f4f4;
+    }
+    main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 200px); /* Adjust for navbar and footer */
+        padding: 20px;
+    }
+    .chat-container {
+        width: 80%;
+        max-width: 800px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    .chat-header {
+        background-color: #ff6f61;
+        color: white;
+        padding: 20px;
+        text-align: left;
+        border-bottom: 2px solid #e0e0e0;
+    }
+    .chat-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    .chat-box {
+        padding: 20px;
+        height: 400px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+    .message {
+        background-color: #e4e4e4;
+        color: #333;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+        max-width: 70%;
+        word-wrap: break-word;
+    }
+    .bot-message {
+        background-color: #ff6f61;
+        color: white;
+        align-self: flex-start;
+    }
+    .user-message {
+        align-self: flex-end;
+        background-color: #dcf8c6;
+    }
+    .input-area {
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+    }
+    .input-area input {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        margin-right: 10px;
+        font-size: 1rem;
+    }
+    .input-area button {
+        background-color: #ff6f61;
         color: white;
         border: none;
+        border-radius: 20px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+    }
+    .input-area button:hover {
+        background-color: #e06054;
+    }
+    .suggestion-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+        padding: 0 15px;
+    }
+    .suggestion-chip {
+        background: #f0f0f0;
+        border: 1px solid #ddd;
         border-radius: 20px;
         padding: 5px 15px;
         font-size: 0.9rem;
         cursor: pointer;
-        transition: all 0.3s;
-        position: absolute;
-        right: 30px;
-        top: 20px;
-        }
-        .history-btn:hover {
-        background: #e06054; /* Darker shade for hover effect */
+        transition: all 0.2s;
+    }
+    .suggestion-chip:hover {
+        background: #e0e0e0;
+    }
+    /* Add loading indicator styles */
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        padding: 5px 10px;
+        background-color: #ff6f61;
         color: white;
+        border-radius: 10px;
+        align-self: flex-start;
+        margin-bottom: 10px;
+    }
+    .typing-indicator span {
+        height: 8px;
+        width: 8px;
+        float: left;
+        margin: 0 1px;
+        background-color: white;
+        display: block;
+        border-radius: 50%;
+        opacity: 0.4;
+    }
+    .typing-indicator span:nth-of-type(1) {
+        animation: 1s blink infinite 0.3333s;
+    }
+    .typing-indicator span:nth-of-type(2) {
+        animation: 1s blink infinite 0.6666s;
+    }
+    .typing-indicator span:nth-of-type(3) {
+        animation: 1s blink infinite 0.9999s;
+    }
+    @keyframes blink {
+        50% {
+            opacity: 1;
         }
+    }
+</style>
+{% endblock %}
 
-        .history-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .history-content {
-            background: white;
-            width: 80%;
-            max-width: 800px;
-            max-height: 80vh;
-            border-radius: 15px;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #ff6f61;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        .history-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #ff6f61;
-        }
-        .history-item {
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
-        }
-        .history-timestamp {
-            font-size: 0.8rem;
-            color: #888;
-            margin-bottom: 5px;
-        }
-        .suggestion-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .suggestion-chip {
-            background: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            padding: 5px 15px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .suggestion-chip:hover {
-            background: #e0e0e0;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="chat-container">
-        <div class="chat-header">
-            <h2>NihonBot</h2>
-            <button id="history-btn" class="history-btn" title="View History">
-                <i class="fas fa-history"></i> History
-            </button>
-        </div>
-        <div class="chat-box" id="chat-box">
-            <!-- Messages will be appended here -->
-        </div>
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="Type your message here...">
-            <button id="send-button">Send</button>
-        </div>
-        <div class="suggestion-chips">
-            <div class="suggestion-chip" data-query="What is JLPT N5?">JLPT N5</div>
-            <div class="suggestion-chip" data-query="Show me hiragana">Hiragana</div>
-            <div class="suggestion-chip" data-query="Tell me about Japanese culture">Japanese Culture</div>
-            <div class="suggestion-chip" data-query="How do Japanese particles work?">Grammar</div>
-            <div class="suggestion-chip" data-query="Popular anime in Japan">Anime</div>
-        </div>
+{% block content %}
+<div class="chat-container">
+    <div class="chat-header">
+        <h2>NihonBot</h2>
     </div>
-
-    {% if not request.user.is_authenticated %}
-    <div class="auth-overlay" id="auth-overlay">
-        <div class="auth-content">
-            <h2>Welcome to NihonBot!</h2>
-            <p>To get the most out of your experience, please <a href="{% url 'login' %}">log in</a> or <a href="{% url 'register' %}">register</a>.</p>
-        </div>
+    <div class="chat-box" id="chat-box">
+        <!-- Messages will be appended here -->
     </div>
-    {% endif %}
-
-    <!-- History Modal -->
-    <div id="history-modal" class="history-modal">
-        <div class="history-content">
-            <div class="history-header">
-                <h3>Conversation History</h3>
-                <button class="history-close" id="history-close">&times;</button>
-            </div>
-            <div id="history-list">
-                <!-- History items will be added here -->
-            </div>
-        </div>
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type your message here...">
+        <button id="send-button">Send</button>
     </div>
+    <div class="suggestion-chips">
+        <div class="suggestion-chip" data-query="What is JLPT N5?">JLPT N5</div>
+        <div class="suggestion-chip" data-query="Show me hiragana">Hiragana</div>
+        <div class="suggestion-chip" data-query="Tell me about Japanese culture">Japanese Culture</div>
+        <div class="suggestion-chip" data-query="How do Japanese particles work?">Grammar</div>
+        <div class="suggestion-chip" data-query="Popular anime in Japan">Anime</div>
+    </div>
+</div>
 
-    <script>
-        const chatBox = document.getElementById('chat-box');
-        const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('send-button');
-        const authOverlay = document.getElementById('auth-overlay');
+<script>
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+    const suggestionChips = document.querySelectorAll('.suggestion-chip');
 
-        // Add these new constants for history functionality
-        const historyBtn = document.getElementById('history-btn');
-        const historyModal = document.getElementById('history-modal');
-        const historyClose = document.getElementById('history-close');
-        const historyList = document.getElementById('history-list');
-        const suggestionChips = document.querySelectorAll('.suggestion-chip');
-
-        // Add event listeners for history
-        historyBtn.addEventListener('click', fetchHistory);
-        historyClose.addEventListener('click', () => {
-            historyModal.style.display = 'none';
+    // Add event listeners for suggestion chips
+    suggestionChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            userInput.value = chip.dataset.query;
+            sendMessage();
         });
+    });
 
-        // Add event listeners for suggestion chips
-        suggestionChips.forEach(chip => {
-            chip.addEventListener('click', () => {
-                userInput.value = chip.dataset.query;
-                sendMessage();
-            });
-        });
+    // Function to add typing indicator
+    function addTypingIndicator() {
+        const indicator = document.createElement('div');
+        indicator.className = 'typing-indicator';
+        indicator.id = 'typing-indicator';
+        indicator.innerHTML = `
+            <span></span>
+            <span></span>
+            <span></span>
+        `;
+        chatBox.appendChild(indicator);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
-        // Function to fetch conversation history
-        function fetchHistory() {
-            if (!{{ is_authenticated|yesno:"true,false" }}) {
-                return;
+    // Function to remove typing indicator
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+
+    // Function to format message text with line breaks
+    function formatMessageText(text) {
+        return text.replace(/\n/g, '<br>');
+    }
+
+    // Function to send a message
+    function sendMessage() {
+        const message = userInput.value;
+        if (message.trim() === '') return;
+
+        // Display user message
+        const userMsg = document.createElement('div');
+        userMsg.className = 'message user-message';
+        userMsg.textContent = message;
+        chatBox.appendChild(userMsg);
+
+        // Clear input
+        userInput.value = '';
+
+        // Scroll to bottom
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Show typing indicator
+        addTypingIndicator();
+
+        // Send message to server
+        fetch('/chatbot/get_response/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `message=${encodeURIComponent(message)}`
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-            
-            fetch('/chatbot/history/', {
-                method: 'GET',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                historyList.innerHTML = '';
-                if (data.history && data.history.length > 0) {
-                    data.history.forEach(item => {
-                        const historyItem = document.createElement('div');
-                        historyItem.className = 'history-item';
-                        historyItem.innerHTML = `
-                            <div class="history-timestamp">${item.timestamp}</div>
-                            <div class="history-user"><strong>You:</strong> ${item.user_input}</div>
-                            <div class="history-bot"><strong>NihonBot:</strong> ${item.bot_response}</div>
-                        `;
-                        historyList.appendChild(historyItem);
-                    });
-                } else {
-                    historyList.innerHTML = '<p>No conversation history found.</p>';
-                }
-                historyModal.style.display = 'flex';
-            })
-            .catch(error => {
-                console.error('Error fetching history:', error);
-            });
-        }
+            return response.json();
+        })
+        .then(data => {
+            // Remove typing indicator
+            removeTypingIndicator();
 
-        // Function to send a message
-        function sendMessage() {
-            const message = userInput.value;
-            if (message.trim() === '') return;
-
-            // Display user message
-            const userMsg = document.createElement('div');
-            userMsg.className = 'message user-message';
-            userMsg.textContent = message;
-            chatBox.appendChild(userMsg);
-
-            // Clear input
-            userInput.value = '';
+            // Display bot response
+            const botMsg = document.createElement('div');
+            botMsg.className = 'message bot-message';
+            botMsg.innerHTML = formatMessageText(data.response);
+            chatBox.appendChild(botMsg);
 
             // Scroll to bottom
             chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(error => {
+            // Remove typing indicator
+            removeTypingIndicator();
 
-            // Send message to server
-            fetch('/chatbot/get_response/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: `message=${encodeURIComponent(message)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Display bot response
-                const botMsg = document.createElement('div');
-                botMsg.className = 'message bot-message';
-                botMsg.innerHTML = `<strong>NihonBot:</strong> ${data.response}`;
-                chatBox.appendChild(botMsg);
+            // Display error message
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'message bot-message';
+            errorMsg.textContent = 'Sorry, there was an error connecting to the server. Please try again.';
+            chatBox.appendChild(errorMsg);
 
-                // Scroll to bottom
-                chatBox.scrollTop = chatBox.scrollHeight;
-            });
+            console.error('Error:', error);
+
+            // Scroll to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    }
+
+    // Event listeners
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            sendMessage();
         }
+    });
 
-        // Event listeners
-        sendButton.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        // Hide auth overlay if user is authenticated
-        window.addEventListener('DOMContentLoaded', () => {
-            if ({{ is_authenticated|yesno:"true,false" }}) {
-                if (authOverlay) {
-                    authOverlay.style.display = 'none';
-                }
-            }
-        });
-
-        // Add a time-based greeting when the page loads
-        window.addEventListener('DOMContentLoaded', () => {
-            if ({{ is_authenticated|yesno:"true,false" }}) {
-                const hour = new Date().getHours();
-                let greeting = '';
-                if (hour >= 5 && hour < 12) {
-                    greeting = 'おはようございます(Ohayou gozaimasu)'; // Good morning (5:00 - 11:59)
-                } else if (hour >= 12 && hour < 17) {
-                    greeting = 'こんにちは(Konnichiwa)'; // Good afternoon (12:00 - 16:59)
-                } else {
-                    greeting = 'こんばんは(Konbanwa)'; // Good evening (17:00 - 4:59)
-                }
-                const username = "{{ request.user.username }}";
-                const botMsg = document.createElement('div');
-                botMsg.className = 'message bot-message';
-                botMsg.innerHTML = `<strong>NihonBot:</strong> ${greeting}、${username} さん(san)! I can help you learn about Japanese language, culture, and more! Try asking about hiragana, JLPT levels, or use the suggestion chips below.`;
-                chatBox.appendChild(botMsg);
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-        });
-    </script>
-</body>
-</html>
+    // Add a welcome message on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot-message';
+        botMsg.textContent = 'こんにちは (Konnichiwa)! I can help you learn about Japanese language, culture, and more! Try asking about hiragana, JLPT levels, or use the suggestion chips below.';
+        chatBox.appendChild(botMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+</script>
+{% endblock %}
 
