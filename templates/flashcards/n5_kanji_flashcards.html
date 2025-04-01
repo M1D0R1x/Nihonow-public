@@ -5,59 +5,107 @@
 <style>
     body {
         background: linear-gradient(135deg, #fff5f5, #fffde7);
+        font-family: 'Noto Sans Japanese', sans-serif;
     }
     .container-shadow {
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        padding: 30px;
     }
     .subtype-btn {
-        border-color: #ff6f61;
+        border: 2px solid #ff6f61;
         color: #ff6f61;
-        border-radius: 20px;
-        transition: all 0.3s;
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
     }
     .subtype-btn:hover {
         background-color: #ff6f61;
         color: #fff;
+        transform: scale(1.05);
     }
     .option-btn {
-        border-color: #2c3e50;
+        border: 2px solid #2c3e50;
         color: #2c3e50;
-        border-radius: 15px;
-        transition: all 0.3s;
+        border-radius: 20px;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
     }
     .option-btn:hover {
         background-color: #e68a8e;
         color: #fff;
+        transform: scale(1.05);
     }
     .btn-next {
         background-color: #ff6f61;
         color: #fff;
         border: none;
-        border-radius: 15px;
-        transition: all 0.3s;
+        border-radius: 20px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
     }
     .btn-next:hover {
         background-color: #e65a50;
+        transform: scale(1.05);
     }
     .btn-back {
         background-color: #ffd700;
         color: #333;
         border: none;
-        border-radius: 15px;
-        transition: all 0.3s;
+        border-radius: 20px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
     }
     .btn-back:hover {
         background-color: #e6c200;
+        transform: scale(1.05);
+    }
+    .kanji-card-container {
+        perspective: 1000px;
+        max-width: 400px;
+        margin: 0 auto;
     }
     .kanji-card {
-        max-width: 400px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+        width: 100%;
+        height: 200px;
+        transform-style: preserve-3d;
+        transition: transform 0.6s ease;
+    }
+    .kanji-card.flipped {
+        transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        background-color: #f7f1e3;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .card-front {
+        z-index: 2;
+    }
+    .card-back {
+        transform: rotateY(180deg);
     }
     .kanji-display {
-        font-size: 4.5rem;
+        font-size: 5rem;
+        color: #ff6f61;
     }
     .card-text {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
+        color: #333;
     }
     .timer-overlay {
         position: fixed;
@@ -73,21 +121,20 @@
     }
     .timer-message {
         background: #fff;
-        padding: 20px 40px;
-        border-radius: 15px;
+        padding: 25px 50px;
+        border-radius: 20px;
         text-align: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
     .timer-message h3 {
         color: #ff6f61;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }
     .timer-message span {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         font-weight: bold;
         color: #2c3e50;
     }
-    /* Authentication overlay styles */
     .auth-overlay {
         position: fixed;
         top: 0;
@@ -107,11 +154,11 @@
     }
     .auth-message {
         background: #fff;
-        padding: 30px;
-        border-radius: 20px;
+        padding: 35px;
+        border-radius: 25px;
         text-align: center;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        max-width: 400px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        max-width: 450px;
         width: 90%;
         transform: scale(0.9);
         transition: transform 0.3s ease;
@@ -121,94 +168,129 @@
     }
     .auth-message h3 {
         color: #ff6f61;
-        font-size: 1.8rem;
-        margin-bottom: 15px;
+        font-size: 2rem;
+        margin-bottom: 20px;
         font-weight: 600;
     }
     .auth-message p {
         color: #333;
-        font-size: 1.1rem;
-        margin-bottom: 20px;
+        font-size: 1.2rem;
+        margin-bottom: 25px;
     }
     .auth-message .btn {
-        display: inline-block;
-        padding: 10px 20px;
-        margin: 0 10px;
-        border-radius: 15px;
+        padding: 12px 25px;
+        margin: 0 15px;
+        border-radius: 20px;
         text-decoration: none;
         font-weight: bold;
-        transition: all 0.3s;
+        transition: all 0.3s ease;
     }
     .auth-message .btn-login {
         background-color: #ff6f61;
         color: #fff;
-        border: none;
     }
     .auth-message .btn-login:hover {
         background-color: #e65a50;
+        transform: scale(1.05);
     }
     .auth-message .btn-register {
         background-color: #ff6f61;
         color: #fff;
-        border: none;
     }
     .auth-message .btn-register:hover {
         background-color: #e65a50;
+        transform: scale(1.05);
+    }
+    .navigation-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+    }
+    #question-timer {
+        margin-bottom: 20px;
+        padding: 10px 20px;
+        background: #2c3e50;
+        border-radius: 10px;
+        border: 2px solid #000;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), inset 0 0 5px rgba(255, 255, 255, 0.3);
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #00ff00; /* Start with green */
+        text-align: center;
+        text-shadow: 0 0 5px rgba(0, 255, 0, 0.7);
+        transition: color 0.5s ease, text-shadow 0.5s ease;
+    }
+    #question-timer.warning {
+        color: #ffeb3b; /* Yellow for warning */
+        text-shadow: 0 0 5px rgba(255, 235, 59, 0.7);
+    }
+    #question-timer.danger {
+        color: #ff0000; /* Red for danger */
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
+        animation: blink 0.5s infinite;
+    }
+    @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
     }
 </style>
 
-<div class="container my-5 container-shadow" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4); padding: 20px; border-radius: 15px;">
-    <h1 class="text-center mb-4" style="color: #d32f2f;">N5 Kanji Flashcards</h1>
+<div class="container my-5 container-shadow">
+    <h2 class="text-center mb-5" style="color: #ff6f61; font-size: 2.8rem;">N5 Kanji Flashcards</h2>
 
-    <!-- Subtype Selection -->
-    <div id="subtypeSelection" class="text-center" style="padding: 20px;">
-        <h3 class="mb-3" style="color: #d32f2f;">Select a Category to Practice</h3>
-        <div class="d-flex flex-wrap justify-content-center gap-2">
-            <button class="btn subtype-btn" data-subtype="numbers">Numbers</button>
-            <button class="btn subtype-btn" data-subtype="environment">Environment</button>
-            <button class="btn subtype-btn" data-subtype="people">People & Body</button>
-            <button class="btn subtype-btn" data-subtype="directions">Directions</button>
-            <button class="btn subtype-btn" data-subtype="verbs">Verbs</button>
-            <button class="btn subtype-btn" data-subtype="adjectives">Adjectives</button>
-            <button class="btn subtype-btn" data-subtype="misc">Miscellaneous</button>
-            <button class="btn subtype-btn" data-subtype="all_kanji">All</button>
+    <!-- Selection Section -->
+    <div id="selection-section" class="text-center" style="padding: 20px;">
+        <h3 class="mb-4" style="color: #ff6f61;">Select a Category to Practice</h3>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <button class="btn subtype-btn" data-category="numbers">Numbers</button>
+            <button class="btn subtype-btn" data-category="environment">Environment</button>
+            <button class="btn subtype-btn" data-category="people">People & Body</button>
+            <button class="btn subtype-btn" data-category="directions">Directions</button>
+            <button class="btn subtype-btn" data-category="verbs">Verbs</button>
+            <button class="btn subtype-btn" data-category="adjectives">Adjectives</button>
+            <button class="btn subtype-btn" data-category="misc">Miscellaneous</button>
+            <button class="btn subtype-btn" data-category="all_kanji">All</button>
         </div>
     </div>
 
     <!-- Flashcard Area (Hidden Initially) -->
-    <div id="flashcardArea" class="d-none">
+    <div id="flashcard-section" class="d-none">
         <!-- Score Display -->
-        <div class="text-center" style="padding: 20px;">
-            <h4 style="color: #d32f2f;">Score: <span id="score">0</span> / <span id="total">0</span></h4>
+        <div class="text-center mb-4" style="padding: 20px;">
+            <h4 style="color: #ff6f61;">Score: <span id="score">0</span> / <span id="total">0</span></h4>
         </div>
 
-        <!-- Kanji Card -->
-        <div class="card mb-4 mx-auto kanji-card" style="background-color: #f7f1e3; border: none; padding: 20px;">
-            <div class="card-body text-center">
-                <h2 id="kanjiDisplay" class="kanji-display" style="color: #d32f2f;"></h2>
-                <p class="card-text" style="color: #333;">Select the correct meaning:</p>
+        <!-- Timer Display (Will be dynamically added) -->
+        <div id="timer-container" class="text-center"></div>
+
+        <!-- Kanji Card with Flip Animation -->
+        <div class="kanji-card-container mb-4">
+            <div class="kanji-card" id="kanji-card">
+                <div class="card-front">
+                    <h3 id="flashcard-char" class="kanji-display"></h3>
+                    <p class="card-text">Choose the correct meaning:</p>
+                </div>
+                <div class="card-back">
+                    <p class="card-text" id="feedback-back" style="font-size: 1.5rem;"></p>
+                </div>
             </div>
         </div>
 
         <!-- Options -->
-        <div class="d-flex flex-wrap justify-content-center gap-2" style="padding: 20px;">
+        <div class="d-flex flex-wrap justify-content-center gap-3" style="padding: 20px;">
             <button class="btn option-btn" data-option="0"></button>
             <button class="btn option-btn" data-option="1"></button>
             <button class="btn option-btn" data-option="2"></button>
             <button class="btn option-btn" data-option="3"></button>
         </div>
 
-        <!-- Feedback -->
-        <div id="feedback" class="text-center" style="padding: 20px;"></div>
-
-        <!-- Next Question Button -->
-        <div class="text-center" style="padding: 20px;">
+        <!-- Navigation Buttons -->
+        <div class="navigation-buttons">
             <button id="nextQuestionBtn" class="btn btn-next d-none">Next Question</button>
-        </div>
-
-        <!-- Back to Selection Button -->
-        <div class="text-center" style="padding: 20px;">
-            <button id="backToSelectionBtn" class="btn btn-back">Back to Selection</button>
+            <button id="back-to-selection-btn" class="btn btn-back">Back to Selection</button>
         </div>
     </div>
 
@@ -220,448 +302,521 @@
         </div>
     </div>
 
-    <!-- Authentication Overlay (Hidden Initially) -->
+    <!-- Authentication Overlay -->
     <div id="auth-overlay" class="auth-overlay d-none">
         <div class="auth-message">
             <h3>Login Required</h3>
             <p>Please login or register to access the flashcards.</p>
             <div>
-                <a href="#" class="btn btn-login" onclick="window.location.href=loginUrl">Login</a>
+                <a href="{% url 'login' %}" class="btn btn-login">Login</a>
                 <a href="{% url 'register' %}" class="btn btn-register">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Limit Popup -->
+    <div id="time-limit-overlay" class="auth-overlay d-none">
+        <div class="auth-message">
+            <h3>Set Time Limit</h3>
+            <p>Enter a time limit per question (in seconds). Leave empty for no limit.</p>
+            <input type="number" id="time-limit-input" min="1" placeholder="e.g., 10" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 10px; border: 2px solid #ff6f61;">
+            <div>
+                <button id="start-with-time-btn" class="btn btn-login">Start</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Pass Django authentication status to JavaScript
-const isAuthenticated = {{ user.is_authenticated|lower }};
-const loginUrl = "{% url 'login' %}?next={% url 'flashcards_n5_kanji' %}&message=Please+login+or+register+to+access+the+features";
+    // Pass Django authentication status to JavaScript
+    const isAuthenticated = {{ user.is_authenticated|lower }};
+    const loginUrl = "{% url 'login' %}?next={% url 'flashcards_n5_kanji' %}&message=Please+login+or+register+to+access+the+features";
 
-// Kanji data embedded in the HTML
-const flashcard_kanji_data = [
-    {'character': '一', 'onyomi': 'ICHI, ITSU', 'kunyomi': 'hito(tsu), hito-', 'meaning': 'one'},
-    {'character': '二', 'onyomi': 'NI', 'kunyomi': 'futa(tsu), futa-', 'meaning': 'two'},
-    {'character': '三', 'onyomi': 'SAN', 'kunyomi': 'mit(tsu), mi-', 'meaning': 'three'},
-    {'character': '四', 'onyomi': 'SHI', 'kunyomi': 'yon, yo(tsu), yo-', 'meaning': 'four'},
-    {'character': '五', 'onyomi': 'GO', 'kunyomi': 'itsu(tsu), itsu-', 'meaning': 'five'},
-    {'character': '六', 'onyomi': 'ROKU', 'kunyomi': 'mut(tsu), mu-', 'meaning': 'six'},
-    {'character': '七', 'onyomi': 'SHICHI', 'kunyomi': 'nana(tsu), nana-', 'meaning': 'seven'},
-    {'character': '八', 'onyomi': 'HACHI', 'kunyomi': 'yat(tsu), ya-', 'meaning': 'eight'},
-    {'character': '九', 'onyomi': 'KYUU, KU', 'kunyomi': 'kokono(tsu), kokono-', 'meaning': 'nine'},
-    {'character': '十', 'onyomi': 'JUU', 'kunyomi': 'too, to-', 'meaning': 'ten'},
-    {'character': '百', 'onyomi': 'HYAKU', 'kunyomi': '–', 'meaning': 'hundred'},
-    {'character': '千', 'onyomi': 'SEN', 'kunyomi': '–', 'meaning': 'thousand'},
-    {'character': '万', 'onyomi': 'MAN', 'kunyomi': '–', 'meaning': 'ten thousand'},
-    {'character': '雨', 'onyomi': 'U', 'kunyomi': 'ame, ama-', 'meaning': 'rain'},
-    {'character': '火', 'onyomi': 'KA', 'kunyomi': 'hi, -bi', 'meaning': 'fire'},
-    {'character': '花', 'onyomi': 'KA', 'kunyomi': 'hana', 'meaning': 'flower'},
-    {'character': '山', 'onyomi': 'SAN', 'kunyomi': 'yama', 'meaning': 'mountain'},
-    {'character': '川', 'onyomi': 'SEN', 'kunyomi': 'kawa', 'meaning': 'river'},
-    {'character': '空', 'onyomi': 'KUU', 'kunyomi': 'sora, a(keru), kara', 'meaning': 'sky, empty'},
-    {'character': '月', 'onyomi': 'GETSU, GATSU', 'kunyomi': 'tsuki', 'meaning': 'moon, month'},
-    {'character': '気', 'onyomi': 'KI, KE', 'kunyomi': '–', 'meaning': 'spirit, air'},
-    {'character': '魚', 'onyomi': 'GYO', 'kunyomi': 'sakana, uo', 'meaning': 'fish'},
-    {'character': '金', 'onyomi': 'KIN, KON', 'kunyomi': 'kane', 'meaning': 'gold, money'},
-    {'character': '木', 'onyomi': 'BOKU, MOKU', 'kunyomi': 'ki, ko-', 'meaning': 'tree, wood'},
-    {'character': '水', 'onyomi': 'SUI', 'kunyomi': 'mizu, mizu-', 'meaning': 'water'},
-    {'character': '土', 'onyomi': 'DO, TO', 'kunyomi': 'tsuchi', 'meaning': 'earth, soil'},
-    {'character': '日', 'onyomi': 'NICHI, JITSU', 'kunyomi': 'hi, -ka', 'meaning': 'day, sun'},
-    {'character': '電', 'onyomi': 'DEN', 'kunyomi': '–', 'meaning': 'electricity'},
-    {'character': '天', 'onyomi': 'TEN', 'kunyomi': 'ame, ama-', 'meaning': 'heaven, sky'},
-    {'character': '人', 'onyomi': 'JIN, NIN', 'kunyomi': 'hito', 'meaning': 'person'},
-    {'character': '子', 'onyomi': 'SHI, SU', 'kunyomi': 'ko, -ko', 'meaning': 'child'},
-    {'character': '女', 'onyomi': 'JO, NYO', 'kunyomi': 'onna, me', 'meaning': 'woman'},
-    {'character': '男', 'onyomi': 'DAN, NAN', 'kunyomi': 'otoko', 'meaning': 'man'},
-    {'character': '父', 'onyomi': 'FU', 'kunyomi': 'tō, chichi', 'meaning': 'father'},
-    {'character': '母', 'onyomi': 'BO', 'kunyomi': 'haha', 'meaning': 'mother'},
-    {'character': '友', 'onyomi': 'YUU', 'kunyomi': 'tomo', 'meaning': 'friend'},
-    {'character': '手', 'onyomi': 'SHU', 'kunyomi': 'te', 'meaning': 'hand'},
-    {'character': '足', 'onyomi': 'SOKU', 'kunyomi': 'ashi, ta(riru)', 'meaning': 'foot, leg'},
-    {'character': '耳', 'onyomi': 'JI', 'kunyomi': 'mimi', 'meaning': 'ear'},
-    {'character': '目', 'onyomi': 'MOKU', 'kunyomi': 'me, -me', 'meaning': 'eye'},
-    {'character': '口', 'onyomi': 'KOU', 'kunyomi': 'kuchi, -guchi', 'meaning': 'mouth'},
-    {'character': '名', 'onyomi': 'MEI, MYOU', 'kunyomi': 'na', 'meaning': 'name'},
-    {'character': '生', 'onyomi': 'SEI, SHOU', 'kunyomi': 'i(kiru), u(mareru), ha(yasu)', 'meaning': 'life, birth'},
-    {'character': '上', 'onyomi': 'JOU', 'kunyomi': 'ue, u(wari), a(geru), nobo(ru)', 'meaning': 'up, above'},
-    {'character': '下', 'onyomi': 'KA, GE', 'kunyomi': 'shita, sa(geru), o(riru)', 'meaning': 'down, below'},
-    {'character': '左', 'onyomi': 'SA', 'kunyomi': 'hidari', 'meaning': 'left'},
-    {'character': '右', 'onyomi': 'U, YUU', 'kunyomi': 'migi', 'meaning': 'right'},
-    {'character': '中', 'onyomi': 'CHUU', 'kunyomi': 'naka', 'meaning': 'middle, inside'},
-    {'character': '外', 'onyomi': 'GAI', 'kunyomi': 'soto, hoka', 'meaning': 'outside'},
-    {'character': '前', 'onyomi': 'ZEN', 'kunyomi': 'mae', 'meaning': 'front, before'},
-    {'character': '後', 'onyomi': 'GO, KOU', 'kunyomi': 'ushiro, ato', 'meaning': 'behind, after'},
-    {'character': '西', 'onyomi': 'SEI', 'kunyomi': 'nishi', 'meaning': 'west'},
-    {'character': '東', 'onyomi': 'TOU', 'kunyomi': 'higashi', 'meaning': 'east'},
-    {'character': '南', 'onyomi': 'NAN', 'kunyomi': 'minami', 'meaning': 'south'},
-    {'character': '北', 'onyomi': 'HOKU', 'kunyomi': 'kita', 'meaning': 'north'},
-    {'character': '飲', 'onyomi': 'IN', 'kunyomi': 'no(mu)', 'meaning': 'drink'},
-    {'character': '会', 'onyomi': 'KAI, E', 'kunyomi': 'a(u)', 'meaning': 'meet'},
-    {'character': '出', 'onyomi': 'SHUTSU', 'kunyomi': 'de(ru), da(su)', 'meaning': 'exit, go out'},
-    {'character': '見', 'onyomi': 'KEN', 'kunyomi': 'mi(ru), mi(eru)', 'meaning': 'see'},
-    {'character': '言', 'onyomi': 'GEN, GON', 'kunyomi': 'i(u), koto', 'meaning': 'say, word'},
-    {'character': '休', 'onyomi': 'KYUU', 'kunyomi': 'yasu(mu)', 'meaning': 'rest'},
-    {'character': '行', 'onyomi': 'KOU', 'kunyomi': 'i(ku), yu(ku), okona(u)', 'meaning': 'go'},
-    {'character': '書', 'onyomi': 'SHO', 'kunyomi': 'ka(ku)', 'meaning': 'write'},
-    {'character': '食', 'onyomi': 'SHOKU', 'kunyomi': 'ta(beru), ku(u)', 'meaning': 'eat'},
-    {'character': '入', 'onyomi': 'NYUU', 'kunyomi': 'i(ru), hai(ru)', 'meaning': 'enter'},
-    {'character': '買', 'onyomi': 'BAI', 'kunyomi': 'ka(u)', 'meaning': 'buy'},
-    {'character': '聞', 'onyomi': 'BUN, MON', 'kunyomi': 'ki(ku)', 'meaning': 'hear, listen'},
-    {'character': '読', 'onyomi': 'DOKU', 'kunyomi': 'yo(mu)', 'meaning': 'read'},
-    {'character': '来', 'onyomi': 'RAI', 'kunyomi': 'ku(ru)', 'meaning': 'come'},
-    {'character': '立', 'onyomi': 'RITSU', 'kunyomi': 'ta(tsu)', 'meaning': 'stand'},
-    {'character': '話', 'onyomi': 'WA', 'kunyomi': 'hanashi, hana(su)', 'meaning': 'talk, story'},
-    {'character': '学', 'onyomi': 'GAKU', 'kunyomi': 'mana(bu)', 'meaning': 'study, learn'},
-    {'character': '分', 'onyomi': 'BUN, FUN', 'kunyomi': 'wa(karu)', 'meaning': 'minute, understand'},
-    {'character': '安', 'onyomi': 'AN', 'kunyomi': 'yasu(i)', 'meaning': 'peace, cheap, safety'},
-    {'character': '多', 'onyomi': 'TA', 'kunyomi': 'oo(i)', 'meaning': 'many, much'},
-    {'character': '大', 'onyomi': 'DAI, TAI', 'kunyomi': 'ou(kii), oo(i)', 'meaning': 'big, a lot'},
-    {'character': '小', 'onyomi': 'SHOU', 'kunyomi': 'chii(sai), ko-', 'meaning': 'small'},
-    {'character': '少', 'onyomi': 'SHOU', 'kunyomi': 'suko(shi), suku(nai)', 'meaning': 'few, little'},
-    {'character': '新', 'onyomi': 'SHIN', 'kunyomi': 'atara(shii)', 'meaning': 'new'},
-    {'character': '古', 'onyomi': 'KO', 'kunyomi': 'furu(i)', 'meaning': 'old'},
-    {'character': '高', 'onyomi': 'KOU', 'kunyomi': 'taka(i)', 'meaning': 'high, tall, expensive'},
-    {'character': '長', 'onyomi': 'CHOU', 'kunyomi': 'naga(i)', 'meaning': 'long, leader'},
-    {'character': '白', 'onyomi': 'HAKU', 'kunyomi': 'shiro, shiro(i)', 'meaning': 'white'},
-    {'character': '半', 'onyomi': 'HAN', 'kunyomi': '–', 'meaning': 'half'},
-    {'character': '今', 'onyomi': 'KON', 'kunyomi': 'ima', 'meaning': 'now'},
-    {'character': '何', 'onyomi': 'KA', 'kunyomi': 'nani, nan', 'meaning': 'what'},
-    {'character': '時', 'onyomi': 'JI', 'kunyomi': 'toki, -doki', 'meaning': 'time, hour'},
-    {'character': '間', 'onyomi': 'KAN', 'kunyomi': 'aida, ma', 'meaning': 'interval, space'},
-    {'character': '年', 'onyomi': 'NEN', 'kunyomi': 'toshi', 'meaning': 'year'},
-    {'character': '円', 'onyomi': 'EN', 'kunyomi': 'maru(i)', 'meaning': 'yen, circle'},
-    {'character': '先', 'onyomi': 'SEN', 'kunyomi': 'saki', 'meaning': 'previous, ahead'},
-    {'character': '毎', 'onyomi': 'MAI', 'kunyomi': '–', 'meaning': 'every'},
-    {'character': '本', 'onyomi': 'HON', 'kunyomi': 'moto', 'meaning': 'book, origin'},
-    {'character': '校', 'onyomi': 'KOU', 'kunyomi': '–', 'meaning': 'school'},
-    {'character': '駅', 'onyomi': 'EKI', 'kunyomi': '–', 'meaning': 'station'},
-    {'character': '店', 'onyomi': 'TEN', 'kunyomi': 'mise', 'meaning': 'shop'},
-    {'character': '道', 'onyomi': 'DOU', 'kunyomi': 'michi', 'meaning': 'road, way'},
-];
+    // Kanji data (unchanged from original)
+    const flashcard_kanji_data = [
+        {'character': '一', 'onyomi': 'ICHI, ITSU', 'kunyomi': 'hito(tsu), hito-', 'meaning': 'one'},
+        {'character': '二', 'onyomi': 'NI', 'kunyomi': 'futa(tsu), futa-', 'meaning': 'two'},
+        {'character': '三', 'onyomi': 'SAN', 'kunyomi': 'mit(tsu), mi-', 'meaning': 'three'},
+        {'character': '四', 'onyomi': 'SHI', 'kunyomi': 'yon, yo(tsu), yo-', 'meaning': 'four'},
+        {'character': '五', 'onyomi': 'GO', 'kunyomi': 'itsu(tsu), itsu-', 'meaning': 'five'},
+        {'character': '六', 'onyomi': 'ROKU', 'kunyomi': 'mut(tsu), mu-', 'meaning': 'six'},
+        {'character': '七', 'onyomi': 'SHICHI', 'kunyomi': 'nana(tsu), nana-', 'meaning': 'seven'},
+        {'character': '八', 'onyomi': 'HACHI', 'kunyomi': 'yat(tsu), ya-', 'meaning': 'eight'},
+        {'character': '九', 'onyomi': 'KYUU, KU', 'kunyomi': 'kokono(tsu), kokono-', 'meaning': 'nine'},
+        {'character': '十', 'onyomi': 'JUU', 'kunyomi': 'too, to-', 'meaning': 'ten'},
+        {'character': '百', 'onyomi': 'HYAKU', 'kunyomi': '–', 'meaning': 'hundred'},
+        {'character': '千', 'onyomi': 'SEN', 'kunyomi': '–', 'meaning': 'thousand'},
+        {'character': '万', 'onyomi': 'MAN', 'kunyomi': '–', 'meaning': 'ten thousand'},
+        {'character': '雨', 'onyomi': 'U', 'kunyomi': 'ame, ama-', 'meaning': 'rain'},
+        {'character': '火', 'onyomi': 'KA', 'kunyomi': 'hi, -bi', 'meaning': 'fire'},
+        {'character': '花', 'onyomi': 'KA', 'kunyomi': 'hana', 'meaning': 'flower'},
+        {'character': '山', 'onyomi': 'SAN', 'kunyomi': 'yama', 'meaning': 'mountain'},
+        {'character': '川', 'onyomi': 'SEN', 'kunyomi': 'kawa', 'meaning': 'river'},
+        {'character': '空', 'onyomi': 'KUU', 'kunyomi': 'sora, a(keru), kara', 'meaning': 'sky, empty'},
+        {'character': '月', 'onyomi': 'GETSU, GATSU', 'kunyomi': 'tsuki', 'meaning': 'moon, month'},
+        {'character': '気', 'onyomi': 'KI, KE', 'kunyomi': '–', 'meaning': 'spirit, air'},
+        {'character': '魚', 'onyomi': 'GYO', 'kunyomi': 'sakana, uo', 'meaning': 'fish'},
+        {'character': '金', 'onyomi': 'KIN, KON', 'kunyomi': 'kane', 'meaning': 'gold, money'},
+        {'character': '木', 'onyomi': 'BOKU, MOKU', 'kunyomi': 'ki, ko-', 'meaning': 'tree, wood'},
+        {'character': '水', 'onyomi': 'SUI', 'kunyomi': 'mizu, mizu-', 'meaning': 'water'},
+        {'character': '土', 'onyomi': 'DO, TO', 'kunyomi': 'tsuchi', 'meaning': 'earth, soil'},
+        {'character': '日', 'onyomi': 'NICHI, JITSU', 'kunyomi': 'hi, -ka', 'meaning': 'day, sun'},
+        {'character': '電', 'onyomi': 'DEN', 'kunyomi': '–', 'meaning': 'electricity'},
+        {'character': '天', 'onyomi': 'TEN', 'kunyomi': 'ame, ama-', 'meaning': 'heaven, sky'},
+        {'character': '人', 'onyomi': 'JIN, NIN', 'kunyomi': 'hito', 'meaning': 'person'},
+        {'character': '子', 'onyomi': 'SHI, SU', 'kunyomi': 'ko, -ko', 'meaning': 'child'},
+        {'character': '女', 'onyomi': 'JO, NYO', 'kunyomi': 'onna, me', 'meaning': 'woman'},
+        {'character': '男', 'onyomi': 'DAN, NAN', 'kunyomi': 'otoko', 'meaning': 'man'},
+        {'character': '父', 'onyomi': 'FU', 'kunyomi': 'tō, chichi', 'meaning': 'father'},
+        {'character': '母', 'onyomi': 'BO', 'kunyomi': 'haha', 'meaning': 'mother'},
+        {'character': '友', 'onyomi': 'YUU', 'kunyomi': 'tomo', 'meaning': 'friend'},
+        {'character': '手', 'onyomi': 'SHU', 'kunyomi': 'te', 'meaning': 'hand'},
+        {'character': '足', 'onyomi': 'SOKU', 'kunyomi': 'ashi, ta(riru)', 'meaning': 'foot, leg'},
+        {'character': '耳', 'onyomi': 'JI', 'kunyomi': 'mimi', 'meaning': 'ear'},
+        {'character': '目', 'onyomi': 'MOKU', 'kunyomi': 'me, -me', 'meaning': 'eye'},
+        {'character': '口', 'onyomi': 'KOU', 'kunyomi': 'kuchi, -guchi', 'meaning': 'mouth'},
+        {'character': '名', 'onyomi': 'MEI, MYOU', 'kunyomi': 'na', 'meaning': 'name'},
+        {'character': '生', 'onyomi': 'SEI, SHOU', 'kunyomi': 'i(kiru), u(mareru), ha(yasu)', 'meaning': 'life, birth'},
+        {'character': '上', 'onyomi': 'JOU', 'kunyomi': 'ue, u(wari), a(geru), nobo(ru)', 'meaning': 'up, above'},
+        {'character': '下', 'onyomi': 'KA, GE', 'kunyomi': 'shita, sa(geru), o(riru)', 'meaning': 'down, below'},
+        {'character': '左', 'onyomi': 'SA', 'kunyomi': 'hidari', 'meaning': 'left'},
+        {'character': '右', 'onyomi': 'U, YUU', 'kunyomi': 'migi', 'meaning': 'right'},
+        {'character': '中', 'onyomi': 'CHUU', 'kunyomi': 'naka', 'meaning': 'middle, inside'},
+        {'character': '外', 'onyomi': 'GAI', 'kunyomi': 'soto, hoka', 'meaning': 'outside'},
+        {'character': '前', 'onyomi': 'ZEN', 'kunyomi': 'mae', 'meaning': 'front, before'},
+        {'character': '後', 'onyomi': 'GO, KOU', 'kunyomi': 'ushiro, ato', 'meaning': 'behind, after'},
+        {'character': '西', 'onyomi': 'SEI', 'kunyomi': 'nishi', 'meaning': 'west'},
+        {'character': '東', 'onyomi': 'TOU', 'kunyomi': 'higashi', 'meaning': 'east'},
+        {'character': '南', 'onyomi': 'NAN', 'kunyomi': 'minami', 'meaning': 'south'},
+        {'character': '北', 'onyomi': 'HOKU', 'kunyomi': 'kita', 'meaning': 'north'},
+        {'character': '飲', 'onyomi': 'IN', 'kunyomi': 'no(mu)', 'meaning': 'drink'},
+        {'character': '会', 'onyomi': 'KAI, E', 'kunyomi': 'a(u)', 'meaning': 'meet'},
+        {'character': '出', 'onyomi': 'SHUTSU', 'kunyomi': 'de(ru), da(su)', 'meaning': 'exit, go out'},
+        {'character': '見', 'onyomi': 'KEN', 'kunyomi': 'mi(ru), mi(eru)', 'meaning': 'see'},
+        {'character': '言', 'onyomi': 'GEN, GON', 'kunyomi': 'i(u), koto', 'meaning': 'say, word'},
+        {'character': '休', 'onyomi': 'KYUU', 'kunyomi': 'yasu(mu)', 'meaning': 'rest'},
+        {'character': '行', 'onyomi': 'KOU', 'kunyomi': 'i(ku), yu(ku), okona(u)', 'meaning': 'go'},
+        {'character': '書', 'onyomi': 'SHO', 'kunyomi': 'ka(ku)', 'meaning': 'write'},
+        {'character': '食', 'onyomi': 'SHOKU', 'kunyomi': 'ta(beru), ku(u)', 'meaning': 'eat'},
+        {'character': '入', 'onyomi': 'NYUU', 'kunyomi': 'i(ru), hai(ru)', 'meaning': 'enter'},
+        {'character': '買', 'onyomi': 'BAI', 'kunyomi': 'ka(u)', 'meaning': 'buy'},
+        {'character': '聞', 'onyomi': 'BUN, MON', 'kunyomi': 'ki(ku)', 'meaning': 'hear, listen'},
+        {'character': '読', 'onyomi': 'DOKU', 'kunyomi': 'yo(mu)', 'meaning': 'read'},
+        {'character': '来', 'onyomi': 'RAI', 'kunyomi': 'ku(ru)', 'meaning': 'come'},
+        {'character': '立', 'onyomi': 'RITSU', 'kunyomi': 'ta(tsu)', 'meaning': 'stand'},
+        {'character': '話', 'onyomi': 'WA', 'kunyomi': 'hanashi, hana(su)', 'meaning': 'talk, story'},
+        {'character': '学', 'onyomi': 'GAKU', 'kunyomi': 'mana(bu)', 'meaning': 'study, learn'},
+        {'character': '分', 'onyomi': 'BUN, FUN', 'kunyomi': 'wa(karu)', 'meaning': 'minute, understand'},
+        {'character': '安', 'onyomi': 'AN', 'kunyomi': 'yasu(i)', 'meaning': 'peace, cheap, safety'},
+        {'character': '多', 'onyomi': 'TA', 'kunyomi': 'oo(i)', 'meaning': 'many, much'},
+        {'character': '大', 'onyomi': 'DAI, TAI', 'kunyomi': 'ou(kii), oo(i)', 'meaning': 'big, a lot'},
+        {'character': '小', 'onyomi': 'SHOU', 'kunyomi': 'chii(sai), ko-', 'meaning': 'small'},
+        {'character': '少', 'onyomi': 'SHOU', 'kunyomi': 'suko(shi), suku(nai)', 'meaning': 'few, little'},
+        {'character': '新', 'onyomi': 'SHIN', 'kunyomi': 'atara(shii)', 'meaning': 'new'},
+        {'character': '古', 'onyomi': 'KO', 'kunyomi': 'furu(i)', 'meaning': 'old'},
+        {'character': '高', 'onyomi': 'KOU', 'kunyomi': 'taka(i)', 'meaning': 'high, tall, expensive'},
+        {'character': '長', 'onyomi': 'CHOU', 'kunyomi': 'naga(i)', 'meaning': 'long, leader'},
+        {'character': '白', 'onyomi': 'HAKU', 'kunyomi': 'shiro, shiro(i)', 'meaning': 'white'},
+        {'character': '半', 'onyomi': 'HAN', 'kunyomi': '–', 'meaning': 'half'},
+        {'character': '今', 'onyomi': 'KON', 'kunyomi': 'ima', 'meaning': 'now'},
+        {'character': '何', 'onyomi': 'KA', 'kunyomi': 'nani, nan', 'meaning': 'what'},
+        {'character': '時', 'onyomi': 'JI', 'kunyomi': 'toki, -doki', 'meaning': 'time, hour'},
+        {'character': '間', 'onyomi': 'KAN', 'kunyomi': 'aida, ma', 'meaning': 'interval, space'},
+        {'character': '年', 'onyomi': 'NEN', 'kunyomi': 'toshi', 'meaning': 'year'},
+        {'character': '円', 'onyomi': 'EN', 'kunyomi': 'maru(i)', 'meaning': 'yen, circle'},
+        {'character': '先', 'onyomi': 'SEN', 'kunyomi': 'saki', 'meaning': 'previous, ahead'},
+        {'character': '毎', 'onyomi': 'MAI', 'kunyomi': '–', 'meaning': 'every'},
+        {'character': '本', 'onyomi': 'HON', 'kunyomi': 'moto', 'meaning': 'book, origin'},
+        {'character': '校', 'onyomi': 'KOU', 'kunyomi': '–', 'meaning': 'school'},
+        {'character': '駅', 'onyomi': 'EKI', 'kunyomi': '–', 'meaning': 'station'},
+        {'character': '店', 'onyomi': 'TEN', 'kunyomi': 'mise', 'meaning': 'shop'},
+        {'character': '道', 'onyomi': 'DOU', 'kunyomi': 'michi', 'meaning': 'road, way'},
+    ];
 
-// Categorize the kanji for flashcards
-const flashcard_number_order = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '百', '千', '万'];
-const flashcard_kanji_numbers = flashcard_kanji_data
-    .filter(k => flashcard_number_order.includes(k.character))
-    .sort((a, b) => flashcard_number_order.indexOf(a.character) - flashcard_number_order.indexOf(b.character));
-const flashcard_kanji_environment = flashcard_kanji_data.filter(k => ['雨', '火', '花', '山', '川', '空', '月', '気', '魚', '金', '木', '水', '土', '日', '電', '天'].includes(k.character));
-const flashcard_kanji_people = flashcard_kanji_data.filter(k => ['人', '子', '女', '男', '父', '母', '友', '手', '足', '耳', '目', '口', '名', '生'].includes(k.character));
-const flashcard_kanji_directions = flashcard_kanji_data.filter(k => ['上', '下', '左', '右', '中', '外', '前', '後', '西', '東', '南', '北'].includes(k.character));
-const flashcard_kanji_verbs = flashcard_kanji_data.filter(k => ['飲', '会', '出', '見', '言', '休', '行', '書', '食', '入', '買', '聞', '読', '来', '立', '話', '学', '分'].includes(k.character));
-const flashcard_kanji_adjectives = flashcard_kanji_data.filter(k => ['安', '多', '大', '小', '少', '新', '古', '高', '長', '白', '半'].includes(k.character));
-const flashcard_kanji_misc = flashcard_kanji_data.filter(k => !(
-    flashcard_kanji_numbers.map(k => k.character).includes(k.character) ||
-    flashcard_kanji_environment.map(k => k.character).includes(k.character) ||
-    flashcard_kanji_people.map(k => k.character).includes(k.character) ||
-    flashcard_kanji_directions.map(k => k.character).includes(k.character) ||
-    flashcard_kanji_verbs.map(k => k.character).includes(k.character) ||
-    flashcard_kanji_adjectives.map(k => k.character).includes(k.character)
-));
+    // Categorize the kanji
+    const flashcard_number_order = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '百', '千', '万'];
+    const flashcard_kanji_numbers = flashcard_kanji_data
+        .filter(k => flashcard_number_order.includes(k.character))
+        .sort((a, b) => flashcard_number_order.indexOf(a.character) - flashcard_number_order.indexOf(b.character));
+    const flashcard_kanji_environment = flashcard_kanji_data.filter(k => ['雨', '火', '花', '山', '川', '空', '月', '気', '魚', '金', '木', '水', '土', '日', '電', '天'].includes(k.character));
+    const flashcard_kanji_people = flashcard_kanji_data.filter(k => ['人', '子', '女', '男', '父', '母', '友', '手', '足', '耳', '目', '口', '名', '生'].includes(k.character));
+    const flashcard_kanji_directions = flashcard_kanji_data.filter(k => ['上', '下', '左', '右', '中', '外', '前', '後', '西', '東', '南', '北'].includes(k.character));
+    const flashcard_kanji_verbs = flashcard_kanji_data.filter(k => ['飲', '会', '出', '見', '言', '休', '行', '書', '食', '入', '買', '聞', '読', '来', '立', '話', '学', '分'].includes(k.character));
+    const flashcard_kanji_adjectives = flashcard_kanji_data.filter(k => ['安', '多', '大', '小', '少', '新', '古', '高', '長', '白', '半'].includes(k.character));
+    const flashcard_kanji_misc = flashcard_kanji_data.filter(k => !(
+        flashcard_kanji_numbers.map(k => k.character).includes(k.character) ||
+        flashcard_kanji_environment.map(k => k.character).includes(k.character) ||
+        flashcard_kanji_people.map(k => k.character).includes(k.character) ||
+        flashcard_kanji_directions.map(k => k.character).includes(k.character) ||
+        flashcard_kanji_verbs.map(k => k.character).includes(k.character) ||
+        flashcard_kanji_adjectives.map(k => k.character).includes(k.character)
+    ));
 
-// Kanji data object for the flashcards
-const kanjiData = {
-    numbers: flashcard_kanji_numbers,
-    environment: flashcard_kanji_environment,
-    people: flashcard_kanji_people,
-    directions: flashcard_kanji_directions,
-    verbs: flashcard_kanji_verbs,
-    adjectives: flashcard_kanji_adjectives,
-    misc: flashcard_kanji_misc,
-    all_kanji: flashcard_kanji_data,
-};
-
-// Initialize variables
-let currentKanjiList = [];
-let currentKanjiIndex = 0;
-let score = 0;
-let total = 0;
-let correctAnswer = '';
-let options = [];
-let answered = false;
-let selectedOption = null;
-let feedbackMessage = '';
-let isTimerActive = false;
-let lastInteractionTime = null; // Track the last interaction time
-
-// DOM elements
-const subtypeSelection = document.getElementById('subtypeSelection');
-const flashcardArea = document.getElementById('flashcardArea');
-const kanjiDisplay = document.getElementById('kanjiDisplay');
-const optionButtons = document.querySelectorAll('.option-btn');
-const feedback = document.getElementById('feedback');
-const nextQuestionBtn = document.getElementById('nextQuestionBtn');
-const backToSelectionBtn = document.getElementById('backToSelectionBtn');
-const scoreDisplay = document.getElementById('score');
-const totalDisplay = document.getElementById('total');
-const timerOverlay = document.getElementById('timer-overlay');
-const timerCountdown = document.getElementById('timer-countdown');
-const authOverlay = document.getElementById('auth-overlay');
-
-// Function to shuffle an array (Fisher-Yates algorithm)
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-
-// Function to reset the game state
-function resetGame() {
-    currentKanjiList = [];
-    currentKanjiIndex = 0;
-    score = 0;
-    total = 0;
-    correctAnswer = '';
-    options = [];
-    answered = false;
-    selectedOption = null;
-    feedbackMessage = '';
-    isTimerActive = false;
-    lastInteractionTime = null;
-    scoreDisplay.textContent = score;
-    totalDisplay.textContent = total;
-    flashcardArea.classList.add('d-none');
-    subtypeSelection.classList.remove('d-none');
-    feedback.textContent = '';
-    nextQuestionBtn.classList.add('d-none');
-    timerOverlay.classList.add('d-none');
-    authOverlay.classList.add('d-none');
-    sessionStorage.removeItem('kanjiFlashcardState');
-}
-
-// Function to save state to sessionStorage
-function saveState() {
-    lastInteractionTime = Date.now();
-    const state = {
-        currentKanjiList: currentKanjiList,
-        currentKanjiIndex: currentKanjiIndex,
-        score: score,
-        total: total,
-        correctAnswer: correctAnswer,
-        options: options,
-        answered: answered,
-        selectedOption: selectedOption,
-        feedbackMessage: feedbackMessage,
-        lastInteractionTime: lastInteractionTime
+    const kanjiData = {
+        numbers: flashcard_kanji_numbers,
+        environment: flashcard_kanji_environment,
+        people: flashcard_kanji_people,
+        directions: flashcard_kanji_directions,
+        verbs: flashcard_kanji_verbs,
+        adjectives: flashcard_kanji_adjectives,
+        misc: flashcard_kanji_misc,
+        all_kanji: flashcard_kanji_data,
     };
-    sessionStorage.setItem('kanjiFlashcardState', JSON.stringify(state));
-}
 
-// Function to load state from sessionStorage
-function loadState() {
-    const savedState = sessionStorage.getItem('kanjiFlashcardState');
-    if (savedState) {
-        const state = JSON.parse(savedState);
-        const now = Date.now();
-        currentKanjiList = state.currentKanjiList;
-        currentKanjiIndex = state.currentKanjiIndex;
-        score = state.score;
-        total = state.total;
-        correctAnswer = state.correctAnswer;
-        options = state.options;
-        answered = state.answered;
-        selectedOption = state.selectedOption;
-        feedbackMessage = state.feedbackMessage;
-        lastInteractionTime = state.lastInteractionTime;
+    // Initialize variables
+    let currentKanjiList = [];
+    let currentKanjiIndex = 0;
+    let score = 0;
+    let total = 0;
+    let correctAnswer = '';
+    let options = [];
+    let answered = false;
+    let selectedOption = null;
+    let feedbackMessage = '';
+    let isTimerActive = false;
+    let timeLimitPerQuestion = null; // Time limit in seconds (null for no limit)
+    let questionTimer = null; // Timer interval reference
 
-        // Update DOM
-        subtypeSelection.classList.add('d-none');
-        flashcardArea.classList.remove('d-none');
+    // DOM elements
+    const selectionSection = document.getElementById('selection-section');
+    const flashcardSection = document.getElementById('flashcard-section');
+    const timerContainer = document.getElementById('timer-container');
+    const flashcardChar = document.getElementById('flashcard-char');
+    const feedbackBack = document.getElementById('feedback-back');
+    const kanjiCard = document.getElementById('kanji-card');
+    const optionButtons = document.querySelectorAll('.option-btn');
+    const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+    const backToSelectionBtn = document.getElementById('back-to-selection-btn');
+    const scoreDisplay = document.getElementById('score');
+    const totalDisplay = document.getElementById('total');
+    const timerOverlay = document.getElementById('timer-overlay');
+    const timerCountdown = document.getElementById('timer-countdown');
+    const authOverlay = document.getElementById('auth-overlay');
+    const timeLimitOverlay = document.getElementById('time-limit-overlay');
+    const timeLimitInput = document.getElementById('time-limit-input');
+    const startWithTimeBtn = document.getElementById('start-with-time-btn');
+    const categoryButtons = document.querySelectorAll('.subtype-btn');
+
+    // Function to shuffle an array (Fisher-Yates algorithm)
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Function to reset the game state
+    function resetGame() {
+        currentKanjiList = [];
+        currentKanjiIndex = 0;
+        score = 0;
+        total = 0;
+        correctAnswer = '';
+        options = [];
+        answered = false;
+        selectedOption = null;
+        feedbackMessage = '';
+        isTimerActive = false;
+        timeLimitPerQuestion = null;
+        if (questionTimer) clearInterval(questionTimer);
         scoreDisplay.textContent = score;
         totalDisplay.textContent = total;
-        feedback.textContent = feedbackMessage;
+        flashcardSection.classList.add('d-none');
+        selectionSection.classList.remove('d-none');
+        nextQuestionBtn.classList.add('d-none');
+        timerOverlay.classList.add('d-none');
+        authOverlay.classList.add('d-none');
+        timeLimitOverlay.classList.add('d-none');
+        kanjiCard.classList.remove('flipped');
+        timerContainer.innerHTML = ''; // Clear timer display
+        sessionStorage.removeItem('kanjiFlashcardState');
+    }
 
-        // Restore the current flashcard
-        if (currentKanjiIndex >= currentKanjiList.length) {
-            kanjiDisplay.textContent = 'Finished!';
-            document.querySelector('.card-text').style.display = 'none';
-            document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-2').innerHTML = '';
-            feedback.textContent = feedbackMessage;
-            nextQuestionBtn.classList.add('d-none');
-        } else {
-            const kanji = currentKanjiList[currentKanjiIndex];
-            kanjiDisplay.textContent = kanji.character;
-            document.querySelector('.card-text').style.display = 'block';
-            optionButtons.forEach((btn, index) => {
-                btn.textContent = options[index];
-                btn.disabled = answered;
-                btn.classList.remove('btn-success', 'btn-danger');
-                btn.classList.add('option-btn');
-                if (answered) {
-                    if (options[index] === correctAnswer) {
-                        btn.classList.remove('option-btn');
-                        btn.classList.add('btn-success');
-                    } else if (index === selectedOption) {
-                        btn.classList.remove('option-btn');
-                        btn.classList.add('btn-danger');
-                    }
-                }
-            });
-            if (answered) {
-                nextQuestionBtn.classList.remove('d-none');
-                feedback.style.color = feedbackMessage === 'Correct!' ? '#96e6a1' : '#d32f2f';
+    // Function to save state to sessionStorage
+    function saveState() {
+        const state = {
+            currentKanjiList: currentKanjiList,
+            currentKanjiIndex: currentKanjiIndex,
+            score: score,
+            total: total,
+            correctAnswer: correctAnswer,
+            options: options,
+            answered: answered,
+            selectedOption: selectedOption,
+            feedbackMessage: feedbackMessage,
+            timeLimitPerQuestion: timeLimitPerQuestion
+        };
+        sessionStorage.setItem('kanjiFlashcardState', JSON.stringify(state));
+    }
+
+    // Function to load state from sessionStorage
+    function loadState() {
+        const savedState = sessionStorage.getItem('kanjiFlashcardState');
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            currentKanjiList = state.currentKanjiList;
+            currentKanjiIndex = state.currentKanjiIndex;
+            score = state.score;
+            total = state.total;
+            correctAnswer = state.correctAnswer;
+            options = state.options;
+            answered = state.answered;
+            selectedOption = state.selectedOption;
+            feedbackMessage = state.feedbackMessage;
+            timeLimitPerQuestion = state.timeLimitPerQuestion;
+
+            selectionSection.classList.add('d-none');
+            flashcardSection.classList.remove('d-none');
+            scoreDisplay.textContent = score;
+            totalDisplay.textContent = total;
+
+            if (currentKanjiIndex >= currentKanjiList.length) {
+                flashcardChar.textContent = 'Finished!';
+                document.querySelector('.card-text').style.display = 'none';
+                document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-3').innerHTML = '';
+                nextQuestionBtn.classList.add('d-none');
+            } else {
+                displayKanji();
             }
         }
     }
-}
 
-// Function to generate 4 options (1 correct, 3 incorrect)
-function generateOptions(correctKanji) {
-    const allMeanings = kanjiData.all_kanji.map(k => k.meaning);
-    const incorrectOptions = allMeanings.filter(m => m !== correctKanji.meaning);
-    const shuffledIncorrect = shuffle([...incorrectOptions]).slice(0, 3);
-    options = [...shuffledIncorrect, correctKanji.meaning];
-    shuffle(options);
-    correctAnswer = correctKanji.meaning;
-    selectedOption = null;
-    feedbackMessage = '';
+    // Function to generate 4 options (1 correct, 3 incorrect)
+    function generateOptions(correctKanji) {
+        const allMeanings = kanjiData.all_kanji.map(k => k.meaning);
+        const incorrectOptions = allMeanings.filter(m => m !== correctKanji.meaning);
+        const shuffledIncorrect = shuffle([...incorrectOptions]).slice(0, 3);
+        options = [...shuffledIncorrect, correctKanji.meaning];
+        shuffle(options);
+        correctAnswer = correctKanji.meaning;
+        selectedOption = null;
+        feedbackMessage = '';
 
-    optionButtons.forEach((btn, index) => {
-        btn.textContent = options[index];
-        btn.disabled = false;
-        btn.classList.remove('btn-success', 'btn-danger');
-        btn.classList.add('option-btn');
-    });
-    saveState();
-}
-
-// Function to show timer and proceed after delay
-function showTimerAndProceed(callback) {
-    if (isTimerActive) return;
-    isTimerActive = true;
-
-    const randomDelay = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000; // 3000-5000ms (3-5s)
-    let timeLeft = Math.floor(randomDelay / 1000);
-
-    timerOverlay.classList.remove('d-none');
-    timerCountdown.textContent = timeLeft;
-
-    const countdown = setInterval(() => {
-        timeLeft--;
-        timerCountdown.textContent = timeLeft;
-        if (timeLeft <= 0) {
-            clearInterval(countdown);
-            timerOverlay.classList.add('d-none');
-            isTimerActive = false;
-            callback();
-        }
-    }, 1000);
-}
-
-// Function to display the current kanji and options
-function displayKanji() {
-    if (currentKanjiIndex >= currentKanjiList.length) {
-        kanjiDisplay.textContent = 'Finished!';
-        document.querySelector('.card-text').style.display = 'none';
-        document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-2').innerHTML = '';
-        feedback.textContent = 'You’ve completed this category! Select another category to continue.';
-        feedbackMessage = feedback.textContent;
-        nextQuestionBtn.classList.add('d-none');
+        optionButtons.forEach((btn, index) => {
+            btn.textContent = options[index];
+            btn.disabled = false;
+            btn.classList.remove('btn-success', 'btn-danger');
+            btn.classList.add('option-btn');
+        });
         saveState();
-        return;
     }
 
-    const kanji = currentKanjiList[currentKanjiIndex];
-    kanjiDisplay.textContent = kanji.character;
-    document.querySelector('.card-text').style.display = 'block';
-    generateOptions(kanji);
-    feedback.textContent = '';
-    nextQuestionBtn.classList.add('d-none');
-    answered = false;
-    saveState();
-}
+    // Function to show timer and proceed after delay
+    function showTimerAndProceed(callback) {
+        if (isTimerActive) return;
+        isTimerActive = true;
 
-// Function to handle option selection
-function handleOptionSelection(selectedOptionIndex) {
-    if (answered) return;
-    answered = true;
-    selectedOption = selectedOptionIndex;
+        const randomDelay = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000;
+        let timeLeft = Math.floor(randomDelay / 1000);
 
-    const selectedMeaning = options[selectedOption];
-    optionButtons.forEach(btn => btn.disabled = true);
+        timerOverlay.classList.remove('d-none');
+        timerCountdown.textContent = timeLeft;
 
-    if (selectedMeaning === correctAnswer) {
-        score += 1;
-        feedback.textContent = 'Correct!';
-        feedbackMessage = feedback.textContent;
-        feedback.style.color = '#96e6a1';
-        optionButtons[selectedOption].classList.remove('option-btn');
-        optionButtons[selectedOption].classList.add('btn-success');
-    } else {
-        feedback.textContent = `Incorrect! The correct answer is '${correctAnswer}'.`;
-        feedbackMessage = feedback.textContent;
-        feedback.style.color = '#d32f2f';
-        optionButtons[selectedOption].classList.remove('option-btn');
-        optionButtons[selectedOption].classList.add('btn-danger');
-        const correctIndex = options.indexOf(correctAnswer);
-        optionButtons[correctIndex].classList.remove('option-btn');
-        optionButtons[correctIndex].classList.add('btn-success');
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerCountdown.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerOverlay.classList.add('d-none');
+                isTimerActive = false;
+                callback();
+            }
+        }, 1000);
     }
 
-    scoreDisplay.textContent = score;
-    totalDisplay.textContent = total;
-    nextQuestionBtn.classList.remove('d-none');
-    saveState();
-}
+    // Function to start question timer
+    function startQuestionTimer() {
+        if (!timeLimitPerQuestion || answered) return;
 
-// Event listeners for subtype selection
-document.querySelectorAll('.subtype-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+        let timeLeft = timeLimitPerQuestion;
+        const timerDisplay = document.createElement('div');
+        timerDisplay.id = 'question-timer';
+        timerDisplay.textContent = `Time: ${timeLeft}s`;
+        timerContainer.appendChild(timerDisplay);
+
+        questionTimer = setInterval(() => {
+            timeLeft--;
+            timerDisplay.textContent = `Time: ${timeLeft}s`;
+
+            // Color transition logic
+            const warningThreshold = timeLimitPerQuestion * 0.5; // 50% of time
+            const dangerThreshold = timeLimitPerQuestion * 0.2; // 20% of time
+
+            if (timeLeft <= dangerThreshold) {
+                timerDisplay.classList.remove('warning');
+                timerDisplay.classList.add('danger');
+            } else if (timeLeft <= warningThreshold) {
+                timerDisplay.classList.remove('danger');
+                timerDisplay.classList.add('warning');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(questionTimer);
+                handleTimeOut();
+                timerDisplay.remove();
+            }
+        }, 1000);
+    }
+
+    // Function to handle timeout
+    function handleTimeOut() {
+        if (answered) return;
+        answered = true;
+        feedbackMessage = `Time's up! Correct: ${correctAnswer}`;
+        feedbackBack.textContent = feedbackMessage;
+        feedbackBack.style.color = '#d32f2f';
+        optionButtons.forEach((btn, index) => {
+            btn.disabled = true;
+            if (options[index] === correctAnswer) {
+                btn.classList.remove('option-btn');
+                btn.classList.add('btn-success');
+            }
+        });
+        kanjiCard.classList.add('flipped');
+        nextQuestionBtn.classList.remove('d-none');
+        totalDisplay.textContent = total;
+        saveState();
+    }
+
+    // Function to display the current kanji and options
+    function displayKanji() {
+        if (questionTimer) clearInterval(questionTimer);
+        const timerDisplay = document.getElementById('question-timer');
+        if (timerDisplay) timerDisplay.remove();
+
+        kanjiCard.classList.remove('flipped');
+        if (currentKanjiIndex >= currentKanjiList.length) {
+            flashcardChar.textContent = 'Finished!';
+            document.querySelector('.card-text').style.display = 'none';
+            document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-3').innerHTML = '';
+            nextQuestionBtn.classList.add('d-none');
+            saveState();
+            return;
+        }
+
+        const kanji = currentKanjiList[currentKanjiIndex];
+        flashcardChar.textContent = kanji.character;
+        document.querySelector('.card-text').style.display = 'block';
+        generateOptions(kanji);
+        feedbackBack.textContent = '';
+        nextQuestionBtn.classList.add('d-none');
+        answered = false;
+        startQuestionTimer();
+        saveState();
+    }
+
+    // Function to handle option selection with flip animation
+    function handleOptionSelection(selectedOptionIndex) {
+        if (answered) return;
+        answered = true;
+        selectedOption = selectedOptionIndex;
+        if (questionTimer) clearInterval(questionTimer);
+        const timerDisplay = document.getElementById('question-timer');
+        if (timerDisplay) timerDisplay.remove();
+
+        const selectedMeaning = options[selectedOption];
+        const correctMeaning = currentKanjiList[currentKanjiIndex].meaning;
+        optionButtons.forEach(btn => btn.disabled = true);
+
+        if (selectedMeaning === correctMeaning) {
+            score += 1;
+            feedbackMessage = 'Correct!';
+            feedbackBack.textContent = 'Correct!';
+            feedbackBack.style.color = '#96e6a1';
+            optionButtons[selectedOption].classList.remove('option-btn');
+            optionButtons[selectedOption].classList.add('btn-success');
+        } else {
+            feedbackMessage = `Correct: ${correctMeaning}`;
+            feedbackBack.textContent = `Correct: ${correctMeaning}`;
+            feedbackBack.style.color = '#d32f2f';
+            optionButtons[selectedOption].classList.remove('option-btn');
+            optionButtons[selectedOption].classList.add('btn-danger');
+            const correctIndex = options.indexOf(correctMeaning);
+            optionButtons[correctIndex].classList.remove('option-btn');
+            optionButtons[correctIndex].classList.add('btn-success');
+        }
+
+        scoreDisplay.textContent = score;
+        totalDisplay.textContent = total;
+        kanjiCard.classList.add('flipped');
+        nextQuestionBtn.classList.remove('d-none');
+        saveState();
+    }
+
+    // Start flashcards with authentication check and time limit prompt
+    function startFlashcards(set) {
+        console.log(`Starting flashcards for category: ${set}`);
         if (!isAuthenticated) {
+            console.log('User not authenticated, showing auth overlay');
             authOverlay.classList.remove('d-none');
-            setTimeout(() => authOverlay.classList.add('show'), 10); // Trigger fade-in animation
+            setTimeout(() => authOverlay.classList.add('show'), 10);
             return;
         }
 
         resetGame();
-        const subtype = btn.getAttribute('data-subtype');
-        currentKanjiList = [...kanjiData[subtype]];
+        currentKanjiList = [...kanjiData[set]];
         currentKanjiList = shuffle(currentKanjiList);
         total = currentKanjiList.length;
         scoreDisplay.textContent = score;
         totalDisplay.textContent = total;
 
-        subtypeSelection.classList.add('d-none');
+        selectionSection.classList.add('d-none');
+        timeLimitOverlay.classList.remove('d-none');
+        setTimeout(() => timeLimitOverlay.classList.add('show'), 10);
+        timeLimitInput.value = ''; // Reset input field
+    }
 
-        // Show timer before displaying flashcards
+    // Event listener for starting with time limit
+    startWithTimeBtn.addEventListener('click', () => {
+        timeLimitPerQuestion = timeLimitInput.value ? parseInt(timeLimitInput.value) : null;
+        timeLimitOverlay.classList.remove('show');
+        setTimeout(() => timeLimitOverlay.classList.add('d-none'), 300); // Match transition duration
         showTimerAndProceed(() => {
-            flashcardArea.classList.remove('d-none');
+            flashcardSection.classList.remove('d-none');
             displayKanji();
         });
     });
-});
 
-// Event listener for option buttons
-optionButtons.forEach((btn, index) => {
-    btn.addEventListener('click', () => {
-        if (!answered) {
-            handleOptionSelection(index);
+    // Event listener for category buttons
+    categoryButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const category = button.getAttribute('data-category');
+            console.log(`Category button clicked: ${category}`);
+            startFlashcards(category);
+        });
+    });
+
+    // Event listener for option buttons
+    optionButtons.forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+            if (!answered) {
+                handleOptionSelection(index);
+            }
+        });
+    });
+
+    // Event listener for Next Question button
+    nextQuestionBtn.addEventListener('click', () => {
+        currentKanjiIndex++;
+        displayKanji();
+    });
+
+    // Event listener for Back to Selection button
+    backToSelectionBtn.addEventListener('click', () => {
+        resetGame();
+    });
+
+    // Load state on page load
+    window.addEventListener('load', () => {
+        loadState();
+    });
+
+    // Reset on back/forward navigation
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            resetGame();
         }
     });
-});
-
-// Event listener for Next Question button
-nextQuestionBtn.addEventListener('click', () => {
-    currentKanjiIndex++;
-    displayKanji();
-});
-
-// Event listener for Back to Selection button
-backToSelectionBtn.addEventListener('click', () => {
-    resetGame();
-});
-
-// Load state on page load (preserves state on reload or tab switch, resets on fresh navigation)
-window.addEventListener('load', () => {
-    loadState();
-});
-
-// Reset on back/forward navigation (pageshow with persisted state)
-window.addEventListener('pageshow', (event) => {
-    if (event.persisted) {
-        resetGame();
-    }
-});
 </script>
 {% endblock %}

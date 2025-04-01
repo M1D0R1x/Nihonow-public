@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}Katakana Flashcards - Nihonow{% endblock %}
 
 {% block content %}
@@ -8,59 +7,107 @@
 <style>
     body {
         background: linear-gradient(135deg, #fff5f5, #fffde7);
+        font-family: 'Noto Sans Japanese', sans-serif;
     }
     .container-shadow {
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+        padding: 30px;
     }
     .subtype-btn {
-        border-color: #1976d2;
+        border: 2px solid #1976d2;
         color: #1976d2;
-        border-radius: 20px;
-        transition: all 0.3s;
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
     }
     .subtype-btn:hover {
         background-color: #1976d2;
         color: #fff;
+        transform: scale(1.05);
     }
     .option-btn {
-        border-color: #2c3e50;
+        border: 2px solid #2c3e50;
         color: #2c3e50;
-        border-radius: 15px;
-        transition: all 0.3s;
+        border-radius: 20px;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
     }
     .option-btn:hover {
         background-color: #1565c0;
         color: #fff;
+        transform: scale(1.05);
     }
     .btn-next {
         background-color: #1976d2;
         color: #fff;
         border: none;
-        border-radius: 15px;
-        transition: all 0.3s;
+        border-radius: 20px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
     }
     .btn-next:hover {
         background-color: #1565c0;
+        transform: scale(1.05);
     }
     .btn-back {
         background-color: #ffd700;
         color: #333;
         border: none;
-        border-radius: 15px;
-        transition: all 0.3s;
+        border-radius: 20px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
     }
     .btn-back:hover {
         background-color: #e6c200;
+        transform: scale(1.05);
+    }
+    .katakana-card-container {
+        perspective: 1000px;
+        max-width: 400px;
+        margin: 0 auto;
     }
     .katakana-card {
-        max-width: 400px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position вЂ‹position: relative;
+        width: 100%;
+        height: 200px;
+        transform-style: preserve-3d;
+        transition: transform 0.6s ease;
+    }
+    .katakana-card.flipped {
+        transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        background-color: #f7f1e3;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .card-front {
+        z-index: 2;
+    }
+    .card-back {
+        transform: rotateY(180deg);
     }
     .katakana-display {
-        font-size: 4.5rem;
+        font-size: 5rem;
+        color: #1976d2;
     }
     .card-text {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
+        color: #333;
     }
     .timer-overlay {
         position: fixed;
@@ -76,21 +123,20 @@
     }
     .timer-message {
         background: #fff;
-        padding: 20px 40px;
-        border-radius: 15px;
+        padding: 25px 50px;
+        border-radius: 20px;
         text-align: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
     .timer-message h3 {
         color: #1976d2;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }
     .timer-message span {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         font-weight: bold;
         color: #2c3e50;
     }
-    /* Improved auth overlay styles */
     .auth-overlay {
         position: fixed;
         top: 0;
@@ -110,11 +156,11 @@
     }
     .auth-message {
         background: #fff;
-        padding: 30px;
-        border-radius: 20px;
+        padding: 35px;
+        border-radius: 25px;
         text-align: center;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        max-width: 400px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        max-width: 450px;
         width: 90%;
         transform: scale(0.9);
         transition: transform 0.3s ease;
@@ -124,89 +170,125 @@
     }
     .auth-message h3 {
         color: #1976d2;
-        font-size: 1.8rem;
-        margin-bottom: 15px;
+        font-size: 2rem;
+        margin-bottom: 20px;
         font-weight: 600;
     }
     .auth-message p {
         color: #333;
-        font-size: 1.1rem;
-        margin-bottom: 20px;
+        font-size: 1.2rem;
+        margin-bottom: 25px;
     }
     .auth-message .btn {
-        display: inline-block;
-        padding: 10px 20px;
-        margin: 0 10px;
-        border-radius: 15px;
+        padding: 12px 25px;
+        margin: 0 15px;
+        border-radius: 20px;
         text-decoration: none;
         font-weight: bold;
-        transition: all 0.3s;
+        transition: all 0.3s ease;
     }
     .auth-message .btn-login {
         background-color: #1976d2;
         color: #fff;
-        border: none;
     }
     .auth-message .btn-login:hover {
         background-color: #1565c0;
+        transform: scale(1.05);
     }
     .auth-message .btn-register {
         background-color: #1976d2;
         color: #fff;
-        border: none;
     }
     .auth-message .btn-register:hover {
         background-color: #1565c0;
+        transform: scale(1.05);
+    }
+    .navigation-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding: 20px;
+    }
+    /* Updated Timer Styles */
+    #question-timer {
+        margin-bottom: 20px;
+        padding: 10px 20px;
+        background: #2c3e50;
+        border-radius: 10px;
+        border: 2px solid #000;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), inset 0 0 5px rgba(255, 255, 255, 0.3);
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #00ff00; /* Start with green */
+        text-align: center;
+        text-shadow: 0 0 5px rgba(0, 255, 0, 0.7);
+        transition: color 0.5s ease, text-shadow 0.5s ease;
+    }
+    #question-timer.warning {
+        color: #ffeb3b; /* Yellow for warning */
+        text-shadow: 0 0 5px rgba(255, 235, 59, 0.7);
+    }
+    #question-timer.danger {
+        color: #ff0000; /* Red for danger */
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
+        animation: blink 0.5s infinite;
+    }
+    @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
     }
 </style>
 
-<div class="container my-5 container-shadow" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb); padding: 20px; border-radius: 15px; font-family: 'Noto Sans Japanese', sans-serif;">
-    <h2 class="text-center mb-4" style="color: #1976d2; font-size: 2.5rem;">Katakana Flashcards</h2>
+<div class="container my-5 container-shadow">
+    <h2 class="text-center mb-5" style="color: #1976d2; font-size: 2.8rem;">Katakana Flashcards</h2>
 
     <!-- Selection Section -->
     <div id="selection-section" class="text-center" style="padding: 20px;">
-        <h3 class="mb-3" style="color: #1976d2;">Select a Category to Practice</h3>
-        <div class="d-flex flex-wrap justify-content-center gap-2">
-            <button class="btn subtype-btn" onclick="startFlashcards('basic')">Basic Katakana</button>
-            <button class="btn subtype-btn" onclick="startFlashcards('combinations')">Combinations</button>
-            <button class="btn subtype-btn" onclick="startFlashcards('tenten')">Tenten/Dakuten</button>
-            <button class="btn subtype-btn" onclick="startFlashcards('all')">All</button>
+        <h3 class="mb-4" style="color: #1976d2;">Select a Category to Practice</h3>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <button class="btn subtype-btn" data-category="basic">Basic Katakana</button>
+            <button class="btn subtype-btn" data-category="combinations">Combinations</button>
+            <button class="btn subtype-btn" data-category="tenten">Tenten/Dakuten</button>
+            <button class="btn subtype-btn" data-category="all">All</button>
         </div>
     </div>
 
     <!-- Flashcard Area (Hidden Initially) -->
     <div id="flashcard-section" class="d-none">
         <!-- Score Display -->
-        <div class="text-center" style="padding: 20px;">
+        <div class="text-center mb-4" style="padding: 20px;">
             <h4 style="color: #1976d2;">Score: <span id="score">0</span> / <span id="total">0</span></h4>
         </div>
 
-        <!-- Katakana Card -->
-        <div class="card mb-4 mx-auto katakana-card" style="background-color: #f7f1e3; border: none; padding: 20px;">
-            <div class="card-body text-center">
-                <h3 id="flashcard-char" class="katakana-display" style="color: #1976d2;"></h3>
-                <p class="card-text" style="color: #333;">Choose the correct reading:</p>
+        <!-- Timer Display (Will be dynamically added) -->
+        <div id="timer-container" class="text-center"></div>
+
+        <!-- Katakana Card with Flip Animation -->
+        <div class="katakana-card-container mb-4">
+            <div class="katakana-card" id="katakana-card">
+                <div class="card-front">
+                    <h3 id="flashcard-char" class="katakana-display"></h3>
+                    <p class="card-text">Choose the correct reading:</p>
+                </div>
+                <div class="card-back">
+                    <p class="card-text" id="feedback-back" style="font-size: 1.5rem;"></p>
+                </div>
             </div>
         </div>
 
         <!-- Options -->
-        <div class="d-flex flex-wrap justify-content-center gap-2" style="padding: 20px;">
+        <div class="d-flex flex-wrap justify-content-center gap-3" style="padding: 20px;">
             <button class="btn option-btn" data-option="0"></button>
             <button class="btn option-btn" data-option="1"></button>
             <button class="btn option-btn" data-option="2"></button>
             <button class="btn option-btn" data-option="3"></button>
         </div>
 
-        <!-- Feedback -->
-        <div id="feedback" class="text-center" style="padding: 20px;"></div>
-
-        <!-- Next Question Button -->
-        <div class="text-center" style="padding: 20px;">
+        <!-- Navigation Buttons -->
+        <div class="navigation-buttons">
             <button id="nextQuestionBtn" class="btn btn-next d-none">Next Question</button>
-        </div>
-
-        <!-- Back to Selection Button -->
-        <div class="text-center" style="padding: 20px;">
             <button id="back-to-selection-btn" class="btn btn-back">Back to Selection</button>
         </div>
     </div>
@@ -219,7 +301,7 @@
         </div>
     </div>
 
-    <!-- Authentication Overlay (Hidden Initially) -->
+    <!-- Authentication Overlay -->
     <div id="auth-overlay" class="auth-overlay d-none">
         <div class="auth-message">
             <h3>Login Required</h3>
@@ -227,6 +309,18 @@
             <div>
                 <a href="{% url 'login' %}" class="btn btn-login">Login</a>
                 <a href="{% url 'register' %}" class="btn btn-register">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Limit Popup -->
+    <div id="time-limit-overlay" class="auth-overlay d-none">
+        <div class="auth-message">
+            <h3>Set Time Limit</h3>
+            <p>Enter a time limit per question (in seconds). Leave empty for no limit.</p>
+            <input type="number" id="time-limit-input" min="1" placeholder="e.g., 10" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 10px; border: 2px solid #1976d2;">
+            <div>
+                <button id="start-with-time-btn" class="btn btn-login">Start</button>
             </div>
         </div>
     </div>
@@ -284,13 +378,17 @@
     let selectedOption = null;
     let feedbackMessage = '';
     let isTimerActive = false;
+    let timeLimitPerQuestion = null; // Time limit in seconds (null for no limit)
+    let questionTimer = null; // Timer interval reference
 
     // DOM elements
     const selectionSection = document.getElementById('selection-section');
     const flashcardSection = document.getElementById('flashcard-section');
+    const timerContainer = document.getElementById('timer-container');
     const flashcardChar = document.getElementById('flashcard-char');
+    const feedbackBack = document.getElementById('feedback-back');
+    const katakanaCard = document.getElementById('katakana-card');
     const optionButtons = document.querySelectorAll('.option-btn');
-    const feedback = document.getElementById('feedback');
     const nextQuestionBtn = document.getElementById('nextQuestionBtn');
     const backToSelectionBtn = document.getElementById('back-to-selection-btn');
     const scoreDisplay = document.getElementById('score');
@@ -298,6 +396,10 @@
     const timerOverlay = document.getElementById('timer-overlay');
     const timerCountdown = document.getElementById('timer-countdown');
     const authOverlay = document.getElementById('auth-overlay');
+    const timeLimitOverlay = document.getElementById('time-limit-overlay');
+    const timeLimitInput = document.getElementById('time-limit-input');
+    const startWithTimeBtn = document.getElementById('start-with-time-btn');
+    const categoryButtons = document.querySelectorAll('.subtype-btn');
 
     // Function to shuffle an array (Fisher-Yates algorithm)
     function shuffle(array) {
@@ -320,14 +422,18 @@
         selectedOption = null;
         feedbackMessage = '';
         isTimerActive = false;
+        timeLimitPerQuestion = null;
+        if (questionTimer) clearInterval(questionTimer);
         scoreDisplay.textContent = score;
         totalDisplay.textContent = total;
         flashcardSection.classList.add('d-none');
         selectionSection.classList.remove('d-none');
-        feedback.textContent = '';
         nextQuestionBtn.classList.add('d-none');
         timerOverlay.classList.add('d-none');
         authOverlay.classList.add('d-none');
+        timeLimitOverlay.classList.add('d-none');
+        katakanaCard.classList.remove('flipped');
+        timerContainer.innerHTML = ''; // Clear timer display
         sessionStorage.removeItem('katakanaFlashcardState');
     }
 
@@ -342,7 +448,8 @@
             options: options,
             answered: answered,
             selectedOption: selectedOption,
-            feedbackMessage: feedbackMessage
+            feedbackMessage: feedbackMessage,
+            timeLimitPerQuestion: timeLimitPerQuestion
         };
         sessionStorage.setItem('katakanaFlashcardState', JSON.stringify(state));
     }
@@ -361,42 +468,20 @@
             answered = state.answered;
             selectedOption = state.selectedOption;
             feedbackMessage = state.feedbackMessage;
+            timeLimitPerQuestion = state.timeLimitPerQuestion;
 
             selectionSection.classList.add('d-none');
             flashcardSection.classList.remove('d-none');
             scoreDisplay.textContent = score;
             totalDisplay.textContent = total;
-            feedback.textContent = feedbackMessage;
 
             if (currentKatakanaIndex >= currentKatakanaList.length) {
                 flashcardChar.textContent = 'Finished!';
                 document.querySelector('.card-text').style.display = 'none';
-                document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-2').innerHTML = '';
-                feedback.textContent = feedbackMessage;
+                document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-3').innerHTML = '';
                 nextQuestionBtn.classList.add('d-none');
             } else {
-                const katakana = currentKatakanaList[currentKatakanaIndex];
-                flashcardChar.textContent = katakana.char;
-                document.querySelector('.card-text').style.display = 'block';
-                optionButtons.forEach((btn, index) => {
-                    btn.textContent = options[index];
-                    btn.disabled = answered;
-                    btn.classList.remove('btn-success', 'btn-danger');
-                    btn.classList.add('option-btn');
-                    if (answered) {
-                        if (options[index] === correctAnswer) {
-                            btn.classList.remove('option-btn');
-                            btn.classList.add('btn-success');
-                        } else if (index === selectedOption) {
-                            btn.classList.remove('option-btn');
-                            btn.classList.add('btn-danger');
-                        }
-                    }
-                });
-                if (answered) {
-                    nextQuestionBtn.classList.remove('d-none');
-                    feedback.style.color = feedbackMessage === 'Correct!' ? '#96e6a1' : '#d32f2f';
-                }
+                displayKatakana();
             }
         }
     }
@@ -444,14 +529,71 @@
         }, 1000);
     }
 
+    // Function to start question timer
+    function startQuestionTimer() {
+        if (!timeLimitPerQuestion || answered) return;
+
+        let timeLeft = timeLimitPerQuestion;
+        const timerDisplay = document.createElement('div');
+        timerDisplay.id = 'question-timer';
+        timerDisplay.textContent = `Time: ${timeLeft}s`;
+        timerContainer.appendChild(timerDisplay);
+
+        questionTimer = setInterval(() => {
+            timeLeft--;
+            timerDisplay.textContent = `Time: ${timeLeft}s`;
+
+            // Color transition logic
+            const warningThreshold = timeLimitPerQuestion * 0.5; // 50% of time
+            const dangerThreshold = timeLimitPerQuestion * 0.2; // 20% of time
+
+            if (timeLeft <= dangerThreshold) {
+                timerDisplay.classList.remove('warning');
+                timerDisplay.classList.add('danger');
+            } else if (timeLeft <= warningThreshold) {
+                timerDisplay.classList.remove('danger');
+                timerDisplay.classList.add('warning');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(questionTimer);
+                handleTimeOut();
+                timerDisplay.remove();
+            }
+        }, 1000);
+    }
+
+    // Function to W handle timeout
+    function handleTimeOut() {
+        if (answered) return;
+        answered = true;
+        feedbackMessage = `Time's up! Correct: ${correctAnswer}`;
+        feedbackBack.textContent = feedbackMessage;
+        feedbackBack.style.color = '#d32f2f';
+        optionButtons.forEach((btn, index) => {
+            btn.disabled = true;
+            if (options[index] === correctAnswer) {
+                btn.classList.remove('option-btn');
+                btn.classList.add('btn-success');
+            }
+        });
+        katakanaCard.classList.add('flipped');
+        nextQuestionBtn.classList.remove('d-none');
+        totalDisplay.textContent = total;
+        saveState();
+    }
+
     // Function to display the current katakana and options
     function displayKatakana() {
+        if (questionTimer) clearInterval(questionTimer);
+        const timerDisplay = document.getElementById('question-timer');
+        if (timerDisplay) timerDisplay.remove();
+
+        katakanaCard.classList.remove('flipped');
         if (currentKatakanaIndex >= currentKatakanaList.length) {
             flashcardChar.textContent = 'Finished!';
             document.querySelector('.card-text').style.display = 'none';
-            document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-2').innerHTML = '';
-            feedback.textContent = 'You’ve completed this category! Select another category to continue.';
-            feedbackMessage = feedback.textContent;
+            document.querySelector('.d-flex.flex-wrap.justify-content-center.gap-3').innerHTML = '';
             nextQuestionBtn.classList.add('d-none');
             saveState();
             return;
@@ -461,17 +603,21 @@
         flashcardChar.textContent = katakana.char;
         document.querySelector('.card-text').style.display = 'block';
         generateOptions(katakana);
-        feedback.textContent = '';
+        feedbackBack.textContent = '';
         nextQuestionBtn.classList.add('d-none');
         answered = false;
+        startQuestionTimer();
         saveState();
     }
 
-    // Function to handle option selection
+    // Function to handle option selection with flip animation
     function handleOptionSelection(selectedOptionIndex) {
         if (answered) return;
         answered = true;
         selectedOption = selectedOptionIndex;
+        if (questionTimer) clearInterval(questionTimer);
+        const timerDisplay = document.getElementById('question-timer');
+        if (timerDisplay) timerDisplay.remove();
 
         const selectedReading = options[selectedOption];
         const correctReading = currentKatakanaList[currentKatakanaIndex].reading;
@@ -479,15 +625,15 @@
 
         if (selectedReading === correctReading) {
             score += 1;
-            feedback.textContent = 'Correct!';
-            feedbackMessage = feedback.textContent;
-            feedback.style.color = '#96e6a1';
+            feedbackMessage = 'Correct!';
+            feedbackBack.textContent = 'Correct!';
+            feedbackBack.style.color = '#96e6a1';
             optionButtons[selectedOption].classList.remove('option-btn');
             optionButtons[selectedOption].classList.add('btn-success');
         } else {
-            feedback.textContent = `Incorrect! The correct answer is '${correctReading}'.`;
-            feedbackMessage = feedback.textContent;
-            feedback.style.color = '#d32f2f';
+            feedbackMessage = `Correct: ${correctReading}`;
+            feedbackBack.textContent = `Correct: ${correctReading}`;
+            feedbackBack.style.color = '#d32f2f';
             optionButtons[selectedOption].classList.remove('option-btn');
             optionButtons[selectedOption].classList.add('btn-danger');
             const correctIndex = options.indexOf(correctReading);
@@ -497,15 +643,18 @@
 
         scoreDisplay.textContent = score;
         totalDisplay.textContent = total;
+        katakanaCard.classList.add('flipped');
         nextQuestionBtn.classList.remove('d-none');
         saveState();
     }
 
-    // Start flashcards with authentication check
+    // Start flashcards with authentication check and time limit prompt
     function startFlashcards(set) {
+        console.log(`Starting flashcards for category: ${set}`);
         if (!isAuthenticated) {
+            console.log('User not authenticated, showing auth overlay');
             authOverlay.classList.remove('d-none');
-            setTimeout(() => authOverlay.classList.add('show'), 10); // Trigger fade-in animation
+            setTimeout(() => authOverlay.classList.add('show'), 10);
             return;
         }
 
@@ -521,11 +670,30 @@
         totalDisplay.textContent = total;
 
         selectionSection.classList.add('d-none');
+        timeLimitOverlay.classList.remove('d-none');
+        setTimeout(() => timeLimitOverlay.classList.add('show'), 10);
+        timeLimitInput.value = ''; // Reset input field
+    }
+
+    // Event listener for starting with time limit
+    startWithTimeBtn.addEventListener('click', () => {
+        timeLimitPerQuestion = timeLimitInput.value ? parseInt(timeLimitInput.value) : null;
+        timeLimitOverlay.classList.remove('show');
+        setTimeout(() => timeLimitOverlay.classList.add('d-none'), 300); // Match transition duration
         showTimerAndProceed(() => {
             flashcardSection.classList.remove('d-none');
             displayKatakana();
         });
-    }
+    });
+
+    // Event listener for category buttons
+    categoryButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const category = button.getAttribute('data-category');
+            console.log(`Category button clicked: ${category}`);
+            startFlashcards(category);
+        });
+    });
 
     // Event listener for option buttons
     optionButtons.forEach((btn, index) => {

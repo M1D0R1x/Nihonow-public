@@ -28,6 +28,11 @@ from treasures.views import custom_login, logout_view
 sitemaps = {
     'static': StaticViewSitemap,
 }
+# Define custom error handlers
+handler400 = 'treasures.views.custom_400'
+handler403 = 'treasures.views.custom_403'
+handler404 = 'treasures.views.custom_404'
+handler500 = 'treasures.views.custom_500'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,6 +42,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
+    path('ads.txt', TemplateView.as_view(template_name="ads.txt", content_type="text/plain")),
 ]
 
 # Serve static and media files during development
