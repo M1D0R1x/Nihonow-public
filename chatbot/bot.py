@@ -1,29 +1,54 @@
-import re
-import requests
 import json
 import logging
-from urllib.parse import quote_plus
 import time
 from difflib import get_close_matches
+
+import requests
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('nihonow_bot')
 
-# Knowledge base (abbreviated; use your full version)
+# Static Knowledge Base for Greetings and Identity Questions
 KNOWLEDGE_BASE = {
-    "hello": {"response": "Hello in Japanese is こんにちは (konnichiwa)! [Polite, Anytime]\nUse it any time of day to greet someone politely.\nExample: こんにちは、元気ですか？ (Konnichiwa, genki desu ka?) - Hello, how are you?"},
-    "hi": {"response": "Hi in Japanese is こんにちは (konnichiwa)! [Polite, Anytime]\nIt’s a friendly, all-purpose greeting.\nExample: こんにちは、お元気ですか？ (Konnichiwa, o-genki desu ka?) - Hi, are you well?"},
-    # Add your full KNOWLEDGE_BASE here
+    # Greetings with consistent responses
+    "hello": {"response": "こんにちは (Konnichiwa)! How can I assist you today?"},
+    "hi": {"response": "こんにちは (Konnichiwa)! How can I assist you today?"},
+    "hii": {"response": "こんにちは (Konnichiwa)! How can I assist you today?"},
+    "good morning": {"response": "おはようございます (Ohayou gozaimasu)! How can I assist you today?"},
+    "good afternoon": {"response": "こんにちは (Konnichiwa)! How can I assist you today?"},
+    "good evening": {"response": "こんばんは (Konbanwa)! How can I assist you today?"},
+    "hey": {"response": "こんにちは (Konnichiwa)! How can I assist you today?"},
+
+    # Identity and status questions with consistent responses
+    "what are you": {"response": "I am NihonBot. I’m here to help you with almost anything—ask me a question!"},
+    "who are you": {"response": "I am NihonBot. I’m here to help you with almost anything—ask me a question!"},
+    "why are you": {"response": "I exist to assist and provide helpful answers, created by xAI to advance our understanding of the universe!"},
+    "how are you": {"response": "I’m doing great, thanks for asking! How can I help you today?"},
+    "how you doing": {"response": "I’m doing great, thanks for asking! How can I help you today?"}
 }
 
-# Model configurations
+# Model configurations with updated API keys
 MODELS = {
     "local": {"type": "knowledge_base", "active": True},
-    "deepseek/deepseek-chat-v3-0324": {
+    "deepseek/deepseek-r1-zero:free": {
         "type": "api",
         "endpoint": "https://openrouter.ai/api/v1/chat/completions",
-        "api_key": "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",
+        "api_key": "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",
+        "context": 131072,
+        "active": True
+    },
+    "mistralai/mistral-small-3.1-24b-instruct:free": {
+        "type": "api",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "api_key": "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",
+        "context": 131072,
+        "active": True
+    },
+    "qwen/qwen2.5-vl-3b-instruct:free": {
+        "type": "api",
+        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+        "api_key": "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",
         "context": 131072,
         "active": True
     }
@@ -55,15 +80,15 @@ def generate_response(model_name, prompt):
         response = KNOWLEDGE_BASE.get(prompt.lower(), {}).get("response")
         logger.debug(f"Local response: {response}")
         return response
-    elif model_name == "deepseek/deepseek-chat-v3-0324":
+    elif model_name in MODELS and MODELS[model_name]["type"] == "api":
         if not api_rate_limiter.is_allowed():
-            logger.warning("DeepSeek API call blocked due to rate limit")
+            logger.warning(f"{model_name} API call blocked due to rate limit")
             return None
         headers = {
             "Authorization": f"Bearer {MODELS[model_name]['api_key']}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost:8000",  # Replace with your site URL
-            "X-Title": "NihonBot"  # Replace with your site name
+            "HTTP-Referer": "https://nihonow.vercel.app/",  # Replace with your site URL
+            "X-Title": "NihonBot"
         }
         data = {
             "model": model_name,
@@ -77,7 +102,7 @@ def generate_response(model_name, prompt):
             response = requests.post(MODELS[model_name]["endpoint"], headers=headers, data=json.dumps(data), timeout=10)
             response.raise_for_status()
             result = response.json()["choices"][0]["message"]["content"]
-            logger.info(f"DeepSeek response: {result[:100]}...")
+            logger.info(f"{model_name} response: {result[:100]}...")
             return result
         except requests.RequestException as e:
             logger.error(f"Error with {model_name}: {str(e)}")
@@ -90,14 +115,14 @@ def get_chatbot_response(user_input, selected_model=None):
     logger.info(f"Received user input: '{user_input}', Selected model: {selected_model}")
     if not user_input or user_input.strip() == "":
         logger.debug("Empty input, returning welcome message")
-        return "こんにちは (Konnichiwa)! I can help you learn about Japanese language, culture, and more! Try asking about hiragana, JLPT levels, or phrases."
+        return "こんにちは (Konnichiwa)! I am NihonBot. I can help you learn about Japanese language, culture, and more! Try asking about hiragana, JLPT levels, or phrases."
 
     user_input_lower = user_input.lower().strip()
     logger.debug(f"Normalized input: '{user_input_lower}'")
 
-    # Typo tolerance for greetings
-    greeting_keys = ["hello", "hi", "goodbye", "thank you", "sorry", "please"]
-    close_match = get_close_matches(user_input_lower, greeting_keys, n=1, cutoff=0.8)
+    # Typo tolerance for greetings and identity questions
+    kb_keys = list(KNOWLEDGE_BASE.keys())
+    close_match = get_close_matches(user_input_lower, kb_keys, n=1, cutoff=0.8)
     if close_match:
         logger.info(f"Found close match: {close_match[0]}")
         return KNOWLEDGE_BASE[close_match[0]]["response"]
@@ -116,7 +141,7 @@ def get_chatbot_response(user_input, selected_model=None):
         response = generate_response(selected_model, user_input)
         if response:
             logger.info(f"Response from {selected_model}: {response[:100]}...")
-            return response  # No prefix added
+            return response
         logger.warning(f"No response from selected model: {selected_model}")
     else:
         logger.debug("No model selected, trying available models in order")
@@ -124,7 +149,7 @@ def get_chatbot_response(user_input, selected_model=None):
             response = generate_response(model_name, user_input)
             if response:
                 logger.info(f"Response from {model_name}: {response[:100]}...")
-                return response  # No prefix added
+                return response
             logger.debug(f"Model {model_name} failed to respond")
 
     logger.warning("All models failed to respond")
