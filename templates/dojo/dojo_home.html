@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dojo - Nihonow{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="text-center mb-5">
+        <h1 style="color: #333; font-size: 3rem;">Nihonow Dojo</h1>
+        <p class="lead">Compete with friends and test your Japanese skills!</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <!-- Host a Room -->
+        <div class="col-md-5">
+            <div class="card shadow h-100 border-0" style="background: linear-gradient(135deg, #84fab0, #8fd3f4);">
+                <div class="card-body text-center p-5">
+                    <h2 class="card-title mb-4" style="color: #00796b;">Host a Room</h2>
+                    <p class="card-text mb-4">Create your own competition room and invite friends to join. As the host, you'll control when the competition starts and ends.</p>
+                    <a href="{% url 'create_room' %}" class="btn btn-light btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i> Create Room
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Join a Room -->
+        <div class="col-md-5">
+            <div class="card shadow h-100 border-0" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
+                <div class="card-body text-center p-5">
+                    <h2 class="card-title mb-4" style="color: #6a1b9a;">Join a Room</h2>
+                    <p class="card-text mb-4">Enter a 6-digit room code to join an existing competition. Compete with friends and see who scores the highest!</p>
+                    <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#joinRoomModal">
+                        <i class="fas fa-sign-in-alt me-2"></i> Join Room
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Join Room Modal -->
+<div class="modal fade" id="joinRoomModal" tabindex="-1" aria-labelledby="joinRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
+                <h5 class="modal-title" id="joinRoomModalLabel" style="color: #6a1b9a;">Join a Dojo Room</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'join_room' %}" method="post" id="joinRoomForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="roomCode" class="form-label">Enter 6-digit Room Code</label>
+                        <input type="text" class="form-control form-control-lg text-center" id="roomCode" name="room_code"
+                               maxlength="6" minlength="6" pattern="[0-9]{6}" required>
+                        <div class="form-text">Ask the host for the room code</div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Join Room</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Format room code input to show only digits
+    document.getElementById('roomCode').addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '').substring(0, 6);
+    });
+</script>
+{% endblock %}
+

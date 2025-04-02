@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Host Room: {{ room.name }} - Nihonow{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.ably.io/lib/ably.min-1.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4 border-0" style="background: linear-gradient(135deg, #84fab0, #8fd3f4);">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h1 style="color: #00796b;">{{ room.name }}</h1>
+                        <div class="badge bg-dark fs-5 p-2">Room Code: <span class="fw-bold">{{ room.code }}</span></div>
+                    </div>
+
+                    <p class="lead">Share this code with your friends to join the competition!</p>
+
+                    <div class="d-flex gap-2 mt-4">
+                        {% if not room.has_started %}
+                        <button id="startCompetition" class="btn btn-success btn-lg">
+                            <i class="fas fa-play me-2"></i> Start Competition
+                        </button>
+                        {% elif not room.has_ended %}
+                        <button id="endCompetition" class="btn btn-danger btn-lg">
+                            <i class="fas fa-stop me-2"></i> End Competition
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow border-0">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">Competition Status</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h4>Room Status:</h4>
+                            <div id="roomStatus" class="badge {% if room.has_started %}bg-success{% elif room.has_ended %}bg-danger{% else %}bg-warning{% endif %} fs-5 p-2">
+                                {% if room.has_started %}In Progress{% elif room.has_ended %}Ended{% else %}Waiting to Start{% endif %}
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 30px;">
+                            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                 style="width: {% if room.has_started %}50{% elif room.has_ended %}100{% else %}0{% endif %}%;"
+                                 aria-valuenow="{% if room.has_started %}50{% elif room.has_ended %}100{% else %}0{% endif %}"
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow border-0">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Participants</h3>
+                    <span class="badge bg-primary fs-6" id="participantCount">{{ participants.count }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush" id="participantsList">
+                        {% for participant in participants %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-user me-2"></i>
+                                {{ participant.user.username }}
+                            </div>
+                            <span class="badge bg-primary rounded-pill">{{ participant.score }}</span>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-muted">No participants yet</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize Ably
+    const ably = new Ably.Realtime('{{ ably_api_key }}');
+    const roomChannel = ably.channels.get('dojo-room-{{ room.code }}');
+
+    // DOM elements
+    const startButton = document.getElementById('startCompetition');
+    const endButton = document.getElementById('endCompetition');
+    const roomStatus = document.getElementById('roomStatus');
+    const progressBar = document.getElementById('progressBar');
+    const participantsList = document.getElementById('participantsList');
+    const participantCount = document.getElementById('participantCount');
+
+    // Listen for participant joins
+    roomChannel.subscribe('participant-joined', (message) => {
+        const participant = message.data;
+
+        // Check if participant already exists
+        const existingParticipant = document.getElementById(`participant-${participant.id}`);
+        if (!existingParticipant) {
+            const listItem = document.createElement('li');
+            listItem.id = `participant-${participant.id}`;
+            listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+            listItem.innerHTML = `
+                <div>
+                    <i class="fas fa-user me-2"></i>
+                    ${participant.username}
+                </div>
+                <span class="badge bg-primary rounded-pill">${participant.score}</span>
+            `;
+
+            // Remove "no participants" message if it exists
+            const noParticipantsMsg = participantsList.querySelector('.text-muted');
+            if (noParticipantsMsg) {
+                participantsList.removeChild(noParticipantsMsg);
+            }
+
+            participantsList.appendChild(listItem);
+            participantCount.textContent = participantsList.children.length;
+        }
+    });
+
+    // Listen for score updates
+    roomChannel.subscribe('score-update', (message) => {
+        const { participantId, score } = message.data;
+
+        // Update participant score
+        const participantElement = document.getElementById(`participant-${participantId}`);
+        if (participantElement) {
+            const scoreElement = participantElement.querySelector('.badge');
+            scoreElement.textContent = score;
+
+            // Sort participants by score (highest first)
+            const participantsArray = Array.from(participantsList.children);
+            participantsArray.sort((a, b) => {
+                const scoreA = parseInt(a.querySelector('.badge').textContent);
+                const scoreB = parseInt(b.querySelector('.badge').textContent);
+                return scoreB - scoreA;
+            });
+
+            // Clear and re-append sorted participants
+            participantsList.innerHTML = '';
+            participantsArray.forEach(item => participantsList.appendChild(item));
+        }
+    });
+
+    // Start competition
+    if (startButton) {
+        startButton.addEventListener('click', async () => {
+            // Intermediate state: disable button and show "Starting..."
+            startButton.disabled = true;
+            startButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Starting...';
+
+            try {
+                const response = await fetch(`/dojo/host/{{ room.code }}/start/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                });
+
+                if (response.ok) {
+                    // Update UI
+                    roomStatus.textContent = 'In Progress';
+                    roomStatus.className = 'badge bg-success fs-5 p-2';
+                    progressBar.style.width = '50%';
+                    progressBar.setAttribute('aria-valuenow', '50');
+
+                    // Replace start button with end button
+                    startButton.parentNode.innerHTML = `
+                        <button id="endCompetition" class="btn btn-danger btn-lg">
+                            <i class="fas fa-stop me-2"></i> End Competition
+                        </button>
+                    `;
+
+                    // Notify participants
+                    roomChannel.publish('competition-status', { status: 'started' });
+
+                    // Add event listener to new end button
+                    document.getElementById('endCompetition').addEventListener('click', endCompetitionHandler);
+                } else {
+                    // Revert button state on failure
+                    startButton.disabled = false;
+                    startButton.innerHTML = '<i class="fas fa-play me-2"></i> Start Competition';
+                }
+            } catch (error) {
+                console.error('Error starting competition:', error);
+                // Revert button state on error
+                startButton.disabled = false;
+                startButton.innerHTML = '<i class="fas fa-play me-2"></i> Start Competition';
+            }
+        });
+    }
+
+    // End competition handler
+    const endCompetitionHandler = async () => {
+        const endButton = document.getElementById('endCompetition');
+        // Intermediate state: disable button and show "Ending..."
+        endButton.disabled = true;
+        endButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Ending...';
+
+        try {
+            const response = await fetch(`/dojo/host/{{ room.code }}/end/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            if (response.ok) {
+                // Update UI
+                roomStatus.textContent = 'Ended';
+                roomStatus.className = 'badge bg-danger fs-5 p-2';
+                progressBar.style.width = '100%';
+                progressBar.setAttribute('aria-valuenow', '100');
+                progressBar.classList.remove('progress-bar-animated');
+
+                // Remove end button
+                endButton.remove();
+
+                // Notify participants
+                roomChannel.publish('competition-status', { status: 'ended' });
+            } else {
+                // Revert button state on failure
+                endButton.disabled = false;
+                endButton.innerHTML = '<i class="fas fa-stop me-2"></i> End Competition';
+            }
+        } catch (error) {
+            console.error('Error ending competition:', error);
+
+            // Revert button state on error
+            endButton.disabled = false;
+            endButton.innerHTML = '<i class="fas fa-stop me-2"></i> End Competition';
+        }
+    };
+
+    // Add event listener to end button if it exists
+    if (endButton) {
+        endButton.addEventListener('click', endCompetitionHandler);
+    }
+</script>
+{% endblock %}

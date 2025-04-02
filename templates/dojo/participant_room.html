@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dojo: {{ room.name }} - Nihonow{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.ably.io/lib/ably.min-1.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4 border-0" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h1 style="color: #6a1b9a;">{{ room.name }}</h1>
+                        <div class="badge bg-dark fs-5 p-2">Room Code: <span class="fw-bold">{{ room.code }}</span></div>
+                    </div>
+
+                    <p class="lead">Host: <strong>{{ room.host.username }}</strong></p>
+
+                    <div id="competitionArea" class="mt-4 p-4 bg-white rounded shadow-sm">
+                        <div id="waitingMessage" class="text-center py-5 {% if room.has_started %}d-none{% endif %}">
+                            <i class="fas fa-spinner fa-spin fa-3x mb-3" style="color: #6a1b9a;"></i>
+                            <h3>Waiting for the host to start the competition...</h3>
+                        </div>
+
+                        <div id="competitionContent" class="{% if not room.has_started %}d-none{% endif %}">
+                            <h3 class="text-center mb-4">Japanese Flashcard Challenge</h3>
+
+                            <div class="card mb-4">
+                                <div class="card-body text-center">
+                                    <h2 id="questionText" class="display-4 mb-4">問題</h2>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-8">
+                                            <input type="text" id="answerInput" class="form-control form-control-lg mb-3" placeholder="Type your answer...">
+                                            <button id="submitAnswer" class="btn btn-primary btn-lg">Submit Answer</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4>Your Score: <span id="userScore" class="badge bg-success">{{ participant.score }}</span></h4>
+                                </div>
+                                <div>
+                                    <h4>Time Left: <span id="timeLeft" class="badge bg-warning">60</span>s</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="endedMessage" class="text-center py-5 {% if not room.has_ended %}d-none{% endif %}">
+                            <i class="fas fa-trophy fa-3x mb-3" style="color: gold;"></i>
+                            <h3>The competition has ended!</h3>
+                            <p class="lead">Check the leaderboard to see the final results.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow border-0">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">Leaderboard</h3>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush" id="leaderboardList">
+                        <li class="list-group-item text-center text-muted">Loading participants...</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize Ably
+    const ably = new Ably.Realtime('{{ ably_api_key }}');
+    const roomChannel = ably.channels.get('dojo-room-{{ room.code }}');
+
+    // DOM elements
+    const waitingMessage = document.getElementById('waitingMessage');
+    const competitionContent = document.getElementById('competitionContent');
+    const endedMessage = document.getElementById('endedMessage');
+    const questionText = document.getElementById('questionText');
+    const answerInput = document.getElementById('answerInput');
+    const submitAnswer = document.getElementById('submitAnswer');
+    const userScore = document.getElementById('userScore');
+    const timeLeft = document.getElementById('timeLeft');
+    const leaderboardList = document.getElementById('leaderboardList');
+
+    // Game state
+    let score = {{ participant.score }};
+    let timer = null;
+    let timeRemaining = 60;
+    let currentQuestion = null;
+
+    // Japanese vocabulary for the game (simplified for example)
+    const vocabulary = [
+        { japanese: '猫', english: 'cat' },
+        { japanese: '犬', english: 'dog' },
+        { japanese: '水', english: 'water' },
+        { japanese: '火', english: 'fire' },
+        { japanese: '山', english: 'mountain' },
+        { japanese: '川', english: 'river' },
+        { japanese: '木', english: 'tree' },
+        { japanese: '本', english: 'book' },
+        { japanese: '車', english: 'car' },
+        { japanese: '魚', english: 'fish' }
+    ];
+
+    // Announce participant joined
+    roomChannel.publish('participant-joined', {
+        id: '{{ participant.id }}',
+        username: '{{ participant.user.username }}',
+        score: score
+    });
+
+    // Listen for competition status changes
+    roomChannel.subscribe('competition-status', (message) => {
+        const { status } = message.data;
+
+        if (status === 'started') {
+            waitingMessage.classList.add('d-none');
+            competitionContent.classList.remove('d-none');
+            endedMessage.classList.add('d-none');
+            startGame();
+        } else if (status === 'ended') {
+            waitingMessage.classList.add('d-none');
+            competitionContent.classList.add('d-none');
+            endedMessage.classList.remove('d-none');
+
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+        }
+    });
+
+    // Listen for leaderboard updates
+    roomChannel.subscribe('participant-joined', updateLeaderboard);
+    roomChannel.subscribe('score-update', updateLeaderboard);
+
+    // Update leaderboard
+    function updateLeaderboard(message) {
+        // Clear loading message
+        if (leaderboardList.querySelector('.text-muted')) {
+            leaderboardList.innerHTML = '';
+        }
+
+        // Fetch all participants
+        fetch(`/dojo/participant/{{ room.code }}/leaderboard/`)
+            .then(response => response.json())
+            .then(participants => {
+                // Sort by score (highest first)
+                participants.sort((a, b) => b.score - a.score);
+
+                // Update leaderboard
+                leaderboardList.innerHTML = '';
+                participants.forEach((participant, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+                    // Highlight current user
+                    if (participant.id === {{ participant.id }}) {
+                        listItem.classList.add('bg-light');
+                    }
+
+                    // Add medal for top 3
+                    let medal = '';
+                    if (index === 0) medal = '<i class="fas fa-medal text-warning me-2"></i>';
+                    else if (index === 1) medal = '<i class="fas fa-medal text-secondary me-2"></i>';
+                    else if (index === 2) medal = '<i class="fas fa-medal text-danger me-2"></i>';
+
+                    listItem.innerHTML = `
+                        <div>
+                            ${medal}
+                            <span class="me-2">${index + 1}.</span>
+                            ${participant.username}
+                        </div>
+                        <span class="badge bg-primary rounded-pill">${participant.score}</span>
+                    `;
+
+                    leaderboardList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error fetching leaderboard:', error));
+    }
+
+    // Start the game
+    function startGame() {
+        // Set initial question
+        nextQuestion();
+
+        // Start timer
+        timer = setInterval(() => {
+            timeRemaining--;
+            timeLeft.textContent = timeRemaining;
+
+            if (timeRemaining <= 0) {
+                clearInterval(timer);
+                timer = null;
+
+                // Game over logic
+                answerInput.disabled = true;
+                submitAnswer.disabled = true;
+            }
+        }, 1000);
+    }
+
+    // Get next question
+    function nextQuestion() {
+        const randomIndex = Math.floor(Math.random() * vocabulary.length);
+        currentQuestion = vocabulary[randomIndex];
+        questionText.textContent = currentQuestion.japanese;
+        answerInput.value = '';
+        answerInput.focus();
+    }
+
+    // Submit answer
+    submitAnswer.addEventListener('click', () => {
+        const userAnswer = answerInput.value.trim().toLowerCase();
+
+        if (userAnswer === currentQuestion.english) {
+            // Correct answer
+            score += 10;
+            userScore.textContent = score;
+
+            // Update score on server
+            updateScore(score);
+
+            // Next question
+            nextQuestion();
+        } else {
+            // Wrong answer
+            answerInput.classList.add('is-invalid');
+            setTimeout(() => {
+                answerInput.classList.remove('is-invalid');
+            }, 1000);
+        }
+    });
+
+    // Allow pressing Enter to submit
+    answerInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            submitAnswer.click();
+        }
+    });
+
+    // Update score on server
+    function updateScore(newScore) {
+        fetch(`/dojo/participant/{{ room.code }}/update-score/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ score: newScore })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Publish score update to channel
+            roomChannel.publish('score-update', {
+                participantId: '{{ participant.id }}',
+                score: newScore
+            });
+        })
+        .catch(error => console.error('Error updating score:', error));
+    }
+
+    // Initial leaderboard load
+    updateLeaderboard();
+</script>
+{% endblock %}
+

@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Dojo Room - Nihonow{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Popup Overlay */
+    .settings-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .settings-overlay.show {
+        opacity: 1;
+    }
+    .settings-message {
+        background: linear-gradient(135deg, #84fab0, #8fd3f4); /* Matches the card gradient */
+        padding: 35px;
+        border-radius: 25px;
+        text-align: center;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        max-width: 450px;
+        width: 90%;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+        position: relative; /* For positioning the close button */
+    }
+    .settings-overlay.show .settings-message {
+        transform: scale(1);
+    }
+    .settings-message h3 {
+        color: #00796b; /* Matches the card header color */
+        font-size: 2rem;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+    .settings-message .form-label {
+        color: #333;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+    .settings-message .form-control {
+        margin-bottom: 20px;
+    }
+    .settings-message .btn {
+        padding: 12px 25px;
+        margin: 0 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+    .btn-confirm {
+        background-color: #00796b;
+        color: #fff;
+    }
+    .btn-confirm:hover {
+        background-color: #005f56;
+        transform: scale(1.05);
+    }
+    .d-none {
+        display: none;
+    }
+    /* Close Button */
+    .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 1.5rem;
+        color: #00796b;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+    .close-btn:hover {
+        color: #005f56;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0" style="background: linear-gradient(135deg, #84fab0, #8fd3f4);">
+                <div class="card-body p-5">
+                    <h1 class="text-center mb-4" style="color: #00796b;">Create a Dojo Room</h1>
+
+                    <form id="createRoomForm" method="post" action="{% url 'create_room' %}">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="room_name" class="form-label">Room Name</label>
+                            <input type="text" class="form-control form-control-lg" id="room_name" name="room_name"
+                                   placeholder="Enter a name for your room" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="createRoomButton">
+                                <i class="fas fa-plus-circle me-2"></i> Create Room
+                            </button>
+                            <a href="{% url 'dojo_home' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Back
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Popup -->
+<div id="settings-overlay" class="settings-overlay d-none">
+    <div class="settings-message">
+        <span class="close-btn" id="closeSettings">&times;</span>
+        <h3>Room Settings</h3>
+        <form id="settingsForm">
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-control" id="category" name="category" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <option value="hiragana">Hiragana</option>
+                    <option value="katakana">Katakana</option>
+                    <option value="kanji">Kanji</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="subcategory" class="form-label">Subcategory</label>
+                <select class="form-control" id="subcategory" name="subcategory" required>
+                    <option value="" disabled selected>Select a subcategory</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="question_type" class="form-label">Question Type</label>
+                <select class="form-control" id="question_type" name="question_type" required>
+                    <option value="" disabled selected>Select a question type</option>
+                    <option value="mcq">Multiple Choice (MCQ)</option>
+                    <option value="blank">Blank (Type the Answer)</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="time_limit" class="form-label">Time Limit per Question (seconds)</label>
+                <input type="number" class="form-control" id="time_limit" name="time_limit"
+                       placeholder="Leave empty for 0" min="0">
+            </div>
+            <div>
+                <button type="button" class="btn btn-confirm" id="confirmSettings">Confirm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const createRoomForm = document.getElementById('createRoomForm');
+    const createRoomButton = document.getElementById('createRoomButton');
+    const settingsOverlay = document.getElementById('settings-overlay');
+    const confirmSettingsButton = document.getElementById('confirmSettings');
+    const closeSettingsButton = document.getElementById('closeSettings');
+    const categorySelect = document.getElementById('category');
+    const subcategorySelect = document.getElementById('subcategory');
+
+    // Define subcategory options for each category
+    const subcategoryOptions = {
+        hiragana: [
+            { value: "basic", text: "Basic" },
+            { value: "tenten_dakuten", text: "Tenten/Dakuten" },
+            { value: "combinations", text: "Combinations" },
+            { value: "all", text: "All" }
+        ],
+        katakana: [
+            { value: "basic", text: "Basic" },
+            { value: "tenten_dakuten", text: "Tenten/Dakuten" },
+            { value: "combinations", text: "Combinations" },
+            { value: "all", text: "All" }
+        ],
+        kanji: [
+            { value: "numbers", text: "Numbers" },
+            { value: "environment", text: "Environment" },
+            { value: "people", text: "People" },
+            { value: "directions", text: "Directions" },
+            { value: "verbs", text: "Verbs" },
+            { value: "adjectives", text: "Adjectives" },
+            { value: "misc", text: "Miscellaneous" },
+            { value: "all", text: "All" }
+        ]
+    };
+
+    // Update subcategory dropdown based on selected category
+    categorySelect.addEventListener('change', () => {
+        const selectedCategory = categorySelect.value;
+        const options = subcategoryOptions[selectedCategory] || [];
+
+        // Clear current options
+        subcategorySelect.innerHTML = '<option value="" disabled selected>Select a subcategory</option>';
+
+        // Populate new options
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option.value;
+            optionElement.textContent = option.text;
+            subcategorySelect.appendChild(optionElement);
+        });
+    });
+
+    // Intercept form submission to show popup
+    createRoomForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // Prevent immediate submission
+        settingsOverlay.classList.remove('d-none');
+        setTimeout(() => settingsOverlay.classList.add('show'), 10);
+    });
+
+    // Close the popup when the "X" button is clicked
+    closeSettingsButton.addEventListener('click', () => {
+        settingsOverlay.classList.remove('show');
+        setTimeout(() => settingsOverlay.classList.add('d-none'), 300); // Match transition duration
+    });
+
+    // Handle confirm button in popup
+    confirmSettingsButton.addEventListener('click', () => {
+        const category = document.getElementById('category').value;
+        const subcategory = document.getElementById('subcategory').value;
+        const questionType = document.getElementById('question_type').value;
+        const timeLimit = document.getElementById('time_limit').value || '0'; // Default to 0 if empty
+
+        // Validate inputs
+        if (!category || !subcategory || !questionType) {
+            alert('Please select a category, subcategory, and question type.');
+            return;
+        }
+
+        // Add hidden inputs to the original form
+        const categoryInput = document.createElement('input');
+        categoryInput.type = 'hidden';
+        categoryInput.name = 'category';
+        categoryInput.value = category;
+        createRoomForm.appendChild(categoryInput);
+
+        const subcategoryInput = document.createElement('input');
+        subcategoryInput.type = 'hidden';
+        subcategoryInput.name = 'subcategory';
+        subcategoryInput.value = subcategory;
+        createRoomForm.appendChild(subcategoryInput);
+
+        const questionTypeInput = document.createElement('input');
+        questionTypeInput.type = 'hidden';
+        questionTypeInput.name = 'question_type';
+        questionTypeInput.value = questionType;
+        createRoomForm.appendChild(questionTypeInput);
+
+        const timeLimitInput = document.createElement('input');
+        timeLimitInput.type = 'hidden';
+        timeLimitInput.name = 'time_limit';
+        timeLimitInput.value = timeLimit;
+        createRoomForm.appendChild(timeLimitInput);
+
+        // Submit the form
+        createRoomForm.submit();
+    });
+</script>
+{% endblock %}
