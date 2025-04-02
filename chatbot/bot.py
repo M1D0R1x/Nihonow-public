@@ -9,7 +9,7 @@ import requests
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('nihonow_bot')
 
-# Static Knowledge Base for Greetings and Identity Questions
+# Static Knowledge Base for Greetings, Identity, and Purpose Questions
 KNOWLEDGE_BASE = {
     # Greetings with consistent responses
     "hello": {"response": "こんにちは (Konnichiwa)! How can I assist you today?"},
@@ -20,12 +20,25 @@ KNOWLEDGE_BASE = {
     "good evening": {"response": "こんばんは (Konbanwa)! How can I assist you today?"},
     "hey": {"response": "こんにちは (Konnichiwa)! How can I assist you today?"},
 
-    # Identity and status questions with consistent responses
+    # Identity and name-related questions
     "what are you": {"response": "I am NihonBot. I’m here to help you with almost anything—ask me a question!"},
     "who are you": {"response": "I am NihonBot. I’m here to help you with almost anything—ask me a question!"},
+    "what is your name": {"response": "I am NihonBot."},
+    "your name": {"response": "I am NihonBot."},
+    "name": {"response": "I am NihonBot."},
+    "what's your name": {"response": "I am NihonBot."},
+    "whats your name": {"response": "I am NihonBot."},
     "why are you": {"response": "I exist to assist and provide helpful answers, created by xAI to advance our understanding of the universe!"},
     "how are you": {"response": "I’m doing great, thanks for asking! How can I help you today?"},
-    "how you doing": {"response": "I’m doing great, thanks for asking! How can I help you today?"}
+    "how you doing": {"response": "I’m doing great, thanks for asking! How can I help you today?"},
+
+    # Purpose-related questions
+    "what do you do": {"response": "I help you learn about Japanese language, culture, and more!"},
+    "what is your purpose": {"response": "I help you learn about Japanese language, culture, and more!"},
+    "what can you do": {"response": "I help you learn about Japanese language, culture, and more!"},
+    "what's your purpose": {"response": "I help you learn about Japanese language, culture, and more!"},
+    "whats your purpose": {"response": "I help you learn about Japanese language, culture, and more!"},
+    "what are you for": {"response": "I help you learn about Japanese language, culture, and more!"}
 }
 
 # Model configurations with updated API keys
@@ -120,7 +133,7 @@ def get_chatbot_response(user_input, selected_model=None):
     user_input_lower = user_input.lower().strip()
     logger.debug(f"Normalized input: '{user_input_lower}'")
 
-    # Typo tolerance for greetings and identity questions
+    # Typo tolerance for greetings, identity, and purpose questions
     kb_keys = list(KNOWLEDGE_BASE.keys())
     close_match = get_close_matches(user_input_lower, kb_keys, n=1, cutoff=0.8)
     if close_match:

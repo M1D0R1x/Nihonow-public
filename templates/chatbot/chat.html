@@ -42,6 +42,11 @@
         font-weight: 600;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     }
+    .chat-header .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
     .chat-header .clear-chat {
         background: #fff;
         color: #ff6f61;
@@ -161,6 +166,78 @@
     @keyframes blink {
         50% { opacity: 1; }
     }
+    /* Authentication Overlay - Centered with background visible */
+    .auth-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none; /* Allow interaction with background elements by default */
+    }
+    .auth-overlay.show {
+        opacity: 1;
+        pointer-events: auto; /* Capture interactions when visible */
+    }
+    .auth-message {
+        background: #fff;
+        padding: 35px;
+        border-radius: 25px;
+        text-align: center;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        max-width: 450px;
+        width: 90%;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+    .auth-overlay.show .auth-message {
+        transform: scale(1);
+    }
+    .auth-message h3 {
+        color: #c2185b;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+    .auth-message p {
+        color: #333;
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+    }
+    .auth-message .btn {
+        padding: 12px 25px;
+        margin: 0 15px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+    .auth-message .btn-login,
+    .auth-message .btn-register {
+        background: linear-gradient(135deg, #ff6f61, #ff8c00);
+        color: #fff;
+    }
+    .auth-message .btn-login:hover,
+    .auth-message .btn-register:hover {
+        background: linear-gradient(135deg, #ff8c00, #ff6f61);
+        transform: scale(1.05);
+    }
+    .d-none {
+        display: none;
+    }
+    /* Blur effect for background when overlay is shown */
+    .blur-background {
+        filter: blur(4px);
+        transition: filter 0.3s ease;
+        pointer-events: none; /* Prevent interaction with blurred content */
+    }
     @media (max-width: 600px) {
         .chat-container {
             margin: 5px;
@@ -168,9 +245,22 @@
         }
         .chat-header {
             padding: 12px 15px;
+            flex-direction: column;
+            align-items: flex-start;
         }
         .chat-header h2 {
             font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        .chat-header .actions {
+            width: 100%;
+            align-items: flex-end;
+        }
+        .chat-header .clear-chat,
+        .model-selector select {
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 0.85rem;
         }
         .chat-box {
             height: 50vh;
@@ -192,37 +282,64 @@
             padding: 10px 20px;
             font-size: 0.95rem;
         }
-        .model-selector select {
-            padding: 6px;
-            font-size: 0.85rem;
+        .auth-message {
+            padding: 25px;
+            width: 85%;
+        }
+        .auth-message h3 {
+            font-size: 1.5rem;
+        }
+        .auth-message p {
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        .auth-message .btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 0.9rem;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="chat-container">
-    <div class="chat-header">
-        <h2>NihonBot</h2>
-        <div>
-            <button id="clear-chat" class="clear-chat">Clear Chat</button>
-            <div class="model-selector">
-                <select id="model-select">
-                    <option value="">Auto-select</option>
-                    <option value="local">Local Knowledge Base</option>
-                    <option value="deepseek/deepseek-r1-zero:free">deepseek-r1-zero:free</option>
-                    <option value="mistralai/mistral-small-3.1-24b-instruct:free">mistral-small-3.1-24b-instruct</option>
-                    <option value="qwen/qwen2.5-vl-3b-instruct:free">qwen2.5-vl-3b-instruct</option>
-                </select>
+<!-- Chat Interface (visible for all users) -->
+<main>
+    <div class="chat-container {% if not user.is_authenticated %}blur-background{% endif %}">
+        <div class="chat-header">
+            <h2>NihonBot</h2>
+            <div class="actions">
+                <button id="clear-chat" class="clear-chat">Clear Chat</button>
+                <div class="model-selector">
+                    <select id="model-select">
+                        <option value="">Auto-select</option>
+                        <option value="local">Local</option>
+                        <option value="deepseek/deepseek-r1-zero:free">deepseek</option>
+                        <option value="mistralai/mistral-small-3.1-24b-instruct:free">mistral</option>
+                        <option value="qwen/qwen2.5-vl-3b-instruct:free">qwen2</option>
+                    </select>
+                </div>
             </div>
         </div>
+        <div class="chat-box" id="chat-box">
+            <!-- Messages will be appended here -->
+        </div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message here...">
+            <button id="send-button">Send</button>
+        </div>
     </div>
-    <div class="chat-box" id="chat-box">
-        <!-- Messages will be appended here -->
-    </div>
-    <div class="input-area">
-        <input type="text" id="user-input" placeholder="Type your message here...">
-        <button id="send-button">Send</button>
+</main>
+
+<!-- Authentication Overlay - Positioned in the middle of the page -->
+<div id="auth-overlay" class="auth-overlay {% if not user.is_authenticated %}show{% else %}d-none{% endif %}">
+    <div class="auth-message">
+        <h3>Login Required</h3>
+        <p>Please login or register to chat with NihonBot.</p>
+        <div>
+            <a href="{% url 'login' %}" class="btn btn-login">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-register">Register</a>
+        </div>
     </div>
 </div>
 
@@ -232,7 +349,17 @@
     const sendButton = document.getElementById('send-button');
     const modelSelect = document.getElementById('model-select');
     const clearChatButton = document.getElementById('clear-chat');
+    const authOverlay = document.getElementById('auth-overlay');
+    const chatContainer = document.querySelector('.chat-container');
     let isSending = false; // Track if a message is being sent
+
+    // Show the auth overlay with animation if not authenticated
+    if (!{{ user.is_authenticated|lower }}) {
+        setTimeout(() => {
+            authOverlay.classList.add('show');
+            chatContainer.classList.add('blur-background');
+        }, 10);
+    }
 
     // Function to add typing indicator
     function addTypingIndicator() {
@@ -319,6 +446,13 @@
 
     // Function to send a message
     function sendMessage() {
+        // If not authenticated, show the auth overlay
+        if (!{{ user.is_authenticated|lower }}) {
+            authOverlay.classList.add('show');
+            chatContainer.classList.add('blur-background');
+            return;
+        }
+
         const message = userInput.value.trim(); // Trim whitespace
         const selectedModel = modelSelect.value;
 
@@ -442,3 +576,4 @@
     window.addEventListener('beforeunload', saveChatHistory);
 </script>
 {% endblock %}
+
