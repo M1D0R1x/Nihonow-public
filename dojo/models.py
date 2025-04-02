@@ -18,6 +18,12 @@ class DojoRoom(models.Model):
     has_started = models.BooleanField(default=False)
     has_ended = models.BooleanField(default=False)
 
+    # Room settings
+    category = models.CharField(max_length=20, null=True, blank=True)
+    subcategory = models.CharField(max_length=20, null=True, blank=True)
+    question_type = models.CharField(max_length=10, null=True, blank=True)
+    time_limit = models.IntegerField(default=60)
+
     def __str__(self):
         return f"{self.name} ({self.code})"
 
@@ -33,3 +39,4 @@ class DojoParticipant(models.Model):
 
     def __str__(self):
         return f"{self.user.username} in {self.room.code}"
+

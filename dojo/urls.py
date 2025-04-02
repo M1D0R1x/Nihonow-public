@@ -11,4 +11,6 @@ urlpatterns = [
     path('host/<str:room_code>/end/', views.end_competition, name='end_competition'),
     path('participant/<str:room_code>/update-score/', views.update_score, name='update_score'),
     path('participant/<str:room_code>/leaderboard/', views.leaderboard, name='leaderboard'),
+    path('get_questions/', views.get_questions, name='get_questions'),
 ]
+

@@ -5,6 +5,48 @@
 
 {% block extra_head %}
 <script src="https://cdn.ably.io/lib/ably.min-1.js"></script>
+<style>
+    /* Animation for status changes */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    /* Participant list animations */
+    @keyframes slideIn {
+        from { transform: translateX(20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    .participant-item {
+        transition: all 0.3s ease;
+    }
+
+    .participant-item.new {
+        animation: slideIn 0.5s ease forwards;
+    }
+
+    .participant-item:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+    }
+
+    /* Score update animation */
+    @keyframes scoreUpdate {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.5); color: #4caf50; }
+        100% { transform: scale(1); }
+    }
+
+    .score-update {
+        animation: scoreUpdate 0.8s ease;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -19,6 +61,28 @@
                     </div>
 
                     <p class="lead">Share this code with your friends to join the competition!</p>
+
+                    <div class="mt-3">
+                        <h4>Room Settings:</h4>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Category:
+                                <span class="badge bg-primary">{{ room.category|default:"Not set" }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Subcategory:
+                                <span class="badge bg-primary">{{ room.subcategory|default:"Not set" }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Question Type:
+                                <span class="badge bg-primary">{{ room.question_type|default:"Not set" }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Time Limit:
+                                <span class="badge bg-primary">{{ room.time_limit|default:"60" }} seconds</span>
+                            </li>
+                        </ul>
+                    </div>
 
                     <div class="d-flex gap-2 mt-4">
                         {% if not room.has_started %}
@@ -42,7 +106,7 @@
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h4>Room Status:</h4>
-                            <div id="roomStatus" class="badge {% if room.has_started %}bg-success{% elif room.has_ended %}bg-danger{% else %}bg-warning{% endif %} fs-5 p-2">
+                            <div id="roomStatus" class="badge {% if room.has_started %}bg-success pulse{% elif room.has_ended %}bg-danger{% else %}bg-warning{% endif %} fs-5 p-2">
                                 {% if room.has_started %}In Progress{% elif room.has_ended %}Ended{% else %}Waiting to Start{% endif %}
                             </div>
                         </div>
@@ -67,7 +131,7 @@
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush" id="participantsList">
                         {% for participant in participants %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <li class="list-group-item d-flex justify-content-between align-items-center participant-item">
                             <div>
                                 <i class="fas fa-user me-2"></i>
                                 {{ participant.user.username }}
@@ -97,6 +161,14 @@
     const participantsList = document.getElementById('participantsList');
     const participantCount = document.getElementById('participantCount');
 
+    // Room settings from Django
+    const roomSettings = {
+        category: '{{ room.category|default:"" }}',
+        subcategory: '{{ room.subcategory|default:"" }}',
+        question_type: '{{ room.question_type|default:"" }}',
+        time_limit: {{ room.time_limit|default:"60" }}
+    };
+
     // Listen for participant joins
     roomChannel.subscribe('participant-joined', (message) => {
         const participant = message.data;
@@ -106,13 +178,13 @@
         if (!existingParticipant) {
             const listItem = document.createElement('li');
             listItem.id = `participant-${participant.id}`;
-            listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+            listItem.className = 'list-group-item d-flex justify-content-between align-items-center participant-item new';
             listItem.innerHTML = `
                 <div>
                     <i class="fas fa-user me-2"></i>
                     ${participant.username}
                 </div>
-                <span class="badge bg-primary rounded-pill">${participant.score}</span>
+                <span class="badge bg-primary rounded-pill">0</span>
             `;
 
             // Remove "no participants" message if it exists
@@ -123,6 +195,11 @@
 
             participantsList.appendChild(listItem);
             participantCount.textContent = participantsList.children.length;
+
+            // Remove the 'new' class after animation completes
+            setTimeout(() => {
+                listItem.classList.remove('new');
+            }, 500);
         }
     });
 
@@ -134,6 +211,16 @@
         const participantElement = document.getElementById(`participant-${participantId}`);
         if (participantElement) {
             const scoreElement = participantElement.querySelector('.badge');
+            const oldScore = parseInt(scoreElement.textContent);
+
+            // Add animation class if score increased
+            if (score > oldScore) {
+                scoreElement.classList.add('score-update');
+                setTimeout(() => {
+                    scoreElement.classList.remove('score-update');
+                }, 800);
+            }
+
             scoreElement.textContent = score;
 
             // Sort participants by score (highest first)
@@ -153,6 +240,12 @@
     // Start competition
     if (startButton) {
         startButton.addEventListener('click', async () => {
+            // Check if settings are configured
+            if (!roomSettings.category || !roomSettings.subcategory || !roomSettings.question_type) {
+                alert('Room settings are not properly configured. Please recreate the room with proper settings.');
+                return;
+            }
+
             // Intermediate state: disable button and show "Starting..."
             startButton.disabled = true;
             startButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Starting...';
@@ -161,14 +254,16 @@
                 const response = await fetch(`/dojo/host/{{ room.code }}/start/`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(roomSettings)
                 });
 
                 if (response.ok) {
                     // Update UI
                     roomStatus.textContent = 'In Progress';
-                    roomStatus.className = 'badge bg-success fs-5 p-2';
+                    roomStatus.className = 'badge bg-success fs-5 p-2 pulse';
                     progressBar.style.width = '50%';
                     progressBar.setAttribute('aria-valuenow', '50');
 
@@ -180,7 +275,10 @@
                     `;
 
                     // Notify participants
-                    roomChannel.publish('competition-status', { status: 'started' });
+                    roomChannel.publish('competition-status', {
+                        status: 'started',
+                        settings: roomSettings
+                    });
 
                     // Add event listener to new end button
                     document.getElementById('endCompetition').addEventListener('click', endCompetitionHandler);
@@ -188,12 +286,14 @@
                     // Revert button state on failure
                     startButton.disabled = false;
                     startButton.innerHTML = '<i class="fas fa-play me-2"></i> Start Competition';
+                    alert('Failed to start competition. Please try again.');
                 }
             } catch (error) {
                 console.error('Error starting competition:', error);
                 // Revert button state on error
                 startButton.disabled = false;
                 startButton.innerHTML = '<i class="fas fa-play me-2"></i> Start Competition';
+                alert('Error starting competition. Please try again.');
             }
         });
     }
@@ -230,6 +330,7 @@
                 // Revert button state on failure
                 endButton.disabled = false;
                 endButton.innerHTML = '<i class="fas fa-stop me-2"></i> End Competition';
+                alert('Failed to end competition. Please try again.');
             }
         } catch (error) {
             console.error('Error ending competition:', error);
@@ -237,6 +338,7 @@
             // Revert button state on error
             endButton.disabled = false;
             endButton.innerHTML = '<i class="fas fa-stop me-2"></i> End Competition';
+            alert('Error ending competition. Please try again.');
         }
     };
 
@@ -246,3 +348,4 @@
     }
 </script>
 {% endblock %}
+
