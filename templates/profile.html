@@ -1,13 +1,215 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 
 {% block title %}Profile - Nihonow{% endblock %}
 
+{% block extra_head %}
+<style>
+    /* Define theme-aware variables */
+    :root {
+        --greeting-bg-start: #ff9a9e;
+        --greeting-bg-end: #fad0c4;
+        --greeting-text-start: #ff6f61;
+        --greeting-text-end: #ffd700;
+        --header-bg-start: #ff6f61;
+        --header-bg-end: #ffd700;
+        --header-text: #fff;
+        --card-bg: #ffffff;
+        --card-text: #212529;
+        --card-border: #e0e0e0;
+        --alert-success-bg: #d4edda;
+        --alert-success-text: #155724;
+        --alert-success-border: #c3e6cb;
+        --btn-outline-bg: transparent;
+        --btn-outline-text: #212529;
+        --btn-outline-border: #212529;
+    }
+
+    /* Dark mode overrides */
+    [data-bs-theme="dark"] {
+        --greeting-bg-start: #ff8085;
+        --greeting-bg-end: #ffb6a8;
+        --greeting-text-start: #ffebee;
+        --greeting-text-end: #fff9c4;
+        --header-bg-start: #ff5c4d;
+        --header-bg-end: #ffeb3b;
+        --header-text: #f8f9fa;
+        --card-bg: #424242;
+        --card-text: #e0e0e0;
+        --card-border: #616161;
+        --alert-success-bg: #388e3c;
+        --alert-success-text: #c8e6c9;
+        --alert-success-border: #66bb6a;
+        --btn-outline-bg: transparent;
+        --btn-outline-text: #f8f9fa;
+        --btn-outline-border: #f8f9fa;
+    }
+
+    /* Apply theme variables */
+    .greeting-section {
+        background: linear-gradient(135deg, var(--greeting-bg-start), var(--greeting-bg-end));
+        padding: 20px 0;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+    }
+
+    .greeting-section h4 {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, var(--greeting-text-start), var(--greeting-text-end));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 1.5s ease-in-out;
+        margin: 0;
+    }
+
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(15px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end));
+        min-height: 200px;
+        color: var(--header-text);
+        border-radius: 20px;
+        margin-bottom: 20px;
+    }
+
+    .profile-header h2,
+    .profile-header p {
+        color: var(--header-text);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .profile-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-card h5,
+    .profile-card p {
+        color: var(--card-text);
+    }
+
+    .alert-success {
+        background-color: var(--alert-success-bg);
+        color: var(--alert-success-text);
+        border-color: var(--alert-success-border);
+        border-radius: 15px;
+    }
+
+    .btn-outline-dark {
+        background-color: var(--btn-outline-bg);
+        color: var(--btn-outline-text);
+        border-color: var(--btn-outline-border);
+        border-radius: 15px;
+    }
+
+    .btn-outline-dark:hover {
+        background-color: var(--btn-outline-text);
+        color: var(--card-bg);
+    }
+
+    [data-bs-theme="dark"] .btn-close {
+        filter: invert(1);
+    }
+
+    /* Ensure gap between profile card and footer */
+    .profile-details {
+        margin-bottom: 40px;
+    }
+
+    /* Reduce size of the account information card */
+    .profile-card .card-body {
+        padding: 20px;
+    }
+
+    .profile-details .col-md-6 {
+        max-width: 400px; /* Reduce the width of the card */
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+        .greeting-section {
+            border-radius: 15px;
+            padding: 15px 0;
+        }
+
+        .greeting-section h4 {
+            font-size: 1.5rem;
+        }
+
+        .profile-header {
+            min-height: 150px;
+            padding: 20px 0;
+            border-radius: 15px;
+        }
+
+        .profile-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .profile-header p {
+            font-size: 0.9rem;
+        }
+
+        .profile-card {
+            border-radius: 15px;
+        }
+
+        .profile-card h5 {
+            font-size: 1.2rem;
+        }
+
+        .profile-card p {
+            font-size: 0.9rem;
+        }
+
+        .profile-card .card-body {
+            padding: 15px;
+        }
+
+        .profile-details .col-md-6 {
+            max-width: 100%; /* Full width on mobile */
+        }
+
+        .btn-outline-dark {
+            font-size: 0.9rem;
+            padding: 8px 16px;
+        }
+
+        .alert-success {
+            border-radius: 10px;
+        }
+
+        .profile-details {
+            margin-bottom: 30px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid py-5 text-center" style="background: linear-gradient(135deg, #ff6f61, #ffd700); min-height: 200px; color: #fff;">
+<!-- Greeting Section -->
+{% if user.is_authenticated %}
+    <div class="greeting-section">
+        <div class="container mt-3 text-center">
+            <h4>{% get_greeting user.username %}</h4>
+        </div>
+    </div>
+{% endif %}
+
+<!-- Profile Header -->
+<div class="container-fluid py-5 text-center profile-header">
     <div class="container">
-        <h2 class="text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Your Profile</h2>
-        <p class="text-white">Manage your account details.</p>
+        <h2>Your Profile</h2>
+        <p>Manage your account details.</p>
     </div>
 </div>
 
@@ -27,9 +229,9 @@
     {% endif %}
 
     <!-- Account Information -->
-    <div class="row justify-content-center">
+    <div class="row justify-content-center profile-details">
         <div class="col-md-6">
-            <div class="card shadow-sm border-0" style="border-radius: 15px;">
+            <div class="card profile-card">
                 <div class="card-body">
                     <h5>Account Information</h5>
                     <p><strong>Username:</strong> {{ user.username }}</p>

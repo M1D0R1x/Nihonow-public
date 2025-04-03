@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Password Reset Complete - NihongoDekita{% endblock %}
+{% block title %}400 - Bad Request - NihongoDekita{% endblock %}
 
 {% block extra_head %}
 <style>
@@ -13,7 +13,8 @@
         --card-bg: #ffffff;
         --card-text: #212529;
         --card-border: #e0e0e0;
-        --link-color: #007bff;
+        --btn-primary-bg: #007bff;
+        --btn-primary-text: #ffffff;
     }
 
     /* Dark mode overrides */
@@ -24,51 +25,41 @@
         --card-bg: #424242;
         --card-text: #e0e0e0;
         --card-border: #616161;
-        --link-color: #4dabf7;
+        --btn-primary-bg: #42a5f5;
+        --btn-primary-text: #ffffff;
     }
 
     /* Apply theme variables */
-    .reset-complete-header {
+    .error-header {
         background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end));
         min-height: 150px;
         color: var(--header-text);
         border-radius: 20px;
-        margin-top: 20px; /* Space between navbar and header */
+        margin-top: 20px;
         margin-bottom: 20px;
     }
 
-    .reset-complete-header h2,
-    .reset-complete-header p {
+    .error-header h2,
+    .error-header p {
         color: var(--header-text);
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     }
 
-    .reset-complete-section {
+    .error-section {
         background-color: var(--card-bg);
         border: 1px solid var(--card-border);
         border-radius: 15px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .reset-complete-section .card-body {
+    .error-section .card-body {
         color: var(--card-text);
     }
 
-    .reset-complete-section a {
-        color: var(--link-color);
-        text-decoration: none;
-    }
-
-    .reset-complete-section a:hover {
-        text-decoration: underline;
-    }
-
-    /* Colorful redirect word */
-    .highlight-redirect {
-        background: linear-gradient(90deg, #ff6f61, #ffd700);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-weight: bold;
+    .btn-primary {
+        background-color: var(--btn-primary-bg);
+        color: var(--btn-primary-text);
+        border: none;
     }
 
     /* Ensure gap between section and footer */
@@ -78,21 +69,21 @@
 
     /* Mobile responsiveness */
     @media (max-width: 600px) {
-        .reset-complete-header {
+        .error-header {
             border-radius: 15px;
             min-height: 120px;
-            margin-top: 15px; /* Adjusted for mobile */
+            margin-top: 15px;
         }
 
-        .reset-complete-header h2 {
+        .error-header h2 {
             font-size: 1.5rem;
         }
 
-        .reset-complete-header p {
+        .error-header p {
             font-size: 0.9rem;
         }
 
-        .reset-complete-section {
+        .error-section {
             border-radius: 10px;
         }
 
@@ -104,21 +95,22 @@
 {% endblock %}
 
 {% block content %}
-<!-- Password Reset Complete Header -->
-<div class="container-fluid py-5 text-center reset-complete-header">
+<!-- Error Header -->
+<div class="container-fluid py-5 text-center error-header">
     <div class="container">
-        <h2>Password Reset Complete</h2>
-        <p>Your password has been reset successfully!</p>
+        <h2>400 - Bad Request</h2>
+        <p>Oops! Something went wrong with your request.</p>
     </div>
 </div>
 
-<!-- Password Reset Complete Message -->
+<!-- Error Message -->
 <div class="container mt-3 form-section">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm reset-complete-section">
+            <div class="card shadow-sm error-section">
                 <div class="card-body text-center">
-                    <p>Your password has been reset. You can now <a href="{% url 'login' %}">login</a> with your new password.</p>
+                    <p>The server couldn't understand your request. Please try again or return to the homepage.</p>
+                    <a href="{% url 'home' %}" class="btn btn-primary">Go to Homepage</a>
                 </div>
             </div>
         </div>

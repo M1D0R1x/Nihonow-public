@@ -3,50 +3,181 @@
 
 {% block title %}Resources{% endblock %}
 
+{% block extra_head %}
+<style>
+    /* Define theme-aware variables */
+    :root {
+        --container-bg: #f8f9fa;
+        --header-bg-start: #ff6f61;
+        --header-bg-end: #ffd700;
+        --header-text: #fff;
+        --card-bg: #ffffff;
+        --card-title: #212529;
+        --card-text: #212529;
+        --btn-outline-bg: transparent;
+        --btn-outline-text: #0d6efd;
+        --btn-outline-border: #0d6efd;
+        --btn-hover-bg: #ff6f61;
+        --btn-hover-text: #fff;
+        --btn-hover-border: #ff6f61;
+    }
+
+    /* Dark mode overrides */
+    [data-bs-theme="dark"] {
+        --container-bg: #2e2e2e;
+        --header-bg-start: #ff5c4d;
+        --header-bg-end: #ffeb3b;
+        --header-text: #f8f9fa;
+        --card-bg: #424242;
+        --card-title: #e0e0e0;
+        --card-text: #e0e0e0;
+        --btn-outline-bg: transparent;
+        --btn-outline-text: #42a5f5;
+        --btn-outline-border: #42a5f5;
+        --btn-hover-bg: #ff5c4d;
+        --btn-hover-text: #f8f9fa;
+        --btn-hover-border: #ff5c4d;
+    }
+
+    /* Fix dropdown going under content by increasing z-index */
+    .navbar .dropdown-menu {
+        z-index: 1050; /* Ensure dropdown appears above content */
+    }
+
+    /* Apply theme variables */
+    .resources-container {
+        background-color: var(--container-bg);
+        min-height: 100vh;
+    }
+
+    .resources-header {
+        background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end));
+        border-radius: 20px;
+    }
+
+    .resources-header h1,
+    .resources-header p {
+        color: var(--header-text);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .resource-card {
+        background-color: var(--card-bg);
+        transition: transform 0.3s;
+        border-radius: 20px;
+    }
+
+    .resource-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .resource-card .card-title {
+        color: var(--card-title);
+    }
+
+    .resource-card .card-text {
+        color: var(--card-text);
+    }
+
+    .btn-outline-primary {
+        background-color: var(--btn-outline-bg);
+        color: var(--btn-outline-text);
+        border-color: var(--btn-outline-border);
+        border-radius: 25px;
+        width: 200px;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: var(--btn-hover-bg);
+        color: var(--btn-hover-text);
+        border-color: var(--btn-hover-border);
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+        .resources-container {
+            padding: 10px;
+        }
+
+        .resources-header {
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .resources-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .resources-header p {
+            font-size: 0.9rem;
+        }
+
+        .resource-card {
+            border-radius: 15px;
+        }
+
+        .resource-card .card-title {
+            font-size: 1.2rem;
+        }
+
+        .resource-card .card-text {
+            font-size: 0.9rem;
+        }
+
+        .btn-outline-primary {
+            width: 150px;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5" style="background-color: #f8f9fa; min-height: 100vh;">
+<div class="container mt-5 resources-container">
     <div class="row justify-content-center py-5">
         <div class="col-md-10">
-            <div class="card shadow-sm border-0 mb-4" style="background: linear-gradient(135deg, #ff6f61, #ffd700); border-radius: 15px;">
+            <div class="card shadow-sm border-0 mb-4 resources-header">
                 <div class="card-body text-center text-white p-5">
-                    <h1 class="display-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Learning Resources</h1>
+                    <h1 class="display-4">Learning Resources</h1>
                     <p class="lead">Enhance your Japanese skills with these tools and materials.</p>
                 </div>
             </div>
             <div class="row g-4">
                 <div class="col-md-6">
-                    <div class="card h-100 border-0 shadow-sm" style="background-color: #fff; transition: transform 0.3s;">
+                    <div class="card h-100 border-0 shadow-sm resource-card">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">Vocabulary Lists</h5>
                             <p class="card-text flex-grow-1">Download comprehensive N5-N1 vocabulary lists to expand your word bank.</p>
-                            <a href="#" class="btn btn-outline-primary mt-auto align-self-center" style="width: 200px; border-radius: 25px; transition: background-color 0.3s, color 0.3s;">Download PDF</a>
+                            <a href="#" class="btn btn-outline-primary mt-auto align-self-center">Download PDF</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card h-100 border-0 shadow-sm" style="background-color: #fff; transition: transform 0.3s;">
+                    <div class="card h-100 border-0 shadow-sm resource-card">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">Grammar Guides</h5>
                             <p class="card-text flex-grow-1">Access detailed guides on Japanese grammar rules and examples.</p>
-                            <a href="#" class="btn btn-outline-primary mt-auto align-self-center" style="width: 200px; border-radius: 25px; transition: background-color 0.3s, color 0.3s;">View Guides</a>
+                            <a href="#" class="btn btn-outline-primary mt-auto align-self-center">View Guides</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card h-100 border-0 shadow-sm" style="background-color: #fff; transition: transform 0.3s;">
+                    <div class="card h-100 border-0 shadow-sm resource-card">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">Kanji Practice</h5>
                             <p class="card-text flex-grow-1">Practice sheets and interactive tools for mastering Japanese characters.</p>
-                            <a href="#" class="btn btn-outline-primary mt-auto align-self-center" style="width: 200px; border-radius: 25px; transition: background-color 0.3s, color 0.3s;">Start Practice</a>
+                            <a href="#" class="btn btn-outline-primary mt-auto align-self-center">Start Practice</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card h-100 border-0 shadow-sm" style="background-color: #fff; transition: transform 0.3s;">
+                    <div class="card h-100 border-0 shadow-sm resource-card">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">Audio Lessons</h5>
                             <p class="card-text flex-grow-1">Listen to pronunciation guides and conversational audio files.</p>
-                            <a href="#" class="btn btn-outline-primary mt-auto align-self-center" style="width: 200px; border-radius: 25px; transition: background-color 0.3s, color 0.3s;">Listen Now</a>
+                            <a href="#" class="btn btn-outline-primary mt-auto align-self-center">Listen Now</a>
                         </div>
                     </div>
                 </div>
@@ -54,12 +185,4 @@
         </div>
     </div>
 </div>
-
-<style>
-    .btn-outline-primary:hover {
-        background-color: #ff6f61;
-        color: #fff;
-        border-color: #ff6f61;
-    }
-</style>
 {% endblock %}

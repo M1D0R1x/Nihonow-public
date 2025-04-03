@@ -4,29 +4,250 @@
 
 {% block title %}Dashboard - Nihonow{% endblock %}
 
+{% block extra_head %}
+<style>
+    /* Define theme-aware variables */
+    :root {
+        --greeting-bg-start: #ff9a9e;
+        --greeting-bg-end: #fad0c4;
+        --greeting-text-start: #ff6f61;
+        --greeting-text-end: #ffd700;
+        --header-bg-start: #ff6f61;
+        --header-bg-end: #ffd700;
+        --header-text: #fff;
+        --progress-card-bg-start: #a1c4fd;
+        --progress-card-bg-end: #c2e9fb;
+        --progress-card-title: #1976d2;
+        --progress-card-border: #e0e0e0;
+        --recent-activity-bg-start: #ff9a9e;
+        --recent-activity-bg-end: #fad0c4;
+        --recent-activity-title: #d32f2f;
+        --recent-activity-text: #212529;
+        --recent-activity-border: #e0e0e0;
+        --next-steps-bg-start: #d4fc79;
+        --next-steps-bg-end: #96e6a1;
+        --next-steps-title: #388e3c;
+        --next-steps-text: #212529;
+        --next-steps-border: #e0e0e0;
+        --admin-card-bg-start: #babf33;
+        --admin-card-bg-end: #a9d16a;
+        --admin-card-title: #88f305;
+        --admin-card-border: #e0e0e0;
+    }
+
+    /* Dark mode overrides */
+    [data-bs-theme="dark"] {
+        --greeting-bg-start: #ff8085;
+        --greeting-bg-end: #ffb6a8;
+        --greeting-text-start: #ffebee;
+        --greeting-text-end: #fff9c4;
+        --header-bg-start: #ff5c4d;
+        --header-bg-end: #ffeb3b;
+        --header-text: #f8f9fa;
+        --progress-card-bg-start: #90caf9;
+        --progress-card-bg-end: #b3e5fc;
+        --progress-card-title: #42a5f5;
+        --progress-card-border: #616161;
+        --recent-activity-bg-start: #ff8085;
+        --recent-activity-bg-end: #ffb6a8;
+        --recent-activity-title: #ef5350;
+        --recent-activity-text: #ffffff;
+        --recent-activity-border: #616161;
+        --next-steps-bg-start: #c5e1a5;
+        --next-steps-bg-end: #aed581;
+        --next-steps-title: #66bb6a;
+        --next-steps-text: #ffffff;
+        --next-steps-border: #616161;
+        --admin-card-bg-start: #c0ca33;
+        --admin-card-bg-end: #c5e1a5;
+        --admin-card-title: #b2ff59;
+        --admin-card-border: #616161;
+    }
+
+    /* Apply theme variables */
+    .greeting-section {
+        background: linear-gradient(135deg, var(--greeting-bg-start), var(--greeting-bg-end));
+        padding: 20px 0;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+    }
+
+    .greeting-section h4 {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, var(--greeting-text-start), var(--greeting-text-end));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 1.5s ease-in-out;
+        margin: 0;
+    }
+
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(15px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-header {
+        background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end));
+        min-height: 200px;
+        color: var(--header-text);
+        border-radius: 20px;
+        margin-bottom: 20px;
+    }
+
+    .dashboard-header h2,
+    .dashboard-header p {
+        color: var(--header-text);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .progress-card {
+        background: linear-gradient(135deg, var(--progress-card-bg-start), var(--progress-card-bg-end));
+        border: 1px solid var(--progress-card-border);
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-card h5 {
+        color: var(--progress-card-title);
+    }
+
+    .progress-card .card-text,
+    .progress-card .text-muted {
+        color: #000000 !important; /* Black text in both modes */
+    }
+
+    .recent-activity {
+        background: linear-gradient(135deg, var(--recent-activity-bg-start), var(--recent-activity-bg-end));
+        border: 1px solid var(--recent-activity-border);
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .recent-activity h4 {
+        color: var(--recent-activity-title);
+    }
+
+    .recent-activity .card-text,
+    .recent-activity .text-muted {
+        color: #000000 !important; /* Black text in both modes */
+    }
+
+    .recent-activity .list-group-item {
+        color: var(--recent-activity-text);
+    }
+
+    .next-steps {
+        background: linear-gradient(135deg, var(--next-steps-bg-start), var(--next-steps-bg-end));
+        border: 1px solid var(--next-steps-border);
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .next-steps h4 {
+        color: var(--next-steps-title);
+    }
+
+    .next-steps .card-text,
+    .next-steps .text-muted {
+        color: #000000 !important; /* Black text in both modes */
+    }
+
+    .next-steps .list-group-item {
+        color: var(--next-steps-text);
+    }
+
+    .admin-card {
+        background: linear-gradient(135deg, var(--admin-card-bg-start), var(--admin-card-bg-end));
+        border: 1px solid var(--admin-card-border);
+        border-radius: 20px;
+        min-height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-card h5 {
+        color: var(--admin-card-title);
+    }
+
+    /* Ensure gap between admin card and footer */
+    .admin-section {
+        margin-bottom: 40px;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+        .greeting-section {
+            border-radius: 15px;
+            padding: 15px 0;
+        }
+
+        .greeting-section h4 {
+            font-size: 1.5rem;
+        }
+
+        .dashboard-header {
+            min-height: 150px;
+            padding: 20px 0;
+            border-radius: 15px;
+        }
+
+        .dashboard-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .dashboard-header p {
+            font-size: 0.9rem;
+        }
+
+        .progress-card,
+        .recent-activity,
+        .next-steps,
+        .admin-card {
+            border-radius: 15px;
+        }
+
+        .progress-card h5,
+        .recent-activity h4,
+        .next-steps h4,
+        .admin-card h5 {
+            font-size: 1.2rem;
+        }
+
+        .progress-card .card-text,
+        .recent-activity .card-text,
+        .recent-activity .list-group-item,
+        .next-steps .card-text,
+        .next-steps .list-group-item {
+            font-size: 0.9rem;
+        }
+
+        .admin-section {
+            margin-bottom: 30px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Greeting Section -->
 {% if user.is_authenticated %}
-    <div style="background: linear-gradient(135deg, #ff9a9e, #fad0c4); padding: 20px 0; border-radius: 15px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin: 20px 0;">
+    <div class="greeting-section">
         <div class="container mt-3 text-center">
-            <h4 style="font-size: 2rem; font-weight: 700; background: linear-gradient(90deg, #ff6f61, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); animation: fadeIn 1.5s ease-in-out; margin: 0;">
-                {% get_greeting user.username %}
-            </h4>
+            <h4>{% get_greeting user.username %}</h4>
         </div>
     </div>
-    <style>
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-    </style>
 {% endif %}
 
 <!-- Dashboard Header -->
-<div class="container-fluid py-5 text-center dashboard-header" style="background: linear-gradient(135deg, #ff6f61, #ffd700); min-height: 200px; color: #fff;">
+<div class="container-fluid py-5 text-center dashboard-header">
     <div class="container">
-        <h2 class="text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Welcome to Your Dashboard</h2>
-        <p class="text-white">Track your progress and continue your Japanese learning journey!</p>
+        <h2>Welcome to Your Dashboard</h2>
+        <p>Track your progress and continue your Japanese learning journey!</p>
     </div>
 </div>
 
@@ -34,9 +255,9 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow-sm border-0" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb); border-radius: 15px;">
+            <div class="card shadow-sm progress-card">
                 <div class="card-body text-center">
-                    <h5 style="color: #1976d2;">Your Progress</h5>
+                    <h5>Your Progress</h5>
                     {% if user.userprogress_set.exists %}
                         <div class="progress mt-2">
                             <div class="progress-bar bg-success" role="progressbar" style="width: {{ average_progress }}%;" aria-valuenow="{{ average_progress }}" aria-valuemin="0" aria-valuemax="100">{{ average_progress|floatformat:0 }}%</div>
@@ -54,9 +275,9 @@
 <div class="container mt-5">
     <div class="row g-4">
         <div class="col-md-6">
-            <div class="card shadow-sm h-100 border-0 recent-activity" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4); border-radius: 15px;">
+            <div class="card shadow-sm h-100 recent-activity">
                 <div class="card-body">
-                    <h4 style="color: #d32f2f;">Recent Activity</h4>
+                    <h4>Recent Activity</h4>
                     <p class="card-text text-muted">View your recent quizzes and lessons here.</p>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">No recent activity yet.</li>
@@ -65,9 +286,9 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card shadow-sm h-100 border-0 next-steps" style="background: linear-gradient(135deg, #d4fc79, #96e6a1); border-radius: 15px;">
+            <div class="card shadow-sm h-100 next-steps">
                 <div class="card-body">
-                    <h4 style="color: #388e3c;">Next Steps</h4>
+                    <h4>Next Steps</h4>
                     <p class="card-text text-muted">Continue your learning journey with these recommended lessons.</p>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">Start with N5 lessons.</li>
@@ -79,11 +300,11 @@
 
     <!-- Admin Bulk Upload Button -->
     {% if user.is_authenticated and user.is_superuser %}
-        <div class="row justify-content-center mt-4">
+        <div class="row justify-content-center mt-4 admin-section">
             <div class="col-md-8">
                 <a href="{% url 'admin_bulk_upload' %}" class="d-block text-decoration-none">
-                    <div class="card shadow-sm border-0" style="background: linear-gradient(135deg, #babf33, #a9d16a); border-radius: 15px; min-height: 100px; display: flex; align-items: center; justify-content: center;">
-                        <h5 style="color: #88f305;">Admin Bulk Upload Dashboard</h5>
+                    <div class="card shadow-sm admin-card">
+                        <h5>Admin Bulk Upload Dashboard</h5>
                     </div>
                 </a>
             </div>

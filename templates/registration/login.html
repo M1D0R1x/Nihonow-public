@@ -3,25 +3,183 @@
 
 {% block title %}Login - NihongoDekita{% endblock %}
 
+{% block extra_head %}
+<style>
+    /* Define theme-aware variables */
+    :root {
+        --header-bg-start: #ff6f61;
+        --header-bg-end: #ffd700;
+        --header-text: #fff;
+        --card-bg: #ffffff;
+        --card-text: #212529;
+        --card-border: #e0e0e0;
+        --btn-primary-bg: #007bff;
+        --btn-primary-text: #ffffff;
+        --btn-outline-bg: transparent;
+        --btn-outline-text: #212529;
+        --btn-outline-border: #212529;
+        --alert-info-bg: #d1ecf1;
+        --alert-info-text: #0c5460;
+        --alert-danger-bg: #f8d7da;
+        --alert-danger-text: #721c24;
+        --link-color: #007bff;
+    }
+
+    /* Dark mode overrides */
+    [data-bs-theme="dark"] {
+        --header-bg-start: #ff5c4d;
+        --header-bg-end: #ffeb3b;
+        --header-text: #f8f9fa;
+        --card-bg: #424242;
+        --card-text: #e0e0e0;
+        --card-border: #616161;
+        --btn-primary-bg: #42a5f5;
+        --btn-primary-text: #ffffff;
+        --btn-outline-bg: transparent;
+        --btn-outline-text: #f8f9fa;
+        --btn-outline-border: #f8f9fa;
+        --alert-info-bg: #4dabf7;
+        --alert-info-text: #e7f1fa;
+        --alert-danger-bg: #ef5350;
+        --alert-danger-text: #f8e1e0;
+        --link-color: #4dabf7;
+    }
+
+    /* Apply theme variables */
+    .login-header {
+        background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end));
+        min-height: 150px;
+        color: var(--header-text);
+        border-radius: 20px;
+        margin-top: 20px; /* Added space between navbar and header */
+        margin-bottom: 20px;
+    }
+
+    .login-header h2,
+    .login-header p {
+        color: var(--header-text);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-form {
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-form .card-body {
+        color: var(--card-text);
+    }
+
+    .login-form .form-label,
+    .login-form .form-text,
+    .login-form p {
+        color: var(--card-text);
+    }
+
+    .login-form a {
+        color: var(--link-color);
+        text-decoration: none;
+    }
+
+    .login-form a:hover {
+        text-decoration: underline;
+    }
+
+    .btn-primary {
+        background-color: var(--btn-primary-bg);
+        color: var(--btn-primary-text);
+        border: none;
+    }
+
+    .btn-outline-secondary {
+        background-color: var(--btn-outline-bg);
+        color: var(--btn-outline-text);
+        border-color: var(--btn-outline-border);
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: var(--btn-outline-text);
+        color: var(--card-bg);
+    }
+
+    .alert-info {
+        background-color: var(--alert-info-bg);
+        color: var(--alert-info-text);
+        border-radius: 10px;
+    }
+
+    .alert-danger {
+        background-color: var(--alert-danger-bg);
+        color: var(--alert-danger-text);
+        border-radius: 10px;
+    }
+
+    /* Colorful redirect word */
+    .highlight-redirect {
+        background: linear-gradient(90deg, #ff6f61, #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    /* Add spacing between links */
+    .login-form p {
+        margin-bottom: 10px;
+    }
+
+    /* Ensure gap between form and footer */
+    .form-section {
+        margin-bottom: 40px;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+        .login-header {
+            border-radius: 15px;
+            min-height: 120px;
+            margin-top: 15px; /* Adjusted for mobile */
+        }
+
+        .login-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .login-header p {
+            font-size: 0.9rem;
+        }
+
+        .login-form {
+            border-radius: 10px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Login Header -->
-<div class="container-fluid py-5 text-center" style="background: linear-gradient(135deg, #ff6f61, #ffd700); min-height: 150px; color: #fff;">
+<div class="container-fluid py-5 text-center login-header">
     <div class="container">
-        <h2 class="text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Login</h2>
-        <p class="text-white">Sign in to continue learning Japanese!</p>
+        <h2>Login</h2>
+        <p>Sign in to continue learning Japanese!</p>
     </div>
 </div>
 
 <!-- Login Form -->
-<div class="container mt-3" style="min-height: calc(100vh - 300px); display: flex; flex-direction: column; justify-content: center; padding-bottom: 50px;">
+<div class="container mt-3 form-section">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm border-0" style="border-radius: 15px;">
+            <div class="card shadow-sm login-form">
                 <div class="card-body">
                     {% if messages %}
                         <div class="alert alert-info">
                             {% for message in messages %}
-                                {{ message }}
+                                {{ message|safe }}
                             {% endfor %}
                         </div>
                     {% endif %}

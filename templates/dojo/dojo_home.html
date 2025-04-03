@@ -6,18 +6,18 @@
 {% block content %}
 <div class="container mt-5 mb-5">
     <div class="text-center mb-5">
-        <h1 style="color: #000; font-size: 3rem;" id="dojo-title">Nihonow Dojo</h1>
+        <h1 id="dojo-title">Nihonow Dojo</h1>
         <p class="lead">Compete with friends and test your Japanese skills!</p>
     </div>
 
     <div class="row g-4 justify-content-center">
         <!-- Host a Room -->
         <div class="col-md-5">
-            <div class="card shadow h-100 border-0" style="background: linear-gradient(135deg, #84fab0, #8fd3f4);">
+            <div class="card shadow h-100 border-0 dojo-card host-card" style="background: linear-gradient(135deg, #84fab0, #8fd3f4);">
                 <div class="card-body text-center p-5">
-                    <h2 class="card-title mb-4" style="color: #000;">Host a Room</h2>
+                    <h2 class="card-title mb-4">Host a Room</h2>
                     <p class="card-text mb-4">Create your own competition room and invite friends to join. As the host, you'll control when the competition starts and ends.</p>
-                    <a href="{% url 'create_room' %}" class="btn btn-light btn-lg">
+                    <a href="{% url 'create_room' %}" class="btn btn-dark btn-lg">
                         <i class="fas fa-plus-circle me-2"></i> Create Room
                     </a>
                 </div>
@@ -26,11 +26,11 @@
 
         <!-- Join a Room -->
         <div class="col-md-5">
-            <div class="card shadow h-100 border-0" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
+            <div class="card shadow h-100 border-0 dojo-card join-card" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
                 <div class="card-body text-center p-5">
-                    <h2 class="card-title mb-4" style="color: #000;">Join a Room</h2>
+                    <h2 class="card-title mb-4">Join a Room</h2>
                     <p class="card-text mb-4">Enter a 6-digit room code to join an existing competition. Compete with friends and see who scores the highest!</p>
-                    <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#joinRoomModal">
+                    <button class="btn btn-dark btn-lg" data-bs-toggle="modal" data-bs-target="#joinRoomModal">
                         <i class="fas fa-sign-in-alt me-2"></i> Join Room
                     </button>
                 </div>
@@ -44,7 +44,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
-                <h5 class="modal-title" id="joinRoomModalLabel" style="color: #000;">Join a Dojo Room</h5>
+                <h5 class="modal-title" id="joinRoomModalLabel">Join a Dojo Room</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -65,21 +65,132 @@
     </div>
 </div>
 
-<!-- CSS for mode-based color adjustments -->
+<!-- CSS for theme-specific adjustments -->
 <style>
-    @media (prefers-color-scheme: dark) {
-        #dojo-title {
-            color: #05bbf3 !important; /* White heading in dark mode */
-        }
-        .card-title {
-            color: #fff !important; /* White card titles in dark mode */
-        }
-        .modal-title {
-            color: #fff !important; /* White modal title in dark mode */
-        }
-        .card-text {
-            color: #000 !important; /* Black card text in dark mode */
-        }
+    /* Common styles for cards */
+    .dojo-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
+
+    .dojo-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* Card title and text styling with better visibility */
+    .card-title {
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-text {
+        font-weight: 500;
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Light mode specific styles */
+    [data-bs-theme="light"] #dojo-title,
+    [data-bs-theme="light"] .modal-title {
+        color: #333;
+    }
+
+    [data-bs-theme="light"] .dojo-card .card-title {
+        color: #000;
+    }
+
+    [data-bs-theme="light"] .dojo-card .card-text {
+        color: #333;
+    }
+
+    /* Dark mode adjustments */
+    [data-bs-theme="dark"] #dojo-title,
+    [data-bs-theme="dark"] .modal-title {
+        color: #fff;
+    }
+
+    /* Dark mode card styles with improved contrast */
+    [data-bs-theme="dark"] .dojo-card {
+        position: relative;
+    }
+
+    [data-bs-theme="dark"] .dojo-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: inherit;
+        z-index: 1;
+    }
+
+    [data-bs-theme="dark"] .dojo-card .card-body {
+        position: relative;
+        z-index: 2;
+    }
+
+    [data-bs-theme="dark"] .dojo-card .card-title {
+        color: #fff;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-bs-theme="dark"] .dojo-card .card-text {
+        color: #f0f0f0;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Host card specific styles */
+    .host-card .btn {
+        background-color: rgba(0, 0, 0, 0.8);
+        border: none;
+    }
+
+    .host-card .btn:hover {
+        background-color: #000;
+    }
+
+    /* Join card specific styles */
+    .join-card .btn {
+        background-color: rgba(0, 0, 0, 0.8);
+        border: none;
+    }
+
+    .join-card .btn:hover {
+        background-color: #000;
+    }
+
+    /* Modal styling fixes for dark mode */
+    [data-bs-theme="dark"] .modal-content {
+        background-color: #333;
+        color: #fff;
+    }
+
+    [data-bs-theme="dark"] .modal-header {
+        position: relative;
+    }
+
+    [data-bs-theme="dark"] .modal-header::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+
+    [data-bs-theme="dark"] .modal-title {
+        position: relative;
+        z-index: 2;
+    }
+
+    [data-bs-theme="dark"] .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+        position: relative;
+        z-index: 2;
     }
 </style>
 

@@ -6,11 +6,62 @@
 <!-- Include MathJax for LaTeX rendering -->
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
 <style>
+    /* Base styles that adapt to theme */
+    :root {
+        --chat-bg: #f0f9ff;
+        --container-bg: #ffffff;
+        --header-gradient-start: #0891b2;
+        --header-gradient-end: #0d9488;
+        --header-text: white;
+        --chat-box-bg: #f9fafb;
+        --message-text: #333;
+        --input-area-bg: #ffffff;
+        --input-border: #ddd;
+        --bot-gradient-start: #0891b2;
+        --bot-gradient-end: #0d9488;
+        --bot-text: white;
+        --user-gradient-start: #bae6fd;
+        --user-gradient-end: #99f6e4;
+        --user-text: #0f172a;
+        --button-shadow: rgba(0, 0, 0, 0.1);
+        --overlay-bg: rgba(0, 0, 0, 0.75);
+        --auth-bg: #ffffff;
+        --auth-title: #0891b2;
+        --auth-text: #333;
+        --indicator-dot: white;
+    }
+
+    /* Dark mode color overrides */
+    [data-bs-theme="dark"] {
+        --chat-bg: #0f172a;
+        --container-bg: #1e293b;
+        --header-gradient-start: #155e75;
+        --header-gradient-end: #115e59;
+        --header-text: white;
+        --chat-box-bg: #111827;
+        --message-text: #f1f5f9;
+        --input-area-bg: #1e293b;
+        --input-border: #334155;
+        --bot-gradient-start: #155e75;
+        --bot-gradient-end: #115e59;
+        --bot-text: white;
+        --user-gradient-start: #67e8f9;
+        --user-gradient-end: #2dd4bf;
+        --user-text: #0f172a;
+        --button-shadow: rgba(0, 0, 0, 0.25);
+        --overlay-bg: rgba(0, 0, 0, 0.85);
+        --auth-bg: #1e293b;
+        --auth-title: #38bdf8;
+        --auth-text: #f1f5f9;
+        --indicator-dot: white;
+    }
+
     body {
-        background-color: #f8f9fa;
+        background-color: var(--chat-bg);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
     }
+
     main {
         display: flex;
         justify-content: center;
@@ -18,38 +69,43 @@
         min-height: calc(100vh - 100px);
         padding: 10px;
     }
+
     .chat-container {
         width: 100%;
         max-width: 900px;
-        background: white;
+        background: var(--container-bg);
         border-radius: 20px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 20px var(--button-shadow);
         overflow: hidden;
         margin: 10px;
     }
+
     .chat-header {
-        background: linear-gradient(135deg, #ff6f61, #ff8c00);
-        color: white;
+        background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
+        color: var(--header-text);
         padding: 15px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 2px solid #e0e0e0;
+        border-bottom: 2px solid var(--input-border);
     }
+
     .chat-header h2 {
         margin: 0;
         font-size: 1.6rem;
         font-weight: 600;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     }
+
     .chat-header .actions {
         display: flex;
         flex-direction: column;
         gap: 8px;
     }
+
     .chat-header .clear-chat {
         background: #fff;
-        color: #ff6f61;
+        color: var(--header-gradient-start);
         border: none;
         border-radius: 5px;
         padding: 5px 10px;
@@ -57,18 +113,21 @@
         font-size: 0.9rem;
         transition: background 0.3s, color 0.3s;
     }
+
     .chat-header .clear-chat:hover {
-        background: #ff6f61;
+        background: var(--header-gradient-start);
         color: white;
     }
+
     .chat-box {
         padding: 20px;
         height: 60vh;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        background-color: #f9f9f9;
+        background-color: var(--chat-box-bg);
     }
+
     .message {
         border-radius: 15px;
         padding: 12px 15px;
@@ -77,39 +136,50 @@
         word-wrap: break-word;
         font-size: 1rem;
         line-height: 1.4;
+        box-shadow: 0 2px 5px var(--button-shadow);
     }
+
     .bot-message {
-        background: linear-gradient(135deg, #ff6f61, #ff8c00);
-        color: white;
+        background: linear-gradient(135deg, var(--bot-gradient-start), var(--bot-gradient-end));
+        color: var(--bot-text);
         align-self: flex-start;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     }
+
     .user-message {
         align-self: flex-end;
-        background: linear-gradient(135deg, #ffd700, #ffeb3b);
-        color: #333;
+        background: linear-gradient(135deg, var(--user-gradient-start), var(--user-gradient-end));
+        color: var(--user-text);
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
     }
+
     .input-area {
         padding: 15px;
-        background-color: #fff;
-        border-top: 1px solid #e0e0e0;
+        background-color: var(--input-area-bg);
+        border-top: 1px solid var(--input-border);
         display: flex;
         align-items: center;
         gap: 10px;
     }
+
     .input-area input {
         flex-grow: 1;
         padding: 12px 15px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--input-border);
         border-radius: 25px;
         font-size: 1rem;
         outline: none;
         transition: border-color 0.3s;
+        background-color: var(--container-bg);
+        color: var(--message-text);
     }
+
     .input-area input:focus {
-        border-color: #ff6f61;
+        border-color: var(--header-gradient-start);
     }
+
     .input-area button {
-        background: linear-gradient(135deg, #ff6f61, #ff8c00);
+        background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
         color: white;
         border: none;
         border-radius: 25px;
@@ -119,53 +189,69 @@
         font-weight: 500;
         transition: transform 0.3s, background 0.3s, opacity 0.3s;
     }
+
     .input-area button:hover:not(:disabled) {
         transform: scale(1.05);
-        background: linear-gradient(135deg, #ff8c00, #ff6f61);
+        background: linear-gradient(135deg, var(--header-gradient-end), var(--header-gradient-start));
     }
+
     .input-area button:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
+
     .model-selector select {
         padding: 8px;
         font-size: 0.9rem;
         border-radius: 8px;
-        background: #fff8e1;
-        border: 1px solid #ffd700;
+        background: var(--container-bg);
+        border: 1px solid var(--input-border);
         cursor: pointer;
         outline: none;
+        color: var(--message-text);
     }
+
+    [data-bs-theme="dark"] .model-selector select {
+        background: #334155;
+        border-color: #475569;
+    }
+
     .typing-indicator {
         display: flex;
         align-items: center;
         padding: 8px 12px;
-        background: linear-gradient(135deg, #ff6f61, #ff8c00);
-        color: white;
+        background: linear-gradient(135deg, var(--bot-gradient-start), var(--bot-gradient-end));
+        color: var(--bot-text);
         border-radius: 15px;
         align-self: flex-start;
         margin-bottom: 15px;
     }
+
     .typing-indicator span {
         height: 8px;
         width: 8px;
         margin: 0 2px;
-        background-color: white;
+        background-color: var(--indicator-dot);
         border-radius: 50%;
         opacity: 0.4;
     }
+
     .typing-indicator span:nth-of-type(1) {
         animation: 1s blink infinite 0.3333s;
     }
+
     .typing-indicator span:nth-of-type(2) {
         animation: 1s blink infinite 0.6666s;
     }
+
     .typing-indicator span:nth-of-type(3) {
         animation: 1s blink infinite 0.9999s;
     }
+
     @keyframes blink {
         50% { opacity: 1; }
     }
+
     /* Authentication Overlay - Centered with background visible */
     .auth-overlay {
         position: fixed;
@@ -173,7 +259,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.75);
+        background: var(--overlay-bg);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -182,12 +268,14 @@
         transition: opacity 0.3s ease;
         pointer-events: none; /* Allow interaction with background elements by default */
     }
+
     .auth-overlay.show {
         opacity: 1;
         pointer-events: auto; /* Capture interactions when visible */
     }
+
     .auth-message {
-        background: #fff;
+        background: var(--auth-bg);
         padding: 35px;
         border-radius: 25px;
         text-align: center;
@@ -197,20 +285,24 @@
         transform: scale(0.9);
         transition: transform 0.3s ease;
     }
+
     .auth-overlay.show .auth-message {
         transform: scale(1);
     }
+
     .auth-message h3 {
-        color: #c2185b;
+        color: var(--auth-title);
         font-size: 2rem;
         margin-bottom: 20px;
         font-weight: 600;
     }
+
     .auth-message p {
-        color: #333;
+        color: var(--auth-text);
         font-size: 1.2rem;
         margin-bottom: 25px;
     }
+
     .auth-message .btn {
         padding: 12px 25px;
         margin: 0 15px;
@@ -219,25 +311,64 @@
         font-weight: bold;
         transition: all 0.3s ease;
     }
+
     .auth-message .btn-login,
     .auth-message .btn-register {
-        background: linear-gradient(135deg, #ff6f61, #ff8c00);
+        background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
         color: #fff;
     }
+
     .auth-message .btn-login:hover,
     .auth-message .btn-register:hover {
-        background: linear-gradient(135deg, #ff8c00, #ff6f61);
+        background: linear-gradient(135deg, var(--header-gradient-end), var(--header-gradient-start));
         transform: scale(1.05);
     }
+
     .d-none {
         display: none;
     }
+
     /* Blur effect for background when overlay is shown */
     .blur-background {
         filter: blur(4px);
         transition: filter 0.3s ease;
         pointer-events: none; /* Prevent interaction with blurred content */
     }
+
+    /* Scrollbar styling for better dark mode compatibility */
+    .chat-box::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .chat-box::-webkit-scrollbar-track {
+        background: var(--chat-box-bg);
+        border-radius: 5px;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb {
+        background: var(--input-border);
+        border-radius: 5px;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb:hover {
+        background: var(--header-gradient-start);
+    }
+
+    /* For Firefox */
+    .chat-box {
+        scrollbar-width: thin;
+        scrollbar-color: var(--input-border) var(--chat-box-bg);
+    }
+
+    /* Improved link colors in messages for dark mode */
+    [data-bs-theme="dark"] .message a {
+        color: #67e8f9;
+    }
+
+    [data-bs-theme="dark"] .message a:hover {
+        color: #99f6e4;
+    }
+
     @media (max-width: 600px) {
         .chat-container {
             margin: 5px;
@@ -576,4 +707,3 @@
     window.addEventListener('beforeunload', saveChatHistory);
 </script>
 {% endblock %}
-

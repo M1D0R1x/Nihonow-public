@@ -3,29 +3,138 @@
 
 {% block title %}Email Confirmation - NihongoDekita{% endblock %}
 
+{% block extra_head %}
+<style>
+    /* Define theme-aware variables */
+    :root {
+        --header-bg-start: #ff6f61;
+        --header-bg-end: #ffd700;
+        --header-text: #fff;
+        --card-bg: #ffffff;
+        --card-text: #212529;
+        --card-border: #e0e0e0;
+        --alert-success-bg: #d4edda;
+        --alert-success-text: #155724;
+        --alert-info-bg: #d1ecf1;
+        --alert-info-text: #0c5460;
+    }
+
+    /* Dark mode overrides */
+    [data-bs-theme="dark"] {
+        --header-bg-start: #ff5c4d;
+        --header-bg-end: #ffeb3b;
+        --header-text: #f8f9fa;
+        --card-bg: #424242;
+        --card-text: #e0e0e0;
+        --card-border: #616161;
+        --alert-success-bg: #81c784;
+        --alert-success-text: #e8f5e9;
+        --alert-info-bg: #4dabf7;
+        --alert-info-text: #e7f1fa;
+    }
+
+    /* Apply theme variables */
+    .confirm-header {
+        background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end));
+        min-height: 150px;
+        color: var(--header-text);
+        border-radius: 20px;
+        margin-top: 20px; /* Space between navbar and header */
+        margin-bottom: 20px;
+    }
+
+    .confirm-header h2,
+    .confirm-header p {
+        color: var(--header-text);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .confirm-section {
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .confirm-section .card-body {
+        color: var(--card-text);
+    }
+
+    .alert-success {
+        background-color: var(--alert-success-bg);
+        color: var(--alert-success-text);
+        border-radius: 10px;
+    }
+
+    .alert-info {
+        background-color: var(--alert-info-bg);
+        color: var(--alert-info-text);
+        border-radius: 10px;
+    }
+
+    /* Colorful redirect word */
+    .highlight-redirect {
+        background: linear-gradient(90deg, #ff6f61, #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    /* Ensure gap between section and footer */
+    .form-section {
+        margin-bottom: 40px;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+        .confirm-header {
+            border-radius: 15px;
+            min-height: 120px;
+            margin-top: 15px; /* Adjusted for mobile */
+        }
+
+        .confirm-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .confirm-header p {
+            font-size: 0.9rem;
+        }
+
+        .confirm-section {
+            border-radius: 10px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Confirmation Header -->
-<div class="container-fluid py-5 text-center" style="background: linear-gradient(135deg, #ff6f61, #ffd700); min-height: 150px; color: #fff;">
+<div class="container-fluid py-5 text-center confirm-header">
     <div class="container">
-        <h2 class="text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Email Confirmation</h2>
-        <p class="text-white">Your email has been verified!</p>
+        <h2>Email Confirmation</h2>
+        <p>Your email has been verified!</p>
     </div>
 </div>
 
 <!-- Confirmation Message -->
-<div class="container mt-3" style="min-height: calc(100vh - 300px); display: flex; flex-direction: column; justify-content: center; padding-bottom: 50px;">
+<div class="container mt-3 form-section">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm border-0" style="border-radius: 15px;">
-                <div class="card-body">
+            <div class="card shadow-sm confirm-section">
+                <div class="card-body text-center">
                     {% if messages %}
                         <div class="alert alert-info">
                             {% for message in messages %}
-                                {{ message }}
+                                {{ message|safe }}
                             {% endfor %}
                         </div>
                     {% endif %}
-                    <div class="alert alert-success text-center">
+                    <div class="alert alert-success">
                         {{ message|safe }}
                     </div>
                     <!-- Auto-redirect after 3 seconds -->

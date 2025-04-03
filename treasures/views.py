@@ -20,6 +20,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth.models import User
 from .models import UserProfile
+from django.shortcuts import render, redirect
 
 
 def home(request):
@@ -658,9 +659,6 @@ def n5_learning(request):
     return render(request, 'learning/n5_learning.html')
 
 """""custom errors"""
-# treasures/views.py (Add at the end)
-from django.shortcuts import render, redirect
-
 
 def custom_400(request, exception):
     return render(request, 'errors/400.html', status=400)
@@ -673,3 +671,4 @@ def custom_404(request, exception):
 
 def custom_500(request):
     return render(request, 'errors/500.html', status=500)
+

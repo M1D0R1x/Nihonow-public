@@ -1,22 +1,156 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Logout{% endblock %}
+{% block title %}Logout - NihongoDekita{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Define theme-aware variables */
+    :root {
+        --header-bg-start: #ff6f61;
+        --header-bg-end: #ffd700;
+        --header-text: #fff;
+        --card-bg: #ffffff;
+        --card-text: #212529;
+        --card-border: #e0e0e0;
+        --btn-primary-bg: #dc3545; /* Red for logout button */
+        --btn-primary-text: #ffffff;
+        --btn-secondary-bg: #6c757d;
+        --btn-secondary-text: #ffffff;
+        --text-muted: #6c757d;
+    }
+
+    /* Dark mode overrides */
+    [data-bs-theme="dark"] {
+        --header-bg-start: #ff5c4d;
+        --header-bg-end: #ffeb3b;
+        --header-text: #f8f9fa;
+        --card-bg: #424242;
+        --card-text: #e0e0e0;
+        --card-border: #616161;
+        --btn-primary-bg: #ef5350;
+        --btn-primary-text: #ffffff;
+        --btn-secondary-bg: #adb5bd;
+        --btn-secondary-text: #212529;
+        --text-muted: #b0bec5;
+    }
+
+    /* Apply theme variables */
+    .logout-header {
+        background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end));
+        min-height: 150px;
+        color: var(--header-text);
+        border-radius: 20px;
+        margin-top: 20px; /* Space between navbar and header */
+        margin-bottom: 20px;
+    }
+
+    .logout-header h2,
+    .logout-header p {
+        color: var(--header-text);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .logout-section {
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .logout-section .card-body {
+        color: var(--card-text);
+    }
+
+    .logout-section h2 {
+        color: var(--card-text);
+    }
+
+    .logout-section .text-muted {
+        color: var(--text-muted);
+    }
+
+    .btn-danger {
+        background-color: var(--btn-primary-bg);
+        color: var(--btn-primary-text);
+        border: none;
+    }
+
+    .btn-secondary {
+        background-color: var(--btn-secondary-bg);
+        color: var(--btn-secondary-text);
+        border: none;
+    }
+
+    /* Colorful redirect word */
+    .highlight-redirect {
+        background: linear-gradient(90deg, #ff6f61, #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    /* Ensure gap between section and footer */
+    .form-section {
+        margin-bottom: 40px;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+        .logout-header {
+            border-radius: 15px;
+            min-height: 120px;
+            margin-top: 15px; /* Adjusted for mobile */
+        }
+
+        .logout-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .logout-header p {
+            font-size: 0.9rem;
+        }
+
+        .logout-section {
+            border-radius: 10px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-    <!-- Logout Confirmation Section -->
-    <div class="container py-5 text-center">
-        <h2 class="mb-4" style="color: #2c3e50;">Are you sure you want to log out?</h2>
-        <p class="lead text-muted">You'll need to log in again to access your dashboard and quizzes.</p>
-        
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger btn-lg me-2">
-                <i class="fas fa-sign-out-alt me-2"></i> Yes, Log Out
-            </button>
-            <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg">
-                <i class="fas fa-arrow-left me-2"></i> No, Go Back
-            </a>
-        </form>
+<!-- Logout Header -->
+<div class="container-fluid py-5 text-center logout-header">
+    <div class="container">
+        <h2>Logout</h2>
+        <p>Are you sure you want to log out?</p>
     </div>
+</div>
+
+<!-- Logout Confirmation Section -->
+<div class="container py-5 text-center form-section">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm logout-section">
+                <div class="card-body">
+                    <h2 class="mb-4">Confirm Logout</h2>
+                    <p class="lead text-muted">You'll need to log in again to access your dashboard and quizzes.</p>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg me-2">
+                            <i class="fas fa-sign-out-alt me-2"></i> Yes, Log Out
+                        </button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i> No, Go Back
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
