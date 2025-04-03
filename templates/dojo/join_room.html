@@ -1,36 +1,29 @@
+<!-- join_room.html - Modified to support auto-filling room code -->
 {% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Join Dojo Room - Nihonow{% endblock %}
 
 {% block content %}
-{% if not user.is_authenticated %}
-<script>
-    // Redirect to login page if user is not authenticated
-    window.location.href = "{% url 'login' %}?next={% url 'join_room' %}";
-</script>
-{% else %}
-<div class="container mt-5 mb-5">
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="card shadow border-0" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
                 <div class="card-body p-5">
                     <h1 class="text-center mb-4" style="color: #6a1b9a;">Join a Dojo Room</h1>
-
+                    
                     {% if error %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ error }}
-                    </div>
+                    <div class="alert alert-danger">{{ error }}</div>
                     {% endif %}
-
+                    
                     <form method="post" action="{% url 'join_room' %}">
                         {% csrf_token %}
                         <div class="mb-4">
                             <label for="room_code" class="form-label">Room Code</label>
-                            <input type="text" class="form-control form-control-lg text-center" id="room_code" name="room_code"
-                                   placeholder="Enter 6-digit code" maxlength="6" minlength="6" pattern="[0-9]{6}" required>
+                            <input type="text" class="form-control form-control-lg" id="room_code" name="room_code" 
+                                   placeholder="Enter the room code" required>
                         </div>
-
+                        
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-sign-in-alt me-2"></i> Join Room
@@ -47,11 +40,19 @@
 </div>
 
 <script>
-    // Format room code input to show only digits
-    document.getElementById('room_code').addEventListener('input', function(e) {
-        this.value = this.value.replace(/[^0-9]/g, '').substring(0, 6);
+    // Check for room code in URL parameters
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const codeParam = urlParams.get('code');
+        
+        if (codeParam) {
+            const roomCodeInput = document.getElementById('room_code');
+            roomCodeInput.value = codeParam;
+            
+            // Optional: Auto-submit the form if code is provided
+            // Uncomment the next line if you want auto-join functionality
+            // document.querySelector('form').submit();
+        }
     });
 </script>
-{% endif %}
 {% endblock %}
-

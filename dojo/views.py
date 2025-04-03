@@ -177,28 +177,40 @@ def get_questions(request):
     subcategory = request.GET.get('subcategory')
     question_type = request.GET.get('question_type')
 
-    if not category or not subcategory:
-        return JsonResponse({'error': 'Missing parameters'}, status=400)
+    # Validate all required parameters
+    if not all([category, subcategory, question_type]):
+        return JsonResponse({'error': 'Missing parameters: category, subcategory, and question_type are required'}, status=400)
 
-    # Get appropriate question set based on type and category
+    # Validate question_type
+    if question_type not in ['mcq', 'blank']:
+        return JsonResponse({'error': 'Invalid question_type. Must be "mcq" or "blank"'}, status=400)
+
+    # Select the appropriate question set
+    questions = []
     if question_type == 'blank':
         if category == 'hiragana':
             questions = HIRAGANA_BLANK_QUESTIONS.get(subcategory, [])
         elif category == 'katakana':
             questions = KATAKANA_BLANK_QUESTIONS.get(subcategory, [])
-        elif category == 'kanji':
+        elif category == 'n5_kanji':
             questions = KANJI_N5_BLANK_QUESTIONS.get(subcategory, [])
-        else:
-            questions = []
     else:  # mcq
         if category == 'hiragana':
             questions = HIRAGANA_QUESTIONS.get(subcategory, [])
         elif category == 'katakana':
             questions = KATAKANA_QUESTIONS.get(subcategory, [])
-        elif category == 'kanji':
+        elif category == 'n5_kanji':
             questions = KANJI_N5_QUESTIONS.get(subcategory, [])
-        else:
-            questions = []
+
+    # Shuffle the questions before returning
+    if questions:
+        random.shuffle(questions)
+        # Limit to a reasonable number to prevent performance issues
+        questions = questions[:30]
+
+    # Return questions or empty list if no match
+    if not questions:
+        return JsonResponse({'questions': [], 'warning': f'No questions found for {category} - {subcategory} ({question_type})'})
 
     return JsonResponse({'questions': questions})
 

@@ -1,3 +1,4 @@
+<!-- participant_room.html - Fixed version -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -233,7 +234,7 @@
 
                             <div class="card mb-4 question-card">
                                 <div class="card-body text-center">
-                                    <h2 id="questionText" class="display-4 mb-4 question-text">問題</h2>
+                                    <h2 id="questionText" class="display-4 mb-4 question-text">Get ready!</h2>
 
                                     <!-- Error message for no questions -->
                                     <div id="errorMessage" class="error-message d-none">
@@ -242,16 +243,16 @@
                                         <p>There was an error loading questions for this category. Please contact the host.</p>
                                     </div>
 
-                                    <!-- Blank answer input (for typing answers) -->
-                                    <div id="blankAnswerArea" class="row justify-content-center mb-3">
+                                    <!-- Blank answer input -->
+                                    <div id="blankAnswerArea" class="row justify-content-center mb-3 d-none">
                                         <div class="col-md-8">
                                             <input type="text" id="answerInput" class="form-control form-control-lg mb-3 animated-input" placeholder="Type your answer...">
                                             <button id="submitBlankAnswer" class="btn btn-primary btn-lg animated-button">Submit Answer</button>
                                         </div>
                                     </div>
 
-                                    <!-- MCQ options (for multiple choice) -->
-                                    <div id="mcqAnswerArea" class="row justify-content-center mb-3">
+                                    <!-- MCQ options -->
+                                    <div id="mcqAnswerArea" class="row justify-content-center mb-3 d-none">
                                         <div class="col-md-10">
                                             <div class="row g-3" id="mcqOptions">
                                                 <!-- MCQ options will be populated here -->
@@ -329,14 +330,27 @@
     let currentQuestionIndex = 0;
     let questions = [];
     let selectedMcqOption = null;
+    let isCountingDown = false;
+    let gameStarted = false;
+    let lastAnswerCorrect = false;
 
     // Room settings from template context
     const roomSettings = {
-        category: '{{ room.category }}',
-        subcategory: '{{ room.subcategory }}',
-        question_type: '{{ room.question_type }}',
+        category: '{{ room.category }}', // e.g., 'hiragana', 'katakana', 'kanji_n5'
+        subcategory: '{{ room.subcategory }}', // e.g., 'basic', 'dakuten', 'numbers'
+        question_type: '{{ room.question_type }}', // 'mcq' or 'blank'
         time_limit: '{{ room.time_limit }}'
     };
+
+    // On page load, ensure we're showing the correct initial state
+    window.addEventListener('load', function() {
+        // Always start with "Get ready!" text, not "問題"
+        questionText.textContent = "Get ready!";
+
+        // Hide answer areas until questions start
+        blankAnswerArea.classList.add('d-none');
+        mcqAnswerArea.classList.add('d-none');
+    });
 
     // Announce participant joined
     roomChannel.publish('participant-joined', {
@@ -347,12 +361,13 @@
 
     // Listen for competition status changes
     roomChannel.subscribe('competition-status', (message) => {
-        const { status } = message.data;
+        const { status, countdown } = message.data;
 
         if (status === 'started') {
             waitingMessage.classList.add('d-none');
             competitionContent.classList.remove('d-none');
             endedMessage.classList.add('d-none');
+            gameStarted = true;
 
             // Update competition title based on settings
             updateCompetitionTitle();
@@ -360,12 +375,27 @@
             // Set up the appropriate question type UI
             setupQuestionTypeUI();
 
-            // Start the game
-            startGame();
+            // Start loading questions
+            loadQuestions();
+        } else if (status === 'countdown') {
+            // Show countdown before starting questions
+            isCountingDown = true;
+            questionText.textContent = `Starting in ${countdown}...`;
+
+            // Ensure answer areas are hidden during countdown
+            blankAnswerArea.classList.add('d-none');
+            mcqAnswerArea.classList.add('d-none');
+            answerFeedback.classList.add('d-none');
+
+            // If countdown reaches 0, reset the countdown flag
+            if (countdown === 0) {
+                isCountingDown = false;
+            }
         } else if (status === 'ended') {
             waitingMessage.classList.add('d-none');
             competitionContent.classList.add('d-none');
             endedMessage.classList.remove('d-none');
+            gameStarted = false;
 
             if (timer) {
                 clearInterval(timer);
@@ -376,20 +406,34 @@
 
     // Update competition title based on settings
     function updateCompetitionTitle() {
-        const category = roomSettings.category.charAt(0).toUpperCase() + roomSettings.category.slice(1);
-        const subcategory = roomSettings.subcategory.charAt(0).toUpperCase() + roomSettings.subcategory.slice(1);
+        const categoryMap = {
+            'hiragana': 'Hiragana',
+            'katakana': 'Katakana',
+            'n5_kanji': 'N5 Kanji'
+        };
+        const subcategoryMap = {
+            'basic': 'Basic',
+            'dakuten': 'Dakuten',
+            'combination': 'Combination',
+            'numbers': 'Numbers',
+            'environment': 'Environment',
+            'people': 'People',
+            'directions': 'Directions',
+            'verbs': 'Verbs',
+            'adjectives': 'Adjectives',
+            'misc': 'Miscellaneous',
+            'all': 'All'
+        };
+        const category = categoryMap[roomSettings.category] || roomSettings.category;
+        const subcategory = subcategoryMap[roomSettings.subcategory] || roomSettings.subcategory;
         competitionTitle.textContent = `${category} ${subcategory} Challenge`;
     }
 
     // Set up the appropriate question type UI
     function setupQuestionTypeUI() {
-        if (roomSettings.question_type === 'mcq') {
-            blankAnswerArea.classList.add('d-none');
-            mcqAnswerArea.classList.remove('d-none');
-        } else { // blank
-            blankAnswerArea.classList.remove('d-none');
-            mcqAnswerArea.classList.add('d-none');
-        }
+        // Initially hide both answer areas until questions start
+        blankAnswerArea.classList.add('d-none');
+        mcqAnswerArea.classList.add('d-none');
 
         // Set time limit
         timeRemaining = parseInt(roomSettings.time_limit) || 60;
@@ -402,19 +446,14 @@
 
     // Update leaderboard
     function updateLeaderboard(message) {
-        // Clear loading message
         if (leaderboardList.querySelector('.text-muted')) {
             leaderboardList.innerHTML = '';
         }
 
-        // Fetch all participants
         fetch(`/dojo/participant/{{ room.code }}/leaderboard/`)
             .then(response => response.json())
             .then(participants => {
-                // Sort by score (highest first)
                 participants.sort((a, b) => b.score - a.score);
-
-                // Update leaderboard
                 leaderboardList.innerHTML = '';
                 participants.forEach((participant, index) => {
                     const listItem = document.createElement('li');
@@ -422,12 +461,10 @@
                     listItem.style.animation = `fadeIn 0.3s ease forwards ${index * 0.1}s`;
                     listItem.style.opacity = '0';
 
-                    // Highlight current user
                     if (participant.id === {{ participant.id }}) {
                         listItem.classList.add('bg-light');
                     }
 
-                    // Add medal for top 3
                     let medal = '';
                     if (index === 0) medal = '<i class="fas fa-medal text-warning me-2"></i>';
                     else if (index === 1) medal = '<i class="fas fa-medal text-secondary me-2"></i>';
@@ -441,40 +478,49 @@
                         </div>
                         <span class="badge bg-primary rounded-pill">${participant.score}</span>
                     `;
-
                     leaderboardList.appendChild(listItem);
                 });
             })
             .catch(error => console.error('Error fetching leaderboard:', error));
     }
 
-    // Start the game
-    function startGame() {
-        // Load questions based on settings
-        loadQuestions();
-    }
-
     // Load questions based on settings
     function loadQuestions() {
-        // Make an AJAX request to get questions
         fetch(`/dojo/get_questions/?category=${roomSettings.category}&subcategory=${roomSettings.subcategory}&question_type=${roomSettings.question_type}`)
             .then(response => response.json())
             .then(data => {
                 if (!data.questions || data.questions.length === 0) {
-                    // Show error message if no questions are available
                     showErrorMessage();
                     return;
                 }
 
-                questions = data.questions;
-                // Shuffle questions
+                // Make a deep copy of the questions and shuffle them
+                questions = JSON.parse(JSON.stringify(data.questions));
                 questions = shuffleArray(questions);
 
-                // Start with the first question
-                nextQuestion();
+                // Wait for host to start the countdown
+                roomChannel.subscribe('question-timer', (message) => {
+                    const { action, questionIndex, timeRemaining } = message.data;
 
-                // Start timer
-                startTimer();
+                    if (action === 'start') {
+                        currentQuestionIndex = questionIndex;
+                        nextQuestion();
+                        startTimer(timeRemaining);
+                    } else if (action === 'next-countdown') {
+                        // Show countdown for next question
+                        if (!answerFeedback.classList.contains('d-none')) {
+                            // Only update the countdown text if feedback is already showing
+                            answerFeedback.textContent = `Next question in ${timeRemaining}...`;
+                        }
+                        
+                        // Hide question text during countdown
+                        questionText.classList.add('d-none');
+                        
+                        // Hide answer areas during countdown
+                        blankAnswerArea.classList.add('d-none');
+                        mcqAnswerArea.classList.add('d-none');
+                    }
+                });
             })
             .catch(error => {
                 console.error('Error loading questions:', error);
@@ -484,15 +530,10 @@
 
     // Show error message when no questions are available
     function showErrorMessage() {
-        // Hide question elements
         questionText.classList.add('d-none');
         blankAnswerArea.classList.add('d-none');
         mcqAnswerArea.classList.add('d-none');
-
-        // Show error message
         errorMessage.classList.remove('d-none');
-
-        // Stop timer if it's running
         if (timer) {
             clearInterval(timer);
             timer = null;
@@ -500,83 +541,137 @@
     }
 
     // Start the timer
-    function startTimer() {
+    function startTimer(timeRemainingValue) {
+        timeRemaining = timeRemainingValue;
+        timeLeft.textContent = timeRemaining;
+
+        if (timer) {
+            clearInterval(timer);
+        }
+
+        // Make sure the timer runs at exactly 1 second intervals
+        const startTime = Date.now();
+        let elapsedSeconds = 0;
+        
         timer = setInterval(() => {
-            timeRemaining--;
-            timeLeft.textContent = timeRemaining;
+            const currentTime = Date.now();
+            const elapsedTime = currentTime - startTime;
+            const newElapsedSeconds = Math.floor(elapsedTime / 1000);
+            
+            if (newElapsedSeconds > elapsedSeconds) {
+                elapsedSeconds = newElapsedSeconds;
+                timeRemaining = timeRemainingValue - elapsedSeconds;
+                
+                if (timeRemaining < 0) timeRemaining = 0;
+                timeLeft.textContent = timeRemaining;
 
-            // Add warning animation when time is running low
-            if (timeRemaining <= 10) {
-                timeLeft.classList.add('timer-warning');
-            } else {
-                timeLeft.classList.remove('timer-warning');
+                if (timeRemaining <= 10) {
+                    timeLeft.classList.add('timer-warning');
+                } else {
+                    timeLeft.classList.remove('timer-warning');
+                }
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timer);
+                    timer = null;
+                    answerInput.disabled = true;
+                    submitBlankAnswer.disabled = true;
+
+                    // Show the correct answer when time runs out
+                    if (roomSettings.question_type === 'mcq') {
+                        mcqOptions.querySelectorAll('.mcq-option').forEach(option => {
+                            option.style.pointerEvents = 'none';
+                            if (option.dataset.correct === 'true') {
+                                option.classList.add('correct');
+                            }
+                        });
+                        
+                        // Don't change the feedback if user already answered correctly
+                        if (!lastAnswerCorrect) {
+                            answerFeedback.textContent = `Time's up! The correct answer was: ${currentQuestion.correct}`;
+                            answerFeedback.className = 'answer-feedback incorrect';
+                            answerFeedback.classList.remove('d-none');
+                        }
+                    } else {
+                        // For blank questions, show the correct answer
+                        const correctAnswer = currentQuestion.english;
+                        
+                        // Don't change the feedback if user already answered correctly
+                        if (!lastAnswerCorrect) {
+                            answerFeedback.textContent = `Time's up! The correct answer was: ${correctAnswer}`;
+                            answerFeedback.className = 'answer-feedback incorrect';
+                            answerFeedback.classList.remove('d-none');
+                        }
+                    }
+                    
+                    // Hide the question when time is up
+                    questionText.classList.add('d-none');
+                }
             }
-
-            if (timeRemaining <= 0) {
-                clearInterval(timer);
-                timer = null;
-
-                // Game over logic
-                answerInput.disabled = true;
-                submitBlankAnswer.disabled = true;
-                mcqOptions.querySelectorAll('.mcq-option').forEach(option => {
-                    option.style.pointerEvents = 'none';
-                });
-
-                // Show time's up message
-                answerFeedback.textContent = "Time's up!";
-                answerFeedback.className = 'answer-feedback incorrect';
-                answerFeedback.classList.remove('d-none');
-            }
-        }, 1000);
+        }, 100); // Check more frequently for more accurate timing
     }
 
     // Get next question
     function nextQuestion() {
-        // Reset UI with animation
-        questionText.style.opacity = '0';
+        // Reset the lastAnswerCorrect flag
+        lastAnswerCorrect = false;
+        
+        // Show the question text again
+        questionText.classList.remove('d-none');
+        
+        // Reset feedback
+        answerFeedback.classList.add('d-none');
 
-        setTimeout(() => {
-            if (questions.length === 0) {
-                showErrorMessage();
-                return;
-            }
+        if (questions.length === 0) {
+            showErrorMessage();
+            return;
+        }
 
-            // Get next question
-            currentQuestion = questions[currentQuestionIndex % questions.length];
-            currentQuestionIndex++;
+        // Get the current question
+        currentQuestion = questions[currentQuestionIndex % questions.length];
 
-            // Update question text with animation
-            questionText.textContent = currentQuestion.character; // Use 'character' for display
-            questionText.style.opacity = '1';
+        // Update the question text based on question type
+        if (roomSettings.question_type === 'mcq') {
+            questionText.textContent = currentQuestion.character;
 
-            // Reset input
+            // Show MCQ options and hide blank answer area
+            mcqAnswerArea.classList.remove('d-none');
+            blankAnswerArea.classList.add('d-none');
+
+            // Set up MCQ options
+            setupMcqOptions();
+        } else {
+            questionText.textContent = currentQuestion.japanese;
+
+            // Show blank answer area and hide MCQ options
+            blankAnswerArea.classList.remove('d-none');
+            mcqAnswerArea.classList.add('d-none');
+
+            // Reset input fields
             answerInput.value = '';
+            answerInput.disabled = false;
+            submitBlankAnswer.disabled = false;
             answerInput.focus();
-            answerFeedback.classList.add('d-none');
-
-            // Handle MCQ options if needed
-            if (roomSettings.question_type === 'mcq') {
-                setupMcqOptions();
-            }
-        }, 300);
+        }
     }
 
-    // Set up MCQ options
+    // Set up MCQ options (always 4 options)
     function setupMcqOptions() {
-        // Clear previous options
         mcqOptions.innerHTML = '';
         selectedMcqOption = null;
 
-        // Use the pre-defined options from the question data
-        const options = currentQuestion.options;
         const correctAnswer = currentQuestion.correct;
 
-        // Shuffle options
-        const shuffledOptions = shuffleArray([...options]);
+        // Get all possible answers from the questions array
+        const allAnswers = questions.map(q => q.correct || q.english).filter(answer => answer !== correctAnswer);
 
-        // Create option elements
-        shuffledOptions.forEach((option, index) => {
+        // Shuffle and take 3 incorrect answers
+        const incorrectAnswers = shuffleArray(allAnswers).slice(0, 3);
+
+        // Combine with correct answer and shuffle again
+        const options = shuffleArray([correctAnswer, ...incorrectAnswers]);
+
+        options.forEach((option, index) => {
             const isCorrect = option === correctAnswer;
             const optionDiv = document.createElement('div');
             optionDiv.className = 'col-md-6 mb-3';
@@ -588,10 +683,8 @@
                 </div>
             `;
 
-            // Add click handler
             const optionCard = optionDiv.querySelector('.mcq-option');
             optionCard.addEventListener('click', handleMcqOptionClick);
-
             mcqOptions.appendChild(optionDiv);
         });
     }
@@ -601,75 +694,80 @@
         const optionCard = e.currentTarget;
         const isCorrect = optionCard.dataset.correct === 'true';
 
-        // Remove previous selection
         mcqOptions.querySelectorAll('.mcq-option').forEach(option => {
             option.classList.remove('selected');
+            option.style.pointerEvents = 'none';
         });
 
-        // Mark as selected
         optionCard.classList.add('selected');
         selectedMcqOption = optionCard;
 
-        // Process answer
+        // Set the lastAnswerCorrect flag based on the answer
+        lastAnswerCorrect = isCorrect;
+        
         processAnswer(isCorrect);
     }
 
     // Submit blank answer
     submitBlankAnswer.addEventListener('click', () => {
         const userAnswer = answerInput.value.trim().toLowerCase();
-        const correctAnswer = currentQuestion.romaji.toLowerCase(); // Use 'romaji' for blank questions
+        const correctAnswer = currentQuestion.english.toLowerCase();
 
+        answerInput.disabled = true;
+        submitBlankAnswer.disabled = true;
+        
+        // Set the lastAnswerCorrect flag based on the answer
+        lastAnswerCorrect = (userAnswer === correctAnswer);
+        
         processAnswer(userAnswer === correctAnswer);
     });
 
     // Process answer (both MCQ and blank)
     function processAnswer(isCorrect) {
-        // Show feedback
-        answerFeedback.textContent = isCorrect ? 'Correct! +10 points' : 'Incorrect!';
+        // Hide the question when showing feedback
+        questionText.classList.add('d-none');
+        
+        if (isCorrect) {
+            // Calculate score based on remaining time (faster = more points)
+            // Base score of 100, with time bonus
+            const timeBonus = Math.floor(timeRemaining / roomSettings.time_limit * 100);
+            const pointsEarned = 100 + timeBonus;
+
+            answerFeedback.textContent = `Correct! +${pointsEarned} points`;
+            score += pointsEarned;
+            userScore.textContent = score;
+            userScore.classList.add('score-update');
+            setTimeout(() => userScore.classList.remove('score-update'), 800);
+            updateScore(score);
+        } else {
+            answerFeedback.textContent = 'Incorrect!';
+        }
+
         answerFeedback.className = isCorrect ? 'answer-feedback correct' : 'answer-feedback incorrect';
         answerFeedback.classList.remove('d-none');
 
-        if (roomSettings.question_type === 'mcq') {
-            // Highlight correct/incorrect for MCQ
-            if (selectedMcqOption) {
-                selectedMcqOption.classList.add(isCorrect ? 'correct' : 'incorrect');
+        if (roomSettings.question_type === 'mcq' && selectedMcqOption) {
+            selectedMcqOption.classList.add(isCorrect ? 'correct' : 'incorrect');
 
-                // Disable further clicks
-                mcqOptions.querySelectorAll('.mcq-option').forEach(option => {
-                    option.style.pointerEvents = 'none';
-                });
+            // Show correct answer if wrong
+            if (!isCorrect) {
+                const correctOption = Array.from(mcqOptions.querySelectorAll('.mcq-option')).find(
+                    option => option.dataset.correct === 'true'
+                );
+                if (correctOption) {
+                    correctOption.classList.add('correct');
+                }
             }
+        } else if (roomSettings.question_type === 'blank' && !isCorrect) {
+            // For blank questions, show the correct answer if wrong
+            const correctAnswer = currentQuestion.english;
+            answerFeedback.textContent = `Incorrect! The correct answer was: ${correctAnswer}`;
         }
-
-        if (isCorrect) {
-            // Correct answer
-            score += 10;
-            userScore.textContent = score;
-            userScore.classList.add('score-update');
-            setTimeout(() => {
-                userScore.classList.remove('score-update');
-            }, 800);
-
-            // Update score on server
-            updateScore(score);
-        }
-
-        // Move to next question after delay
-        setTimeout(() => {
-            nextQuestion();
-
-            // Re-enable MCQ options if needed
-            if (roomSettings.question_type === 'mcq') {
-                mcqOptions.querySelectorAll('.mcq-option').forEach(option => {
-                    option.style.pointerEvents = 'auto';
-                });
-            }
-        }, 1500);
     }
 
-    // Allow pressing Enter to submit
+    // Allow pressing Enter to submit blank answer
     answerInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !submitBlankAnswer.disabled) {
             submitBlankAnswer.click();
         }
     });
@@ -686,7 +784,6 @@
         })
         .then(response => response.json())
         .then(data => {
-            // Publish score update to channel
             roomChannel.publish('score-update', {
                 participantId: '{{ participant.id }}',
                 score: newScore
@@ -697,11 +794,15 @@
 
     // Utility function to shuffle array
     function shuffleArray(array) {
+        // Create a copy of the array to avoid modifying the original
         const newArray = [...array];
+
+        // Fisher-Yates shuffle algorithm
         for (let i = newArray.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [newArray[i], newArray[j]] = [newArray[i], newArray[j]];
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
         }
+
         return newArray;
     }
 

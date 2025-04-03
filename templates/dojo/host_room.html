@@ -1,3 +1,4 @@
+<!-- host_room.html - Modified for shareable link -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -57,7 +58,14 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h1 style="color: #00796b;">{{ room.name }}</h1>
-                        <div class="badge bg-dark fs-5 p-2">Room Code: <span class="fw-bold">{{ room.code }}</span></div>
+                        <div class="d-flex align-items-center">
+                            <div class="badge bg-dark fs-5 p-2 me-2" id="roomCodeBadge" style="cursor: pointer;" onclick="copyRoomCode()">
+                                Room Code: <span class="fw-bold">{{ room.code }}</span>
+                            </div>
+                            <button class="btn btn-sm btn-primary" id="copyLinkBtn" onclick="copyRoomLink()" title="Copy shareable link">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <p class="lead">Share this code with your friends to join the competition!</p>
@@ -280,6 +288,21 @@
                         settings: roomSettings
                     });
 
+                    // Start countdown
+                    let countdown = 5;
+                    const countdownInterval = setInterval(() => {
+                        roomChannel.publish('competition-status', {
+                            status: 'countdown',
+                            countdown: countdown
+                        });
+
+                        countdown--;
+                        if (countdown < 0) {
+                            clearInterval(countdownInterval);
+                            startQuestions();
+                        }
+                    }, 1000);
+
                     // Add event listener to new end button
                     document.getElementById('endCompetition').addEventListener('click', endCompetitionHandler);
                 } else {
@@ -298,9 +321,55 @@
         });
     }
 
+    // Start questions with synchronized timing
+    function startQuestions() {
+        let questionIndex = 0;
+        const questionTimeLimit = parseInt(roomSettings.time_limit) || 60;
+        const maxQuestions = 20; // Limit the number of questions to prevent infinite loop
+
+        function sendQuestion() {
+            // Stop if we've reached the maximum number of questions
+            if (questionIndex >= maxQuestions) {
+                endCompetitionHandler();
+                return;
+            }
+
+            // Signal to start the question
+            roomChannel.publish('question-timer', {
+                action: 'start',
+                questionIndex: questionIndex,
+                timeRemaining: questionTimeLimit
+            });
+
+            // Wait for question time to expire
+            setTimeout(() => {
+                // Show 5 second countdown for next question
+                let nextCountdown = 5;
+                const nextInterval = setInterval(() => {
+                    roomChannel.publish('question-timer', {
+                        action: 'next-countdown',
+                        timeRemaining: nextCountdown
+                    });
+
+                    nextCountdown--;
+                    if (nextCountdown < 0) {
+                        clearInterval(nextInterval);
+                        questionIndex++;
+                        sendQuestion(); // Send next question
+                    }
+                }, 1000);
+            }, questionTimeLimit * 1000);
+        }
+
+        // Start the first question
+        sendQuestion();
+    }
+
     // End competition handler
     const endCompetitionHandler = async () => {
         const endButton = document.getElementById('endCompetition');
+        if (!endButton) return;
+
         // Intermediate state: disable button and show "Ending..."
         endButton.disabled = true;
         endButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Ending...';
@@ -346,6 +415,45 @@
     if (endButton) {
         endButton.addEventListener('click', endCompetitionHandler);
     }
+
+    // Copy room code to clipboard
+    function copyRoomCode() {
+        const roomCode = '{{ room.code }}';
+        navigator.clipboard.writeText(roomCode)
+            .then(() => {
+                const badge = document.getElementById('roomCodeBadge');
+                const originalText = badge.innerHTML;
+                badge.innerHTML = '<i class="fas fa-check me-1"></i> Copied!';
+                setTimeout(() => {
+                    badge.innerHTML = originalText;
+                }, 2000);
+            })
+            .catch(err => {
+                console.error('Failed to copy room code: ', err);
+                alert('Failed to copy room code. Please try again.');
+            });
+    }
+
+    // Copy shareable link to clipboard
+    function copyRoomLink() {
+        // Use the deployed site URL for the link
+        const baseUrl = window.location.origin;
+        const roomCode = '{{ room.code }}';
+        const joinUrl = `${baseUrl}/dojo/join/?code=${roomCode}`;
+        const message = `Join my Japanese Dojo room! Room code: ${roomCode}\n${joinUrl}`;
+
+        navigator.clipboard.writeText(message)
+            .then(() => {
+                const btn = document.getElementById('copyLinkBtn');
+                btn.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-link"></i>';
+                }, 2000);
+            })
+            .catch(err => {
+                console.error('Failed to copy link: ', err);
+                alert('Failed to copy link. Please try again.');
+            });
+    }
 </script>
 {% endblock %}
-
