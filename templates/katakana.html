@@ -11,13 +11,13 @@
     <div class="card mb-4 shadow-sm" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4); border-color: #d32f2f;">
         <div class="card-body">
             <h2 class="card-title text-center" style="color: #d32f2f;">Practice Katakana</h2>
-            <p class="text-dark">Enter the pronunciation of any Katakana character and check your input. Use lowercase letters (e.g., 'ka' for カ).</p>
+            <p style="color: #333; font-weight: 500;">Enter the pronunciation of any Katakana character and check your input. Use lowercase letters (e.g., 'ka' for カ).</p>
             <div class="mb-3">
-                <label for="katakanaInput" class="form-label">Type the pronunciation:</label>
+                <label for="katakanaInput" class="form-label" style="font-weight: 500; color: #333;">Type the pronunciation:</label>
                 <input type="text" id="katakanaInput" class="form-control" placeholder="e.g., ka, sa, chi">
             </div>
-            <p id="result" style="color: #e74c3c;"></p>
-            <p class="text-dark"><strong>Stroke Order:</strong> Learning the correct stroke order is important. Check <a href="https://www.tofugu.com/japanese/katakana-chart/" target="_blank">this resource</a> for guidance.</p>
+            <p id="result" style="color: #e74c3c; font-weight: 500;"></p>
+            <p style="color: #333; font-weight: 500;"><strong>Stroke Order:</strong> Learning the correct stroke order is important. Check <a href="https://www.tofugu.com/japanese/katakana-chart/" target="_blank" style="color: #006666;">this resource</a> for guidance.</p>
             <script>
                 // Mapping of Katakana characters to pronunciations
                 const katakanaMap = {
@@ -52,28 +52,57 @@
                     reverseKatakanaMap[pron] = char;
                 }
 
-                document.getElementById('katakanaInput').addEventListener('input', function() {
-                    const input = this.value.toLowerCase().trim();
+                document.addEventListener('DOMContentLoaded', function() {
+                    const input = document.getElementById('katakanaInput');
                     const result = document.getElementById('result');
-                    let correctChar = '';
 
-                    // Find the first matching character for the input pronunciation
-                    for (const [char, pron] of Object.entries(katakanaMap)) {
-                        if (pron === input) {
-                            correctChar = char;
-                            break;
+                    if (input && result) {
+                        input.addEventListener('input', function() {
+                            const inputValue = this.value.toLowerCase().trim();
+                            let correctChar = '';
+
+                            // Find the first matching character for the input pronunciation
+                            for (const [char, pron] of Object.entries(katakanaMap)) {
+                                if (pron === inputValue) {
+                                    correctChar = char;
+                                    break;
+                                }
+                            }
+
+                            if (correctChar) {
+                                result.textContent = `Correct! The character is ${correctChar}.`;
+                                result.style.color = '#27ae60';
+                            } else if (inputValue in reverseKatakanaMap) {
+                                result.textContent = `Wrong! The correct pronunciation for ${reverseKatakanaMap[inputValue]} is not '${inputValue}'. Try again!`;
+                                result.style.color = '#e74c3c';
+                            } else {
+                                result.textContent = 'Invalid input! Please enter a valid pronunciation (e.g., "ka", "shi").';
+                                result.style.color = '#e74c3c';
+                            }
+                        });
+
+                        // Check dark mode and adjust text color if needed
+                        const isDarkMode = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+                        if (isDarkMode) {
+                            const textElements = document.querySelectorAll('[style*="color: #333"]');
+                            textElements.forEach(el => {
+                                el.style.color = '#f8f9fa';
+                            });
                         }
-                    }
 
-                    if (correctChar) {
-                        result.textContent = `Correct! The character is ${correctChar}.`;
-                        result.style.color = '#27ae60';
-                    } else if (input in reverseKatakanaMap) {
-                        result.textContent = `Wrong! The correct pronunciation for ${reverseKatakanaMap[input]} is not '${input}'. Try again!`;
-                        result.style.color = '#e74c3c';
-                    } else {
-                        result.textContent = 'Invalid input! Please enter a valid pronunciation (e.g., "ka", "shi").';
-                        result.style.color = '#e74c3c';
+                        // Add listener to theme toggle for dynamic color changes
+                        const themeToggle = document.getElementById('theme-toggle');
+                        if (themeToggle) {
+                            themeToggle.addEventListener('change', function() {
+                                setTimeout(function() {
+                                    const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+                                    const textElements = document.querySelectorAll('[style*="color: #333"]');
+                                    textElements.forEach(el => {
+                                        el.style.color = isDark ? '#f8f9fa' : '#333';
+                                    });
+                                }, 50);
+                            });
+                        }
                     }
                 });
             </script>
@@ -84,190 +113,237 @@
     <div class="card mb-4 shadow-sm" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb); border-color: #3498db;">
         <div class="card-body">
             <h2 class="card-title text-center" style="color: #3498db;">About Katakana</h2>
-            <p class="text-dark">Katakana is another Japanese writing system, primarily used for foreign words, onomatopoeia, and emphasis. Like Hiragana, it consists of 46 basic characters, each representing a syllable. Katakana is often used to write loanwords from other languages (e.g., コーヒー for "coffee").</p>
-            <p class="text-dark">Japanese also uses Kanji (Chinese characters) and Hiragana, which were covered earlier. Don’t wait to memorize all Katakana characters before moving on—learn them as you progress through the lessons.</p>
-            <p class="text-dark">There are 5 vowels in Japanese:</p>
-            <ul class="text-dark">
+            <p style="color: #333; font-weight: 500;">Katakana is another Japanese writing system, primarily used for foreign words, onomatopoeia, and emphasis. Like Hiragana, it consists of 46 basic characters, each representing a syllable. Katakana is often used to write loanwords from other languages (e.g., コーヒー for "coffee").</p>
+            <p style="color: #333; font-weight: 500;">Japanese also uses Kanji (Chinese characters) and Hiragana, which were covered earlier. Don't wait to memorize all Katakana characters before moving on—learn them as you progress through the lessons.</p>
+            <p style="color: #333; font-weight: 500;">There are 5 vowels in Japanese:</p>
+            <ul style="color: #333; font-weight: 500;">
                 <li><strong>(a)</strong> - pronounced "ahh"</li>
                 <li><strong>(i)</strong> - pronounced like "e" in "eat"</li>
                 <li><strong>(u)</strong> - pronounced like "oo" in "soon"</li>
                 <li><strong>(e)</strong> - pronounced like "e" in "elk"</li>
                 <li><strong>(o)</strong> - pronounced "oh"</li>
             </ul>
-            <p class="text-dark">All Katakana characters end with one of these vowels, except for (ン). The Japanese 'r' is slightly rolled, resembling a combination of 'd', 'r', and 'l'.</p>
-            <p class="text-dark"><strong>Tenten (゛) and Dakuten (゜):</strong> These diacritic marks modify consonant sounds. The `tenten` (゛) voices the consonant (e.g., カ → ガ), while the `dakuten` (゜) alters it further (e.g., ハ → パ). These variations are included in the table below.</p>
+            <p style="color: #333; font-weight: 500;">All Katakana characters end with one of these vowels, except for (ン). The Japanese 'r' is slightly rolled, resembling a combination of 'd', 'r', and 'l'.</p>
+            <p style="color: #333; font-weight: 500;"><strong>Tenten (゛) and Dakuten (゜):</strong> These diacritic marks modify consonant sounds. The `tenten` (゛) voices the consonant (e.g., カ → ガ), while the `dakuten` (゜) alters it further (e.g., ハ → パ). These variations are included in the table below.</p>
         </div>
     </div>
 
     <!-- Basic Katakana with Tenten and Dakuten -->
     <div class="card mb-4 shadow-sm" style="background: linear-gradient(135deg, #f6d365, #fda085); border-color: #e67e22;">
         <div class="card-body">
-            <h2 class="card-title text-center" style="color: #e67e22;">Basic Katakana Characters (Including Tenten and Dakuten)</h2>
-            <table class="table table-bordered text-center" style="font-size: 1.5em; background-color: white; border-radius: 10px;">
-                <thead>
-                    <tr style="background-color: #e67e22; color: white;">
-                        <th>a</th><th>i</th><th>u</th><th>e</th><th>o</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span style="color: #2ecc71;">ア (a)</span></td>
-                        <td><span style="color: #2ecc71;">イ (i)</span></td>
-                        <td><span style="color: #2ecc71;">ウ (u)</span></td>
-                        <td><span style="color: #2ecc71;">エ (e)</span></td>
-                        <td><span style="color: #2ecc71;">オ (o)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #3498db;">カ (ka)</span></td>
-                        <td><span style="color: #3498db;">キ (ki)</span></td>
-                        <td><span style="color: #3498db;">ク (ku)</span></td>
-                        <td><span style="color: #3498db;">ケ (ke)</span></td>
-                        <td><span style="color: #3498db;">コ (ko)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #3498db;">ガ (ga)</span></td>
-                        <td><span style="color: #3498db;">ギ (gi)</span></td>
-                        <td><span style="color: #3498db;">グ (gu)</span></td>
-                        <td><span style="color: #3498db;">ゲ (ge)</span></td>
-                        <td><span style="color: #3498db;">ゴ (go)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #9b59b6;">サ (sa)</span></td>
-                        <td><span style="color: #9b59b6;">シ (shi)</span></td>
-                        <td><span style="color: #9b59b6;">ス (su)</span></td>
-                        <td><span style="color: #9b59b6;">セ (se)</span></td>
-                        <td><span style="color: #9b59b6;">ソ (so)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #9b59b6;">ザ (za)</span></td>
-                        <td><span style="color: #9b59b6;">ジ (ji)</span></td>
-                        <td><span style="color: #9b59b6;">ズ (zu)</span></td>
-                        <td><span style="color: #9b59b6;">ゼ (ze)</span></td>
-                        <td><span style="color: #9b59b6;">ゾ (zo)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #e67e22;">タ (ta)</span></td>
-                        <td><span style="color: #e67e22;">チ (chi)</span></td>
-                        <td><span style="color: #e67e22;">ツ (tsu)</span></td>
-                        <td><span style="color: #e67e22;">テ (te)</span></td>
-                        <td><span style="color: #e67e22;">ト (to)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #e67e22;">ダ (da)</span></td>
-                        <td><span style="color: #e67e22;">ヂ (ji)</span></td>
-                        <td><span style="color: #e67e22;">ヅ (zu)</span></td>
-                        <td><span style="color: #e67e22;">デ (de)</span></td>
-                        <td><span style="color: #e67e22;">ド (do)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #1abc9c;">ナ (na)</span></td>
-                        <td><span style="color: #1abc9c;">ニ (ni)</span></td>
-                        <td><span style="color: #1abc9c;">ヌ (nu)</span></td>
-                        <td><span style="color: #1abc9c;">ネ (ne)</span></td>
-                        <td><span style="color: #1abc9c;">ノ (no)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #f1c40f;">ハ (ha)</span></td>
-                        <td><span style="color: #f1c40f;">ヒ (hi)</span></td>
-                        <td><span style="color: #f1c40f;">フ (fu)</span></td>
-                        <td><span style="color: #f1c40f;">ヘ (he)</span></td>
-                        <td><span style="color: #f1c40f;">ホ (ho)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #f1c40f;">バ (ba)</span></td>
-                        <td><span style="color: #f1c40f;">ビ (bi)</span></td>
-                        <td><span style="color: #f1c40f;">ブ (bu)</span></td>
-                        <td><span style="color: #f1c40f;">ベ (be)</span></td>
-                        <td><span style="color: #f1c40f;">ボ (bo)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #f1c40f;">パ (pa)</span></td>
-                        <td><span style="color: #f1c40f;">ピ (pi)</span></td>
-                        <td><span style="color: #f1c40f;">プ (pu)</span></td>
-                        <td><span style="color: #f1c40f;">ペ (pe)</span></td>
-                        <td><span style="color: #f1c40f;">ポ (po)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #e74c3c;">マ (ma)</span></td>
-                        <td><span style="color: #e74c3c;">ミ (mi)</span></td>
-                        <td><span style="color: #e74c3c;">ム (mu)</span></td>
-                        <td><span style="color: #e74c3c;">メ (me)</span></td>
-                        <td><span style="color: #e74c3c;">モ (mo)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #8e44ad;">ヤ (ya)</span></td>
-                        <td></td>
-                        <td><span style="color: #8e44ad;">ユ (yu)</span></td>
-                        <td></td>
-                        <td><span style="color: #8e44ad;">ヨ (yo)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #27ae60;">ラ (ra)</span></td>
-                        <td><span style="color: #27ae60;">リ (ri)</span></td>
-                        <td><span style="color: #27ae60;">ル (ru)</span></td>
-                        <td><span style="color: #27ae60;">レ (re)</span></td>
-                        <td><span style="color: #27ae60;">ロ (ro)</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style="color: #d35400;">ワ (wa)</span></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><span style="color: #d35400;">ヲ (wo)</span></td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" style="color: #c0392b;"><span style="font-size: 1.8em;">ン (n)</span></td>
-                    </tr>
-                </tbody>
-            </table>
+            <h2 class="card-title text-center" style="color: #e67e22;">Basic Katakana Characters</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center" style="font-size: 1.5em; background-color: white; border-radius: 10px;">
+                    <thead>
+                        <tr style="background-color: #e67e22; color: white;">
+                            <th>a</th><th>i</th><th>u</th><th>e</th><th>o</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span style="color: #2ecc71;">ア (a)</span></td>
+                            <td><span style="color: #2ecc71;">イ (i)</span></td>
+                            <td><span style="color: #2ecc71;">ウ (u)</span></td>
+                            <td><span style="color: #2ecc71;">エ (e)</span></td>
+                            <td><span style="color: #2ecc71;">オ (o)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #3498db;">カ (ka)</span></td>
+                            <td><span style="color: #3498db;">キ (ki)</span></td>
+                            <td><span style="color: #3498db;">ク (ku)</span></td>
+                            <td><span style="color: #3498db;">ケ (ke)</span></td>
+                            <td><span style="color: #3498db;">コ (ko)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #3498db;">ガ (ga)</span></td>
+                            <td><span style="color: #3498db;">ギ (gi)</span></td>
+                            <td><span style="color: #3498db;">グ (gu)</span></td>
+                            <td><span style="color: #3498db;">ゲ (ge)</span></td>
+                            <td><span style="color: #3498db;">ゴ (go)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #9b59b6;">サ (sa)</span></td>
+                            <td><span style="color: #9b59b6;">シ (shi)</span></td>
+                            <td><span style="color: #9b59b6;">ス (su)</span></td>
+                            <td><span style="color: #9b59b6;">セ (se)</span></td>
+                            <td><span style="color: #9b59b6;">ソ (so)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #9b59b6;">ザ (za)</span></td>
+                            <td><span style="color: #9b59b6;">ジ (ji)</span></td>
+                            <td><span style="color: #9b59b6;">ズ (zu)</span></td>
+                            <td><span style="color: #9b59b6;">ゼ (ze)</span></td>
+                            <td><span style="color: #9b59b6;">ゾ (zo)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #e67e22;">タ (ta)</span></td>
+                            <td><span style="color: #e67e22;">チ (chi)</span></td>
+                            <td><span style="color: #e67e22;">ツ (tsu)</span></td>
+                            <td><span style="color: #e67e22;">テ (te)</span></td>
+                            <td><span style="color: #e67e22;">ト (to)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #e67e22;">ダ (da)</span></td>
+                            <td><span style="color: #e67e22;">ヂ (ji)</span></td>
+                            <td><span style="color: #e67e22;">ヅ (zu)</span></td>
+                            <td><span style="color: #e67e22;">デ (de)</span></td>
+                            <td><span style="color: #e67e22;">ド (do)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #1abc9c;">ナ (na)</span></td>
+                            <td><span style="color: #1abc9c;">ニ (ni)</span></td>
+                            <td><span style="color: #1abc9c;">ヌ (nu)</span></td>
+                            <td><span style="color: #1abc9c;">ネ (ne)</span></td>
+                            <td><span style="color: #1abc9c;">ノ (no)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #f1c40f;">ハ (ha)</span></td>
+                            <td><span style="color: #f1c40f;">ヒ (hi)</span></td>
+                            <td><span style="color: #f1c40f;">フ (fu)</span></td>
+                            <td><span style="color: #f1c40f;">ヘ (he)</span></td>
+                            <td><span style="color: #f1c40f;">ホ (ho)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #f1c40f;">バ (ba)</span></td>
+                            <td><span style="color: #f1c40f;">ビ (bi)</span></td>
+                            <td><span style="color: #f1c40f;">ブ (bu)</span></td>
+                            <td><span style="color: #f1c40f;">ベ (be)</span></td>
+                            <td><span style="color: #f1c40f;">ボ (bo)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #f1c40f;">パ (pa)</span></td>
+                            <td><span style="color: #f1c40f;">ピ (pi)</span></td>
+                            <td><span style="color: #f1c40f;">プ (pu)</span></td>
+                            <td><span style="color: #f1c40f;">ペ (pe)</span></td>
+                            <td><span style="color: #f1c40f;">ポ (po)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #e74c3c;">マ (ma)</span></td>
+                            <td><span style="color: #e74c3c;">ミ (mi)</span></td>
+                            <td><span style="color: #e74c3c;">ム (mu)</span></td>
+                            <td><span style="color: #e74c3c;">メ (me)</span></td>
+                            <td><span style="color: #e74c3c;">モ (mo)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #8e44ad;">ヤ (ya)</span></td>
+                            <td></td>
+                            <td><span style="color: #8e44ad;">ユ (yu)</span></td>
+                            <td></td>
+                            <td><span style="color: #8e44ad;">ヨ (yo)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #27ae60;">ラ (ra)</span></td>
+                            <td><span style="color: #27ae60;">リ (ri)</span></td>
+                            <td><span style="color: #27ae60;">ル (ru)</span></td>
+                            <td><span style="color: #27ae60;">レ (re)</span></td>
+                            <td><span style="color: #27ae60;">ロ (ro)</span></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color: #d35400;">ワ (wa)</span></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><span style="color: #d35400;">ヲ (wo)</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" style="color: #c0392b;"><span style="font-size: 1.8em;">ン (n)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <!-- Downloadable Chart -->
     <div class="text-center mb-4">
         <a href="https://fczdt0xol8zxbzng.public.blob.vercel-storage.com/katakana_chart-HLk1YhSqI65UmrPP6esUdFCaNd2gcZ.pdf?download=1"
-       class="btn btn-success btn-lg"
-       style="background-color: #27ae60; border-color: #27ae60; padding: 10px 20px; font-size: 18px; font-weight: bold; text-decoration: none; border-radius: 5px;"
-       download="katakana_Chart.pdf">
-        Download Katakana Chart
-    </a>
+           class="btn btn-success btn-lg"
+           style="background-color: #27ae60; border-color: #27ae60; padding: 10px 20px; font-size: 18px; font-weight: bold; text-decoration: none; border-radius: 5px;"
+           download="katakana Chart.pdf">
+            Download Katakana Chart
+        </a>
     </div>
 
     <!-- Katakana Ya, Yu, Yo Combinations -->
     <div class="card mb-4 shadow-sm" style="background: linear-gradient(135deg, #84fab0, #8fd3f4); border-color: #388e3c;">
         <div class="card-body">
             <h2 class="card-title text-center" style="color: #388e3c;">Katakana Ya, Yu, Yo Combinations</h2>
-            <p class="text-dark">Katakana can form additional sounds using small characters (e.g., ャ, ュ, ョ).</p>
-            <table class="table table-bordered text-center" style="font-size: 1.5em; background-color: white; border-radius: 10px;">
-                <thead>
-                    <tr style="background-color: #388e3c; color: white;">
-                        <th>Base</th><th>Combination</th><th>Pronunciation</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td><span style="color: #3498db;">キ</span></td><td><span style="color: #3498db;">キャ</span></td><td>kya</td></tr>
-                    <tr><td><span style="color: #3498db;">キ</span></td><td><span style="color: #3498db;">キュ</span></td><td>kyu</td></tr>
-                    <tr><td><span style="color: #3498db;">キ</span></td><td><span style="color: #3498db;">キョ</span></td><td>kyo</td></tr>
-                    <tr><td><span style="color: #9b59b6;">シ</span></td><td><span style="color: #9b59b6;">シャ</span></td><td>sha</td></tr>
-                    <tr><td><span style="color: #9b59b6;">シ</span></td><td><span style="color: #9b59b6;">シュ</span></td><td>shu</td></tr>
-                    <tr><td><span style="color: #9b59b6;">シ</span></td><td><span style="color: #9b59b6;">ショ</span></td><td>sho</td></tr>
-                    <tr><td><span style="color: #e67e22;">チ</span></td><td><span style="color: #e67e22;">チャ</span></td><td>cha</td></tr>
-                    <tr><td><span style="color: #e67e22;">チ</span></td><td><span style="color: #e67e22;">チュ</span></td><td>chu</td></tr>
-                    <tr><td><span style="color: #e67e22;">チ</span></td><td><span style="color: #e67e22;">チョ</span></td><td>cho</td></tr>
-                    <tr><td><span style="color: #1abc9c;">ニ</span></td><td><span style="color: #1abc9c;">ニャ</span></td><td>nya</td></tr>
-                    <tr><td><span style="color: #1abc9c;">ニ</span></td><td><span style="color: #1abc9c;">ニュ</span></td><td>nyu</td></tr>
-                    <tr><td><span style="color: #1abc9c;">ニ</span></td><td><span style="color: #1abc9c;">ニョ</span></td><td>nyo</td></tr>
-                    <tr><td><span style="color: #f1c40f;">ヒ</span></td><td><span style="color: #f1c40f;">ヒャ</span></td><td>hya</td></tr>
-                    <tr><td><span style="color: #f1c40f;">ヒ</span></td><td><span style="color: #f1c40f;">ヒュ</span></td><td>hyu</td></tr>
-                    <tr><td><span style="color: #f1c40f;">ヒ</span></td><td><span style="color: #f1c40f;">ヒョ</span></td><td>hyo</td></tr>
-                    <tr><td><span style="color: #e74c3c;">ミ</span></td><td><span style="color: #e74c3c;">ミャ</span></td><td>mya</td></tr>
-                    <tr><td><span style="color: #e74c3c;">ミ</span></td><td><span style="color: #e74c3c;">ミュ</span></td><td>myu</td></tr>
-                    <tr><td><span style="color: #e74c3c;">ミ</span></td><td><span style="color: #e74c3c;">ミョ</span></td><td>myo</td></tr>
-                    <tr><td><span style="color: #27ae60;">リ</span></td><td><span style="color: #27ae60;">リャ</span></td><td>rya</td></tr>
-                    <tr><td><span style="color: #27ae60;">リ</span></td><td><span style="color: #27ae60;">リュ</span></td><td>ryu</td></tr>
-                    <tr><td><span style="color: #27ae60;">リ</span></td><td><span style="color: #27ae60;">リョ</span></td><td>ryo</td></tr>
-                </tbody>
-            </table>
+            <p style="color: #333; font-weight: 500;">Katakana can form additional sounds using small characters (e.g., ャ, ュ, ョ).</p>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center" style="font-size: 1.5em; background-color: white; border-radius: 10px;">
+                    <thead>
+                        <tr style="background-color: #388e3c; color: white;">
+                            <th>Base</th><th>Combination</th><th>Pronunciation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><span style="color: #3498db;">キ</span></td><td><span style="color: #3498db;">キャ</span></td><td>kya</td></tr>
+                        <tr><td><span style="color: #3498db;">キ</span></td><td><span style="color: #3498db;">キュ</span></td><td>kyu</td></tr>
+                        <tr><td><span style="color: #3498db;">キ</span></td><td><span style="color: #3498db;">キョ</span></td><td>kyo</td></tr>
+                        <tr><td><span style="color: #9b59b6;">シ</span></td><td><span style="color: #9b59b6;">シャ</span></td><td>sha</td></tr>
+                        <tr><td><span style="color: #9b59b6;">シ</span></td><td><span style="color: #9b59b6;">シュ</span></td><td>shu</td></tr>
+                        <tr><td><span style="color: #9b59b6;">シ</span></td><td><span style="color: #9b59b6;">ショ</span></td><td>sho</td></tr>
+                        <tr><td><span style="color: #e67e22;">チ</span></td><td><span style="color: #e67e22;">チャ</span></td><td>cha</td></tr>
+                        <tr><td><span style="color: #e67e22;">チ</span></td><td><span style="color: #e67e22;">チュ</span></td><td>chu</td></tr>
+                        <tr><td><span style="color: #e67e22;">チ</span></td><td><span style="color: #e67e22;">チョ</span></td><td>cho</td></tr>
+                        <tr><td><span style="color: #1abc9c;">ニ</span></td><td><span style="color: #1abc9c;">ニャ</span></td><td>nya</td></tr>
+                        <tr><td><span style="color: #1abc9c;">ニ</span></td><td><span style="color: #1abc9c;">ニュ</span></td><td>nyu</td></tr>
+                        <tr><td><span style="color: #1abc9c;">ニ</span></td><td><span style="color: #1abc9c;">ニョ</span></td><td>nyo</td></tr>
+                        <tr><td><span style="color: #f1c40f;">ヒ</span></td><td><span style="color: #f1c40f;">ヒャ</span></td><td>hya</td></tr>
+                        <tr><td><span style="color: #f1c40f;">ヒ</span></td><td><span style="color: #f1c40f;">ヒュ</span></td><td>hyu</td></tr>
+                        <tr><td><span style="color: #f1c40f;">ヒ</span></td><td><span style="color: #f1c40f;">ヒョ</span></td><td>hyo</td></tr>
+                        <tr><td><span style="color: #e74c3c;">ミ</span></td><td><span style="color: #e74c3c;">ミャ</span></td><td>mya</td></tr>
+                        <tr><td><span style="color: #e74c3c;">ミ</span></td><td><span style="color: #e74c3c;">ミュ</span></td><td>myu</td></tr>
+                        <tr><td><span style="color: #e74c3c;">ミ</span></td><td><span style="color: #e74c3c;">ミョ</span></td><td>myo</td></tr>
+                        <tr><td><span style="color: #27ae60;">リ</span></td><td><span style="color: #27ae60;">リャ</span></td><td>rya</td></tr>
+                        <tr><td><span style="color: #27ae60;">リ</span></td><td><span style="color: #27ae60;">リュ</span></td><td>ryu</td></tr>
+                        <tr><td><span style="color: #27ae60;">リ</span></td><td><span style="color: #27ae60;">リョ</span></td><td>ryo</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
+    <script>
+        // Function to handle dark mode text adjustments
+        document.addEventListener('DOMContentLoaded', function() {
+            function updateTextColors() {
+                const isDarkMode = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+                const textElements = document.querySelectorAll('[style*="color: #333"]');
+
+                textElements.forEach(element => {
+                    if (isDarkMode) {
+                        element.style.color = '#f8f9fa';
+                    } else {
+                        element.style.color = '#333';
+                    }
+                });
+            }
+
+            // Run on initial load
+            updateTextColors();
+
+            // Add an event listener to the theme toggle to update text colors when theme changes
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('change', function() {
+                    // Use setTimeout to let the theme change apply first
+                    setTimeout(updateTextColors, 10);
+                });
+            }
+
+            // Improve mobile view margins
+            if (window.innerWidth < 768) {
+                const cards = document.querySelectorAll('.card');
+                cards.forEach(card => {
+                    card.style.margin = '0 5px 15px 5px';
+                });
+
+                const tables = document.querySelectorAll('.table-responsive');
+                tables.forEach(table => {
+                    table.style.fontSize = '0.9em';
+                });
+            }
+        });
+    </script>
 {% endblock %}

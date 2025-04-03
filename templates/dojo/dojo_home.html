@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container mt-5 mb-5">
     <div class="text-center mb-5">
-        <h1 style="color: #333; font-size: 3rem;">Nihonow Dojo</h1>
+        <h1 style="color: #000; font-size: 3rem;" id="dojo-title">Nihonow Dojo</h1>
         <p class="lead">Compete with friends and test your Japanese skills!</p>
     </div>
 
@@ -15,7 +15,7 @@
         <div class="col-md-5">
             <div class="card shadow h-100 border-0" style="background: linear-gradient(135deg, #84fab0, #8fd3f4);">
                 <div class="card-body text-center p-5">
-                    <h2 class="card-title mb-4" style="color: #00796b;">Host a Room</h2>
+                    <h2 class="card-title mb-4" style="color: #000;">Host a Room</h2>
                     <p class="card-text mb-4">Create your own competition room and invite friends to join. As the host, you'll control when the competition starts and ends.</p>
                     <a href="{% url 'create_room' %}" class="btn btn-light btn-lg">
                         <i class="fas fa-plus-circle me-2"></i> Create Room
@@ -28,7 +28,7 @@
         <div class="col-md-5">
             <div class="card shadow h-100 border-0" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
                 <div class="card-body text-center p-5">
-                    <h2 class="card-title mb-4" style="color: #6a1b9a;">Join a Room</h2>
+                    <h2 class="card-title mb-4" style="color: #000;">Join a Room</h2>
                     <p class="card-text mb-4">Enter a 6-digit room code to join an existing competition. Compete with friends and see who scores the highest!</p>
                     <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#joinRoomModal">
                         <i class="fas fa-sign-in-alt me-2"></i> Join Room
@@ -44,7 +44,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
-                <h5 class="modal-title" id="joinRoomModalLabel" style="color: #6a1b9a;">Join a Dojo Room</h5>
+                <h5 class="modal-title" id="joinRoomModalLabel" style="color: #000;">Join a Dojo Room</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -65,6 +65,24 @@
     </div>
 </div>
 
+<!-- CSS for mode-based color adjustments -->
+<style>
+    @media (prefers-color-scheme: dark) {
+        #dojo-title {
+            color: #05bbf3 !important; /* White heading in dark mode */
+        }
+        .card-title {
+            color: #fff !important; /* White card titles in dark mode */
+        }
+        .modal-title {
+            color: #fff !important; /* White modal title in dark mode */
+        }
+        .card-text {
+            color: #000 !important; /* Black card text in dark mode */
+        }
+    }
+</style>
+
 <script>
     // Format room code input to show only digits
     document.getElementById('roomCode').addEventListener('input', function(e) {
@@ -72,4 +90,3 @@
     });
 </script>
 {% endblock %}
-
