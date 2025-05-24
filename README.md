@@ -1,6 +1,6 @@
-# Nihonow - Japanese Learning Platform
+# Nihonow-Public - Japanese Learning Platform
 
-Nihonow is a comprehensive web application designed to help users learn Japanese language efficiently. The platform offers various tools and resources for learners at different proficiency levels, from beginners to advanced students preparing for the Japanese Language Proficiency Test (JLPT).
+**Nihonow-Public** is a comprehensive web application designed to help users learn the Japanese language efficiently. The platform offers various tools and resources for learners at different proficiency levels, from beginners to advanced students preparing for the Japanese Language Proficiency Test (JLPT).
 
 ## Features
 
@@ -35,13 +35,14 @@ Nihonow is a comprehensive web application designed to help users learn Japanese
 ### Setup Instructions
 
 1. **Clone the repository**
-   ```
-   git clone https://github.com/yourusername/nihonow.git
-   cd nihonow
-   ```
+   ```bash
+   git clone https://github.com/yourusername/nihonow-public.git
+   cd nihonow-public
+````
 
 2. **Create and activate a virtual environment**
-   ```
+
+   ```bash
    # On Windows
    python -m venv venv
    venv\Scripts\activate
@@ -49,73 +50,97 @@ Nihonow is a comprehensive web application designed to help users learn Japanese
    # On macOS/Linux
    python3 -m venv venv
    source venv/bin/activate
-   ```
+   ````
 
 3. **Install dependencies**
-   ```
+
+   ```bash
    pip install -r requirements.txt
    ```
 
-4. **Configure the database**
-   - Create a PostgreSQL database
-   - Update the database settings in `Nihonow/settings.py` with your database credentials
+4. **Configure the database and environment variables**
+
+   * Create a PostgreSQL database
+   * *Update the following sensitive settings in `Nihonow/settings.py`:**
+
+     * Database credentials (name, user, password, host, port)
+     * Email application keys
+     * Ably API keys
 
 5. **Apply migrations**
-   ```
+
+   ```bash
    python manage.py migrate
    ```
 
 6. **Create a superuser (admin)**
-   ```
+
+   ```bash
    python manage.py createsuperuser
    ```
 
 7. **Collect static files**
-   ```
+
+   ```bash
    python manage.py collectstatic
    ```
 
 ## Running the Application
 
 ### Development Server
+
 To run the application locally for development:
-```
+
+```bash
 python manage.py runserver
 ```
-The application will be available at http://127.0.0.1:8000/
+
+The application will be available at [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ### Production Deployment
+
 The application is configured for deployment on Vercel. Follow these steps:
 
 1. Install Vercel CLI
-   ```
+
+   ```bash
    npm install -g vercel
    ```
 
 2. Deploy to Vercel
-   ```
+
+   ```bash
    vercel
    ```
 
 ## Usage
 
 1. **Registration and Login**
-   - Register for an account and verify your email
-   - Log in to access all features
+
+   * Register for an account and verify your email
+   * Log in to access all features
 
 2. **Learning Path**
-   - Start with Hiragana and Katakana if you're a beginner
-   - Progress to N5 level content and gradually move up
-   - Use flashcards and quizzes to reinforce your learning
+
+   * Start with Hiragana and Katakana if you're a beginner
+   * Progress to N5 level content and gradually move up
+   * Use flashcards and quizzes to reinforce your learning
 
 3. **Admin Features**
-   - Access the admin panel at `/admin/` with your superuser credentials
-   - Bulk upload content using CSV files through the admin interface
-   - Manage users, quizzes, and learning content
+
+   * Access the admin panel at `/admin/` with your superuser credentials
+   * Bulk upload content using CSV files through the admin interface
+   * Manage users, quizzes, and learning content
+
+## Chatbot Configuration
+
+To ensure the chatbot works properly:
+
+* **Update the model name, API endpoint, and API key** in `chatbot/bot.py` with your desired configuration and credentials.
 
 ## Contributing
 
-Contributions to Nihonow are welcome! Please follow these steps:
+Contributions to Nihonow-Public are welcome! Please follow these steps:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)

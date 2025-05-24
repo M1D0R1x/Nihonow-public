@@ -44,24 +44,24 @@ KNOWLEDGE_BASE = {
 # Model configurations with updated API keys
 MODELS = {
     "local": {"type": "knowledge_base", "active": True},
-    "deepseek/deepseek-r1-zero:free": {
+    "YOUR_MODEL": {
         "type": "api",
-        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
-        "api_key": "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",
+        "endpoint": "YOUR_END_POINT",
+        "api_key": "Your_API_KEY",
         "context": 131072,
         "active": True
     },
-    "mistralai/mistral-small-3.1-24b-instruct:free": {
+    "YOUR_MODEL": {
         "type": "api",
-        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
-        "api_key": "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",
+        "endpoint": "YOUR_END_POINT",
+        "api_key": "YOUR_API_KEY",
         "context": 131072,
         "active": True
     },
-    "qwen/qwen2.5-vl-3b-instruct:free": {
+    "YOUR_MODEL": {
         "type": "api",
-        "endpoint": "https://openrouter.ai/api/v1/chat/completions",
-        "api_key": "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",
+        "endpoint": "YOUR_END_POINT",
+        "api_key": "YOUR_API_KEY",
         "context": 131072,
         "active": True
     }

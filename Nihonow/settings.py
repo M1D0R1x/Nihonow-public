@@ -1,16 +1,16 @@
 """
-Django settings for Nihonow project.
+Django settings for Nihonow-public project.
 """
 import os.path
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-po^n&a(ii85f@0xqb_q$*pq#3m8^qcup-pkmof7b*(9bs$%m27'
+SECRET_KEY = 'django-insecure-po^n&a(ii85f@0xqb_q$*pq#3m8^qcup-pkmof7b*(9#)6@!$&'
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', '.now.sh', 'localhost', 'e1ef-152-59-82-151.ngrok-free.app']
+ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
@@ -63,18 +63,18 @@ WSGI_APPLICATION = 'Nihonow.wsgi.application'
 ASGI_APPLICATION = 'Nihonow.asgi.application'
 
 # Ably API Key
-ABLY_API_KEY = 'y7OU_w.GT0IiA:Caz6bpm8n4q0UhrCO8827IqtsQV_yPa7oWXYytJDX-8'
+ABLY_API_KEY = 'YOUR_ABLY_API_KEY'  # Replace with your actual Ably API key
 
 SITE_ID = 1
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'RZBFSItwfdWjSabpIvRJDFiEuwyoSCVL',
-        'HOST': 'shortline.proxy.rlwy.net',
-        'PORT': '26709',
+        'ENGINE': 'django.db.backends.postgresql',  # Use 'django.db.backends.sqlite3' for SQLite
+        'NAME': 'nihonow_db',  # Replace with your database name
+        'USER': 'nihonow_user',  # Replace with your database user
+        'PASSWORD': 'YOUR_DATABASE_PASSWORD',  # Replace with your database password
+        'HOST': 'localhost',  # Replace with your database host
+        'PORT': '5432',  # Default PostgreSQL port, change if necessary
     }
 }
 
@@ -102,12 +102,12 @@ LOGOUT_REDIRECT_URL = '/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'veerababusaviti21@gmail.com'
-EMAIL_HOST_PASSWORD = 'ilkg mkaz mela bbuy'
+EMAIL_BACKEND = 'YOUR_EMAIL_BACKEND'  # e.g., 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'YOUR_EMAIL_HOST'  # e.g., 'smtp.gmail.com'
+EMAIL_PORT = 587  # e.g., 587 for TLS
+EMAIL_USE_TLS = True  # Use TLS for security
+EMAIL_HOST_USER = 'YOUR_EMAIL_USER'  # Your email address
+EMAIL_HOST_PASSWORD = 'YOUR_EMAIL_PASSWORD'  # Your email password
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 AUTHENTICATION_BACKENDS = [
