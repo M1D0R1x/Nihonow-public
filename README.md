@@ -36,7 +36,7 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/nihonow-public.git
+   git clone https://github.com/M1D0R1x/Nihonow-public.git
    cd nihonow-public
 ````
 
